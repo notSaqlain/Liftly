@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
-        
+
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
@@ -24,20 +25,29 @@
             display: none;
             animation: fadeIn 0.4s ease-out;
         }
+
         .section-content.active {
             display: block;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Stili per il menu attivo */
         .submenu-link.active-link {
-            color: #2563eb; 
+            color: #2563eb;
             font-weight: 700;
         }
+
         .submenu-link.active-link::before {
             content: '';
             position: absolute;
@@ -49,43 +59,70 @@
             border-radius: 50%;
             background-color: #2563eb;
         }
-        
+
         .main-link.active-link {
             background-color: #001540;
             color: white;
         }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #001540; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #001540;
+            border-radius: 10px;
+        }
 
         /* --- STILI SPECIFICI PER LA WBS (Integrati e adattati) --- */
         .phase-row {
-            background-color: #001540; /* Blu Liftly */
+            background-color: #001540;
+            /* Blu Liftly */
             color: #ffffff;
             font-weight: 700;
         }
+
         .table-row:nth-child(even) {
             background-color: #f8fafc;
         }
+
         .table-row:hover {
             background-color: #e2e8f0;
             transition: background-color 0.2s ease-in-out;
         }
-        
+
         @media print {
-            body { background-color: white; padding: 0; }
-            #sidebar, .lg\:hidden { display: none; }
-            .wbs-container { box-shadow: none; border: none; }
-            .print-hide { display: none; }
+            body {
+                background-color: white;
+                padding: 0;
+            }
+
+            #sidebar,
+            .lg\:hidden {
+                display: none;
+            }
+
+            .wbs-container {
+                box-shadow: none;
+                border: none;
+            }
+
+            .print-hide {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body class="text-slate-900">
 
     <div class="flex flex-col lg:flex-row min-h-screen">
-        
+
         <!-- MOBILE HEADER -->
         <div class="lg:hidden bg-white border-b px-4 py-3 flex justify-between items-center sticky top-0 z-50">
             <div class="flex items-center gap-2">
@@ -100,14 +137,15 @@
         </div>
 
         <!-- SIDEBAR MENU -->
-        <aside id="sidebar" class="fixed inset-0 z-40 lg:static lg:block w-full lg:w-80 bg-white border-r flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 hidden h-screen overflow-y-auto print-hide">
-            
+        <aside id="sidebar"
+            class="fixed inset-0 z-40 lg:static lg:block w-full lg:w-80 bg-white border-r flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 hidden h-screen overflow-y-auto print-hide">
+
             <div class="p-6 pb-2 sticky top-0 bg-white z-10 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-[#001540] rounded-xl flex items-center justify-center shadow-lg">
                         <span class="text-white text-lg font-bold">L↑</span>
                     </div>
-                    <span class="font-black text-2xl tracking-tighter text-[#001540]">LIFTLY</span>
+                    <img src="liftly.png" alt="LIFTLY" class="h-7 object-contain">
                 </div>
                 <button id="close-menu-btn" class="lg:hidden p-2 text-slate-500">
                     <i data-lucide="x"></i>
@@ -115,62 +153,87 @@
             </div>
 
             <nav class="flex-1 p-4 space-y-1">
-                
+
                 <!-- 1. PROJECT CHARTER (Dropdown) -->
                 <div>
-                    <button onclick="toggleMenu('menu-charter', 'icon-charter')" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-3"><i data-lucide="folder-open" class="w-5 h-5"></i> Project Charter</div>
-                        <i data-lucide="chevron-down" id="icon-charter" class="w-4 h-4 transition-transform duration-200"></i>
+                    <button onclick="toggleMenu('menu-charter', 'icon-charter')"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                        <div class="flex items-center gap-3"><i data-lucide="folder-open" class="w-5 h-5"></i> Project
+                            Charter</div>
+                        <i data-lucide="chevron-down" id="icon-charter"
+                            class="w-4 h-4 transition-transform duration-200"></i>
                     </button>
                     <div id="menu-charter" class="hidden pl-10 pr-4 py-1 border-l-2 border-slate-100 ml-6 relative">
-                        <button onclick="showSection('charter-liftly', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">LIFTLY</button>
-                        <button onclick="showSection('charter-fixflow', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">FIXFLOW</button>
+                        <button onclick="showSection('charter-liftly', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">LIFTLY</button>
+                        <button onclick="showSection('charter-fixflow', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">FIXFLOW</button>
                     </div>
                 </div>
 
                 <!-- 2. SRS (Dropdown) -->
                 <div>
-                    <button onclick="toggleMenu('menu-srs', 'icon-srs')" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                    <button onclick="toggleMenu('menu-srs', 'icon-srs')"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                         <div class="flex items-center gap-3"><i data-lucide="file-text" class="w-5 h-5"></i> SRS</div>
-                        <i data-lucide="chevron-down" id="icon-srs" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
+                        <i data-lucide="chevron-down" id="icon-srs"
+                            class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
                     </button>
                     <div id="menu-srs" class="block pl-10 pr-4 py-1 border-l-2 border-slate-100 ml-6 relative">
-                        <button onclick="showSection('srs-intro', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">1. Introduzione</button>
-                        <button onclick="showSection('srs-funzionali', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">2. Requisiti Funzionali</button>
-                        <button onclick="showSection('srs-non-funzionali', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">3. Requisiti Non Funz</button>
-                        <button onclick="showSection('srs-architettura', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">4. Architettura</button>
-                        <button onclick="showSection('srs-ambito', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">5. Ambito</button>
-                        <button onclick="showSection('srs-definizioni', this, true)" class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">6. Definizioni</button>
+                        <button onclick="showSection('srs-intro', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">1.
+                            Introduzione</button>
+                        <button onclick="showSection('srs-funzionali', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">2.
+                            Requisiti Funzionali</button>
+                        <button onclick="showSection('srs-non-funzionali', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">3.
+                            Requisiti Non Funz</button>
+                        <button onclick="showSection('srs-architettura', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">4.
+                            Architettura</button>
+                        <button onclick="showSection('srs-ambito', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">5.
+                            Ambito</button>
+                        <button onclick="showSection('srs-definizioni', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">6.
+                            Definizioni</button>
                     </div>
                 </div>
 
                 <!-- 3. WBS (Direct Link) -->
-                <button onclick="showSection('wbs', this, false)" class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                <button onclick="showSection('wbs', this, false)"
+                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                     <i data-lucide="network" class="w-5 h-5"></i> WBS
                 </button>
 
                 <!-- 4. OBS (Direct Link) -->
-                <button onclick="showSection('obs', this, false)" class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                <button onclick="showSection('obs', this, false)"
+                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                     <i data-lucide="users" class="w-5 h-5"></i> OBS
                 </button>
 
                 <!-- 5. RACI (Direct Link) -->
-                <button onclick="showSection('raci', this, false)" class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                <button onclick="showSection('raci', this, false)"
+                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                     <i data-lucide="table" class="w-5 h-5"></i> Matrice RACI
                 </button>
 
                 <!-- 6. GANTT & COSTI (Direct Link) -->
-                <button onclick="showSection('gantt', this, false)" class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                <button onclick="showSection('gantt', this, false)"
+                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                     <i data-lucide="calendar-days" class="w-5 h-5"></i> Gantt & Costi
                 </button>
 
                 <!-- 7. CODICE (Direct Link) -->
-                <button onclick="showSection('codice', this, false)" class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                <button onclick="showSection('codice', this, false)"
+                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                     <i data-lucide="code" class="w-5 h-5"></i> Descrizione Codice
                 </button>
 
                 <!-- 8. MANUALE (Direct Link) -->
-                <button onclick="showSection('manuale', this, false)" class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
+                <button onclick="showSection('manuale', this, false)"
+                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
                     <i data-lucide="book-open" class="w-5 h-5"></i> Manuale d'Uso
                 </button>
 
@@ -182,11 +245,15 @@
                     <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">Team GPO</p>
                     <div class="space-y-2">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded border border-blue-200 bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-[10px]">D</div>
+                            <div
+                                class="w-6 h-6 rounded border border-blue-200 bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-[10px]">
+                                D</div>
                             <span class="text-xs font-semibold text-slate-700">Davide (PM)</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded border border-emerald-200 bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-[10px]">S</div>
+                            <div
+                                class="w-6 h-6 rounded border border-emerald-200 bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-[10px]">
+                                S</div>
                             <span class="text-xs font-semibold text-slate-700">Saqlain (Tech)</span>
                         </div>
                     </div>
@@ -197,30 +264,35 @@
         <!-- MAIN CONTENT -->
         <main class="flex-1 p-4 lg:p-10 overflow-y-auto w-full">
             <div class="max-w-5xl mx-auto">
-            
+
                 <!-- ============================================== -->
                 <!-- PAGINA DI BENVENUTO (LANDING PAGE)             -->
                 <!-- ============================================== -->
                 <section id="landing-page" class="section-content active">
                     <div class="flex flex-col items-center justify-center min-h-[80vh] text-center">
                         <!-- Animazione Logo -->
-                        <div class="w-28 h-28 bg-[#001540] rounded-3xl flex items-center justify-center shadow-2xl mb-8 transform hover:scale-105 transition-transform">
+                        <div
+                            class="w-28 h-28 bg-[#001540] rounded-3xl flex items-center justify-center shadow-2xl mb-8 transform hover:scale-105 transition-transform">
                             <span class="text-white text-5xl font-bold">L↑</span>
                         </div>
-                        
-                        <h1 class="text-5xl font-black text-[#001540] mb-4 tracking-tighter">Benvenuto in Liftly Docs</h1>
+
+                        <h1 class="text-5xl font-black text-[#001540] mb-4 tracking-tighter">Benvenuto in Liftly Docs
+                        </h1>
                         <p class="text-xl text-slate-500 max-w-2xl mb-10 leading-relaxed">
-                            Questo portale contiene tutta la documentazione ufficiale del progetto GPO. 
-                            Qui puoi trovare le specifiche tecniche, l'analisi dei requisiti e la pianificazione aziendale.
+                            Questo portale contiene tutta la documentazione ufficiale del progetto GPO.
+                            Qui puoi trovare le specifiche tecniche, l'analisi dei requisiti e la pianificazione
+                            aziendale.
                         </p>
-                        
-                        <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl flex items-center gap-4 max-w-lg text-left">
+
+                        <div
+                            class="bg-blue-50 border border-blue-100 p-6 rounded-2xl flex items-center gap-4 max-w-lg text-left">
                             <div class="bg-white p-3 rounded-full text-blue-600 shadow-sm shrink-0">
                                 <i data-lucide="arrow-left" class="w-6 h-6"></i>
                             </div>
                             <div>
                                 <h3 class="font-bold text-blue-900">Come navigare</h3>
-                                <p class="text-sm text-blue-700">Utilizza il menu laterale per selezionare e consultare i singoli documenti (SRS, WBS, Gantt, ecc.).</p>
+                                <p class="text-sm text-blue-700">Utilizza il menu laterale per selezionare e consultare
+                                    i singoli documenti (SRS, WBS, Gantt, ecc.).</p>
                             </div>
                         </div>
                     </div>
@@ -231,15 +303,20 @@
                 <!-- ============================================== -->
                 <section id="charter-liftly" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-6"><i data-lucide="hard-hat" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="hard-hat" class="w-12 h-12"></i></div>
                         <h1 class="text-4xl font-black text-[#001540] mb-4">Project Charter: LIFTLY</h1>
-                        <p class="text-slate-500 max-w-md">Questo documento è attualmente in fase di stesura da parte del Project Manager (Davide).</p>
+                        <p class="text-slate-500 max-w-md">Questo documento è attualmente in fase di stesura da parte
+                            del Project Manager (Davide).</p>
                     </div>
                 </section>
 
                 <section id="charter-fixflow" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center mb-6"><i data-lucide="hammer" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="hammer" class="w-12 h-12"></i></div>
                         <h1 class="text-4xl font-black text-[#001540] mb-4">Project Charter: FIXFLOW</h1>
                         <p class="text-slate-500 max-w-md">Questo documento è attualmente in fase di stesura.</p>
                     </div>
@@ -249,90 +326,161 @@
                 <!-- SEZIONI SRS -->
                 <!-- ============================================== -->
                 <section id="srs-intro" class="section-content">
-                    <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Documento SRS</div>
-                    <h1 class="text-4xl font-black text-[#001540] mb-4 uppercase italic tracking-tighter">1. Introduzione</h1>
+                    <div
+                        class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Documento SRS</div>
+                    <h1 class="text-4xl font-black text-[#001540] mb-4 uppercase italic tracking-tighter">1.
+                        Introduzione</h1>
                     <p class="text-lg text-slate-500 mb-10">Visione strategica e obiettivi del software Liftly.</p>
-                    
+
                     <div class="grid md:grid-cols-2 gap-6 mb-10">
                         <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5 text-[#001540]"><i data-lucide="target"></i></div>
+                            <div
+                                class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5 text-[#001540]">
+                                <i data-lucide="target"></i></div>
                             <h3 class="text-xl font-bold mb-3">Scopo del Progetto</h3>
-                            <p class="text-slate-600 text-sm leading-relaxed">Liftly trasforma il diario d'allenamento in un'esperienza digitale dinamica. Fornisce all'utente una guida che si adatta ai macchinari reali della palestra selezionata.</p>
+                            <p class="text-slate-600 text-sm leading-relaxed">Liftly trasforma il diario d'allenamento
+                                in un'esperienza digitale dinamica. Fornisce all'utente una guida che si adatta ai
+                                macchinari reali della palestra selezionata.</p>
                         </div>
                         <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-5 text-emerald-600"><i data-lucide="bar-chart-3"></i></div>
+                            <div
+                                class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-5 text-emerald-600">
+                                <i data-lucide="bar-chart-3"></i></div>
                             <h3 class="text-xl font-bold mb-3">Valore del Prodotto</h3>
-                            <p class="text-slate-600 text-sm leading-relaxed">Tramite il modello <strong>Freemium</strong>, Liftly offre strumenti base gratuiti e analisi avanzate a pagamento, creando un ecosistema sostenibile.</p>
+                            <p class="text-slate-600 text-sm leading-relaxed">Tramite il modello
+                                <strong>Freemium</strong>, Liftly offre strumenti base gratuiti e analisi avanzate a
+                                pagamento, creando un ecosistema sostenibile.</p>
                         </div>
                     </div>
                 </section>
 
                 <section id="srs-funzionali" class="section-content">
-                    <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Documento SRS</div>
-                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">2. Requisiti Funzionali</h1>
+                    <div
+                        class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Documento SRS</div>
+                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">2. Requisiti
+                        Funzionali</h1>
                     <div class="grid gap-4">
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-5">
-                            <div class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">RF1</div>
+                            <div
+                                class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">
+                                RF1</div>
                             <div>
-                                <h4 class="font-bold text-lg text-slate-800 mb-1">Auth & Profile <span class="ml-2 bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded uppercase">Alta</span></h4>
-                                <p class="text-slate-500 text-sm">Registrazione utente con inserimento dati biometrici (peso, età, sesso).</p>
+                                <h4 class="font-bold text-lg text-slate-800 mb-1">Auth & Profile <span
+                                        class="ml-2 bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded uppercase">Alta</span>
+                                </h4>
+                                <p class="text-slate-500 text-sm">Registrazione utente con inserimento dati biometrici
+                                    (peso, età, sesso).</p>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-5">
-                            <div class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">RF2</div>
+                            <div
+                                class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">
+                                RF2</div>
                             <div>
-                                <h4 class="font-bold text-lg text-slate-800 mb-1">Workout Logger <span class="ml-2 bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded uppercase">Alta</span></h4>
-                                <p class="text-slate-500 text-sm">Inserimento di carichi, serie e ripetizioni per ogni esercizio.</p>
+                                <h4 class="font-bold text-lg text-slate-800 mb-1">Workout Logger <span
+                                        class="ml-2 bg-red-100 text-red-600 text-[10px] px-2 py-0.5 rounded uppercase">Alta</span>
+                                </h4>
+                                <p class="text-slate-500 text-sm">Inserimento di carichi, serie e ripetizioni per ogni
+                                    esercizio.</p>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-5">
-                            <div class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">RF3</div>
+                            <div
+                                class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">
+                                RF3</div>
                             <div>
-                                <h4 class="font-bold text-lg text-slate-800 mb-1">Gym Mapping <span class="ml-2 bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded uppercase">Media</span></h4>
-                                <p class="text-slate-500 text-sm">Filtraggio automatico degli esercizi in base ai macchinari presenti.</p>
+                                <h4 class="font-bold text-lg text-slate-800 mb-1">Gym Mapping <span
+                                        class="ml-2 bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded uppercase">Media</span>
+                                </h4>
+                                <p class="text-slate-500 text-sm">Filtraggio automatico degli esercizi in base ai
+                                    macchinari presenti.</p>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-5">
-                            <div class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">RF4</div>
+                            <div
+                                class="bg-slate-100 text-[#001540] w-12 h-12 rounded-lg flex items-center justify-center font-black shrink-0">
+                                RF4</div>
                             <div>
-                                <h4 class="font-bold text-lg text-slate-800 mb-1">Affollamento <span class="ml-2 bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded uppercase">Bassa</span></h4>
-                                <p class="text-slate-500 text-sm">Sistema di crowdsourcing per segnalare il livello di occupazione.</p>
+                                <h4 class="font-bold text-lg text-slate-800 mb-1">Affollamento <span
+                                        class="ml-2 bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded uppercase">Bassa</span>
+                                </h4>
+                                <p class="text-slate-500 text-sm">Sistema di crowdsourcing per segnalare il livello di
+                                    occupazione.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <section id="srs-non-funzionali" class="section-content">
-                    <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Documento SRS</div>
-                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">3. Requisiti Non Funzionali</h1>
+                    <div
+                        class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Documento SRS</div>
+                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">3. Requisiti
+                        Non Funzionali</h1>
                     <div class="grid md:grid-cols-2 gap-4">
-                        <div class="p-6 bg-white border rounded-2xl"><h4 class="font-bold text-lg mb-2"><i data-lucide="zap" class="inline w-4 h-4 mr-1"></i> Performance</h4><p class="text-slate-500 text-sm">Caricamento app in meno di 1.5s.</p></div>
-                        <div class="p-6 bg-white border rounded-2xl"><h4 class="font-bold text-lg mb-2"><i data-lucide="shield-check" class="inline w-4 h-4 mr-1"></i> Affidabilità</h4><p class="text-slate-500 text-sm">Uptime del 99.9% e salvataggio cloud.</p></div>
-                        <div class="p-6 bg-white border rounded-2xl"><h4 class="font-bold text-lg mb-2"><i data-lucide="smartphone" class="inline w-4 h-4 mr-1"></i> Usabilità</h4><p class="text-slate-500 text-sm">Design Mobile-First touch-friendly.</p></div>
-                        <div class="p-6 bg-white border rounded-2xl"><h4 class="font-bold text-lg mb-2"><i data-lucide="lock" class="inline w-4 h-4 mr-1"></i> Sicurezza</h4><p class="text-slate-500 text-sm">Crittografia dati e GDPR compliance.</p></div>
+                        <div class="p-6 bg-white border rounded-2xl">
+                            <h4 class="font-bold text-lg mb-2"><i data-lucide="zap" class="inline w-4 h-4 mr-1"></i>
+                                Performance</h4>
+                            <p class="text-slate-500 text-sm">Caricamento app in meno di 1.5s.</p>
+                        </div>
+                        <div class="p-6 bg-white border rounded-2xl">
+                            <h4 class="font-bold text-lg mb-2"><i data-lucide="shield-check"
+                                    class="inline w-4 h-4 mr-1"></i> Affidabilità</h4>
+                            <p class="text-slate-500 text-sm">Uptime del 99.9% e salvataggio cloud.</p>
+                        </div>
+                        <div class="p-6 bg-white border rounded-2xl">
+                            <h4 class="font-bold text-lg mb-2"><i data-lucide="smartphone"
+                                    class="inline w-4 h-4 mr-1"></i> Usabilità</h4>
+                            <p class="text-slate-500 text-sm">Design Mobile-First touch-friendly.</p>
+                        </div>
+                        <div class="p-6 bg-white border rounded-2xl">
+                            <h4 class="font-bold text-lg mb-2"><i data-lucide="lock" class="inline w-4 h-4 mr-1"></i>
+                                Sicurezza</h4>
+                            <p class="text-slate-500 text-sm">Crittografia dati e GDPR compliance.</p>
+                        </div>
                     </div>
                 </section>
 
                 <section id="srs-architettura" class="section-content">
-                    <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Documento SRS</div>
-                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">4. Architettura</h1>
+                    <div
+                        class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Documento SRS</div>
+                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">4.
+                        Architettura</h1>
                     <div class="bg-[#001540] rounded-3xl p-8 text-white mb-6">
                         <h3 class="text-xl font-bold mb-6 text-blue-300">Stack Tecnologico Principale</h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                            <div><div class="text-2xl font-black">React</div><div class="text-xs opacity-50">Frontend</div></div>
-                            <div><div class="text-2xl font-black">Firebase</div><div class="text-xs opacity-50">Backend/Auth</div></div>
-                            <div><div class="text-2xl font-black">Tailwind</div><div class="text-xs opacity-50">CSS</div></div>
-                            <div><div class="text-2xl font-black">Firestore</div><div class="text-xs opacity-50">Database NoSQL</div></div>
+                            <div>
+                                <div class="text-2xl font-black">React</div>
+                                <div class="text-xs opacity-50">Frontend</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-black">Firebase</div>
+                                <div class="text-xs opacity-50">Backend/Auth</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-black">Tailwind</div>
+                                <div class="text-xs opacity-50">CSS</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-black">Firestore</div>
+                                <div class="text-xs opacity-50">Database NoSQL</div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <section id="srs-ambito" class="section-content">
-                    <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Documento SRS</div>
+                    <div
+                        class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Documento SRS</div>
                     <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">5. Ambito</h1>
                     <div class="grid md:grid-cols-2 gap-8">
                         <div>
-                            <h3 class="text-emerald-600 font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="check-circle-2"></i> IN AMBITO</h3>
+                            <h3 class="text-emerald-600 font-bold text-lg mb-4 flex items-center gap-2"><i
+                                    data-lucide="check-circle-2"></i> IN AMBITO</h3>
                             <ul class="space-y-2 text-sm text-slate-700">
                                 <li class="p-3 bg-white border rounded-lg">WebApp Mobile First</li>
                                 <li class="p-3 bg-white border rounded-lg">Login e Database Esercizi</li>
@@ -340,9 +488,11 @@
                             </ul>
                         </div>
                         <div>
-                            <h3 class="text-red-500 font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="x-circle"></i> FUORI AMBITO</h3>
+                            <h3 class="text-red-500 font-bold text-lg mb-4 flex items-center gap-2"><i
+                                    data-lucide="x-circle"></i> FUORI AMBITO</h3>
                             <ul class="space-y-2 text-sm text-slate-500">
-                                <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg">App Native iOS/Android</li>
+                                <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg">App Native iOS/Android
+                                </li>
                                 <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg">Pagamenti reali</li>
                                 <li class="p-3 bg-slate-50 border border-slate-200 rounded-lg">Sensori IoT Palestre</li>
                             </ul>
@@ -351,14 +501,30 @@
                 </section>
 
                 <section id="srs-definizioni" class="section-content">
-                    <div class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Documento SRS</div>
-                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">6. Definizioni</h1>
+                    <div
+                        class="mb-4 inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Documento SRS</div>
+                    <h1 class="text-4xl font-black text-[#001540] mb-8 uppercase italic tracking-tighter">6. Definizioni
+                    </h1>
                     <div class="bg-white rounded-2xl border overflow-hidden">
                         <table class="w-full text-left text-sm">
-                            <tr class="border-b bg-slate-50"><th class="p-4">Termine</th><th class="p-4">Significato</th></tr>
-                            <tr class="border-b"><td class="p-4 font-bold text-[#001540]">SRS</td><td class="p-4 text-slate-600">Software Requirements Specification.</td></tr>
-                            <tr class="border-b"><td class="p-4 font-bold text-[#001540]">Freemium</td><td class="p-4 text-slate-600">Prodotto base gratuito, funzioni extra a pagamento.</td></tr>
-                            <tr class="border-b"><td class="p-4 font-bold text-[#001540]">Crowdsourcing</td><td class="p-4 text-slate-600">Dati (es. affollamento) forniti volontariamente dagli utenti.</td></tr>
+                            <tr class="border-b bg-slate-50">
+                                <th class="p-4">Termine</th>
+                                <th class="p-4">Significato</th>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-4 font-bold text-[#001540]">SRS</td>
+                                <td class="p-4 text-slate-600">Software Requirements Specification.</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-4 font-bold text-[#001540]">Freemium</td>
+                                <td class="p-4 text-slate-600">Prodotto base gratuito, funzioni extra a pagamento.</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-4 font-bold text-[#001540]">Crowdsourcing</td>
+                                <td class="p-4 text-slate-600">Dati (es. affollamento) forniti volontariamente dagli
+                                    utenti.</td>
+                            </tr>
                         </table>
                     </div>
                 </section>
@@ -367,21 +533,27 @@
                 <!-- SEZIONE WBS (Completa e integrata senza tagli) -->
                 <!-- ============================================== -->
                 <section id="wbs" class="section-content">
-                    <div id="wbs-container" class="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200 w-full mb-8">
-                        
+                    <div id="wbs-container"
+                        class="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200 w-full mb-8">
+
                         <!-- Intestazione Progetto -->
-                        <div class="bg-[#001540] p-6 md:p-8 text-white flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div
+                            class="bg-[#001540] p-6 md:p-8 text-white flex flex-col md:flex-row justify-between items-start md:items-center">
                             <div>
                                 <!-- Logo Liftly -->
-                                <div class="flex items-center text-4xl md:text-5xl font-bold tracking-tighter mb-2 leading-none select-none">
-                                    <img src="LIFTLY_logo.png" width="200" height="150" alt="LIFTLY" onerror="this.outerHTML='<span class=\'text-white tracking-tighter\'>LIFTLY</span>'">
+                                <div
+                                    class="flex items-center text-4xl md:text-5xl font-bold tracking-tighter mb-2 leading-none select-none">
+                                    <img src="LIFTLY_logo.png" width="200" height="150" alt="LIFTLY"
+                                        onerror="this.outerHTML='<span class=\'text-white tracking-tighter\'>LIFTLY</span>'">
                                 </div>
                                 <p class="text-blue-200 text-lg font-medium">Work Breakdown Structure (WBS)</p>
                             </div>
-                            <div class="mt-4 md:mt-0 bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20 text-sm">
+                            <div
+                                class="mt-4 md:mt-0 bg-white/10 p-4 rounded-lg backdrop-blur-sm border border-white/20 text-sm">
                                 <div class="grid grid-cols-2 gap-x-6 gap-y-2">
                                     <p><span class="text-blue-300 font-semibold">Data Inizio:</span> 13/02/2026</p>
-                                    <p><span class="text-blue-300 font-semibold">Cliente:</span> Industria dello sport</p>
+                                    <p><span class="text-blue-300 font-semibold">Cliente:</span> Industria dello sport
+                                    </p>
                                     <p><span class="text-blue-300 font-semibold">Versione:</span> 1.0</p>
                                     <p><span class="text-blue-300 font-semibold">Sponsor:</span> RedBull</p>
                                     <p><span class="text-blue-300 font-semibold">PM:</span> Davide Dolce</p>
@@ -393,7 +565,8 @@
                         <div class="overflow-x-auto w-full">
                             <table class="w-full text-left border-collapse min-w-[800px]">
                                 <thead>
-                                    <tr class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wider border-b-2 border-gray-300">
+                                    <tr
+                                        class="bg-gray-100 text-gray-700 text-sm uppercase tracking-wider border-b-2 border-gray-300">
                                         <th class="p-4 font-semibold w-24 text-center">Codice</th>
                                         <th class="p-4 font-semibold w-1/4">Fase / Attività</th>
                                         <th class="p-4 font-semibold w-32 text-center">Durata</th>
@@ -403,7 +576,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-800 text-sm">
-                                    
+
                                     <!-- 1.0 -->
                                     <tr class="phase-row">
                                         <td class="p-3 text-center">1.0</td>
@@ -413,7 +586,8 @@
                                         <td class="p-3 text-center text-gray-500 font-medium">1.1</td>
                                         <td class="p-3 font-medium">Raccolta requisiti</td>
                                         <td class="p-3 text-center text-gray-600">2 ore</td>
-                                        <td class="p-3 text-gray-600">Raccolta richieste (diario, storico, affollamento)</td>
+                                        <td class="p-3 text-gray-600">Raccolta richieste (diario, storico, affollamento)
+                                        </td>
                                         <td class="p-3 text-center font-bold text-blue-600">A</td>
                                         <td class="p-3 text-center font-bold text-green-600">R</td>
                                     </tr>
@@ -437,7 +611,8 @@
                                         <td class="p-3 text-center text-gray-500 font-medium">1.4</td>
                                         <td class="p-3 font-medium">Struttura pagine e flusso utente</td>
                                         <td class="p-3 text-center text-gray-600">2 ore</td>
-                                        <td class="p-3 text-gray-600">Definizione schermate (login, diario, statistiche)</td>
+                                        <td class="p-3 text-gray-600">Definizione schermate (login, diario, statistiche)
+                                        </td>
                                         <td class="p-3 text-center font-bold text-orange-500">C</td>
                                         <td class="p-3 text-center font-bold text-green-600">R</td>
                                     </tr>
@@ -459,7 +634,8 @@
                                         <td class="p-3 text-center text-gray-500 font-medium">2.1</td>
                                         <td class="p-3 font-medium">Specifiche tecniche complete</td>
                                         <td class="p-3 text-center text-gray-600">2 ore</td>
-                                        <td class="p-3 text-gray-600">Dettaglio moduli account, statistiche e crowdsourcing</td>
+                                        <td class="p-3 text-gray-600">Dettaglio moduli account, statistiche e
+                                            crowdsourcing</td>
                                         <td class="p-3 text-center font-bold text-blue-600">A</td>
                                         <td class="p-3 text-center font-bold text-green-600">R</td>
                                     </tr>
@@ -467,7 +643,8 @@
                                         <td class="p-3 text-center text-gray-500 font-medium">2.2</td>
                                         <td class="p-3 font-medium">Progettazione UI / UX</td>
                                         <td class="p-3 text-center text-gray-600">3 ore</td>
-                                        <td class="p-3 text-gray-600">Progettazione interfaccia, ottimizzata per mobile</td>
+                                        <td class="p-3 text-gray-600">Progettazione interfaccia, ottimizzata per mobile
+                                        </td>
                                         <td class="p-3 text-center font-bold text-purple-500">I</td>
                                         <td class="p-3 text-center font-bold text-green-600">R</td>
                                     </tr>
@@ -521,7 +698,8 @@
                                         <td class="p-3 text-center text-gray-500 font-medium">3.4</td>
                                         <td class="p-3 font-medium">Sistema crowdsourcing affollamento</td>
                                         <td class="p-3 text-center text-gray-600">4 ore</td>
-                                        <td class="p-3 text-gray-600">Segnalazione manuale dello stato della palestra</td>
+                                        <td class="p-3 text-gray-600">Segnalazione manuale dello stato della palestra
+                                        </td>
                                         <td class="p-3 text-center font-bold text-purple-500">I</td>
                                         <td class="p-3 text-center font-bold text-green-600">R</td>
                                     </tr>
@@ -658,18 +836,26 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <!-- Legenda Matrice RACI -->
                         <div class="bg-gray-50 p-4 border-t border-gray-200">
                             <h3 class="text-sm font-semibold text-gray-700 mb-2">Legenda Ruoli (RACI)</h3>
                             <div class="flex flex-wrap gap-4 text-xs">
-                                <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">R</span> <span>Responsible (Esecutore)</span></div>
-                                <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">A</span> <span>Accountable (Approvatore)</span></div>
-                                <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center font-bold">C</span> <span>Consulted (Consultato)</span></div>
-                                <div class="flex items-center gap-1"><span class="w-4 h-4 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center font-bold">I</span> <span>Informed (Informato)</span></div>
+                                <div class="flex items-center gap-1"><span
+                                        class="w-4 h-4 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold">R</span>
+                                    <span>Responsible (Esecutore)</span></div>
+                                <div class="flex items-center gap-1"><span
+                                        class="w-4 h-4 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">A</span>
+                                    <span>Accountable (Approvatore)</span></div>
+                                <div class="flex items-center gap-1"><span
+                                        class="w-4 h-4 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center font-bold">C</span>
+                                    <span>Consulted (Consultato)</span></div>
+                                <div class="flex items-center gap-1"><span
+                                        class="w-4 h-4 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center font-bold">I</span>
+                                    <span>Informed (Informato)</span></div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </section>
 
@@ -678,39 +864,49 @@
                 <!-- ============================================== -->
                 <section id="obs" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6"><i data-lucide="users" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="users" class="w-12 h-12"></i></div>
                         <h1 class="text-3xl font-black text-[#001540] mb-2">OBS - Organigramma</h1>
                         <p class="text-slate-500">Sezione in fase di sviluppo.</p>
                     </div>
                 </section>
-                
+
                 <section id="raci" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6"><i data-lucide="table" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="table" class="w-12 h-12"></i></div>
                         <h1 class="text-3xl font-black text-[#001540] mb-2">Matrice RACI Completa</h1>
                         <p class="text-slate-500">Sezione in fase di sviluppo.</p>
                     </div>
                 </section>
-                
+
                 <section id="gantt" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6"><i data-lucide="calendar-days" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="calendar-days" class="w-12 h-12"></i></div>
                         <h1 class="text-3xl font-black text-[#001540] mb-2">Gantt, Risorse e Costi</h1>
                         <p class="text-slate-500">In attesa dell'esportazione da Project Libre.</p>
                     </div>
                 </section>
-                
+
                 <section id="codice" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6"><i data-lucide="code" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="code" class="w-12 h-12"></i></div>
                         <h1 class="text-3xl font-black text-[#001540] mb-2">Descrizione del Codice</h1>
                         <p class="text-slate-500">Saqlain sta scrivendo questa parte...</p>
                     </div>
                 </section>
-                
+
                 <section id="manuale" class="section-content">
                     <div class="flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6"><i data-lucide="book-open" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
+                            <i data-lucide="book-open" class="w-12 h-12"></i></div>
                         <h1 class="text-3xl font-black text-[#001540] mb-2">Manuale d'Uso</h1>
                         <p class="text-slate-500">Sarà redatto al termine dello sviluppo della webapp.</p>
                     </div>
@@ -728,7 +924,7 @@
         function toggleMenu(menuId, iconId) {
             const menu = document.getElementById(menuId);
             const icon = document.getElementById(iconId);
-            
+
             if (menu.classList.contains('hidden')) {
                 menu.classList.remove('hidden');
                 menu.classList.add('block');
@@ -746,10 +942,10 @@
             document.querySelectorAll('.section-content').forEach(section => {
                 section.classList.remove('active');
             });
-            
+
             // 2. Mostra la sezione target
             const target = document.getElementById(sectionId);
-            if(target) target.classList.add('active');
+            if (target) target.classList.add('active');
 
             // 3. Reset stili link
             document.querySelectorAll('.submenu-link').forEach(link => {
@@ -775,7 +971,7 @@
                 document.getElementById('sidebar').classList.add('-translate-x-full');
                 setTimeout(() => { document.getElementById('sidebar').classList.add('hidden'); }, 300);
             }
-            
+
             // 6. Torna in cima alla pagina
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -792,4 +988,5 @@
         };
     </script>
 </body>
+
 </html>
