@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    background-color: #f8fafc;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Gestione visibilità sezioni */
+.section-content {
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.section-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stili per il menu attivo */
+.submenu-link.active-link {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.submenu-link.active-link::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #2563eb;
+}
+
+.main-link.active-link {
+    background-color: #001540;
+    color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #001540;
+    border-radius: 10px;
+}
+
+/* --- STILI SPECIFICI PER LA WBS (Integrati e adattati) --- */
+.phase-row {
+    background-color: #001540;
+    /* Blu Liftly */
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.table-row:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.table-row:hover {
+    background-color: #e2e8f0;
+    transition: background-color 0.2s ease-in-out;
+}
+
+@media print {
+    body {
+        background-color: white;
+        padding: 0;
+    }
+
+    #sidebar,
+    .lg\:hidden {
+        display: none;
+    }
+
+    .wbs-container {
+        box-shadow: none;
+        border: none;
+    }
+
+    .print-hide {
+        display: none;
+    }
+}
