@@ -1,0 +1,326 @@
+import React, { useState } from 'react';
+import { 
+  ChevronRight, 
+  Target, 
+  Users, 
+  BarChart3, 
+  ShieldCheck, 
+  Zap, 
+  Smartphone, 
+  Code2, 
+  Database, 
+  Layout, 
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Menu,
+  X,
+  FileText
+} from 'lucide-react';
+
+const App = () => {
+  const [activeSection, setActiveSection] = useState('introduzione');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const sections = [
+    { id: 'introduzione', title: '1. Introduzione', icon: <Target className="w-5 h-5" /> },
+    { id: 'requisiti-funzionali', title: '2. Requisiti Funzionali', icon: <Layout className="w-5 h-5" /> },
+    { id: 'requisiti-non-funzionali', title: '3. Requisiti Non Funzionali', icon: <Zap className="w-5 h-5" /> },
+    { id: 'architettura', title: '4. Architettura & Strumenti', icon: <Code2 className="w-5 h-5" /> },
+    { id: 'ambito', title: '5. Ambito del Progetto', icon: <ShieldCheck className="w-5 h-5" /> },
+    { id: 'definizioni', title: '6. Definizioni', icon: <FileText className="w-5 h-5" /> },
+  ];
+
+  const sidebarItem = (id, title, icon) => (
+    <button
+      onClick={() => {
+        setActiveSection(id);
+        setIsMenuOpen(false);
+      }}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+        activeSection === id 
+          ? 'bg-[#001540] text-white shadow-lg shadow-blue-900/20' 
+          : 'text-gray-600 hover:bg-gray-100'
+      }`}
+    >
+      {icon}
+      <span className="font-medium text-sm lg:text-base">{title}</span>
+    </button>
+  );
+
+  return (
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50 font-sans text-slate-900">
+      {/* Mobile Header */}
+      <div className="lg:hidden bg-white border-b px-4 py-3 flex justify-between items-center sticky top-0 z-50">
+        <div className="flex items-center gap-2">
+           <div className="w-8 h-8 bg-[#001540] rounded flex items-center justify-center">
+             <div className="text-white text-xs font-bold">L↑</div>
+           </div>
+           <span className="font-bold text-xl tracking-tight text-[#001540]">Liftly</span>
+        </div>
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-0 z-40 lg:static lg:block
+        w-full lg:w-72 bg-white border-r p-6
+        transition-transform duration-300 transform
+        ${isMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="hidden lg:flex items-center gap-2 mb-10 px-2">
+           <div className="w-10 h-10 bg-[#001540] rounded-lg flex items-center justify-center">
+             <div className="text-white text-lg font-bold">L↑</div>
+           </div>
+           <span className="font-black text-2xl tracking-tighter text-[#001540]">LIFTLY</span>
+        </div>
+
+        <nav className="space-y-2">
+          {sections.map(s => sidebarItem(s.id, s.title, s.icon))}
+        </nav>
+
+        <div className="absolute bottom-8 left-6 right-6">
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Team di Progetto</p>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span className="text-xs font-semibold text-slate-700">Davide (PM)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <span className="text-xs font-semibold text-slate-700">Saqlain (Tech Lead)</span>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-slate-200">
+              <span className="text-[10px] text-slate-400">Versione 1.0 - 5ª Informatica</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-4 lg:p-12 overflow-y-auto max-w-5xl mx-auto w-full">
+        {activeSection === 'introduzione' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-4xl font-black text-[#001540] mb-2 uppercase italic">1. Introduzione</h1>
+            <p className="text-slate-500 mb-8">Visione generale e obiettivi strategici di Liftly.</p>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-10">
+              <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+                  <Target className="text-[#001540]" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Scopo del Progetto</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Liftly nasce con il duplice obiettivo di digitalizzare l'esperienza in palestra e ottimizzare il tempo degli utenti. 
+                  A differenza dei diari cartacei, Liftly si adatta al contesto specifico della palestra frequentata, fornendo dati in tempo reale.
+                </p>
+              </div>
+              <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mb-4">
+                  <BarChart3 className="text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Valore del Prodotto</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  L'app introduce un modello <strong>Freemium</strong> che genera valore tramite abbonamenti per analytics avanzate. 
+                  Il beneficio stimato si basa sulla fidelizzazione dell'atleta e sulla vendita di dati aggregati alle palestre (B2B).
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-[#001540] text-white p-8 rounded-3xl overflow-hidden relative">
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-4 italic">Pubblico di Destinazione</h3>
+                <p className="opacity-80 max-w-xl">
+                  Il prodotto è destinato ad atleti di ogni livello, dai principianti che necessitano di guida agli esperti che cercano precisione nei dati. 
+                  Il mercato di riferimento è quello del fitness tech, in costante crescita esponenziale.
+                </p>
+              </div>
+              <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'requisiti-funzionali' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-4xl font-black text-[#001540] mb-8 uppercase italic">2. Requisiti Funzionali</h1>
+            
+            <div className="space-y-4">
+              {[
+                { title: "Core: Log Allenamento", desc: "Gestione completa di Set, Reps e Carico per ogni esercizio selezionato.", priority: "Alta" },
+                { title: "Smart: Selezione Palestra", desc: "Filtro automatico degli esercizi in base all'attrezzatura disponibile nel centro scelto.", priority: "Alta" },
+                { title: "Social: Occupancy Tracking", desc: "Sistema di crowdsourcing per monitorare l'affollamento in tempo reale.", priority: "Media" },
+                { title: "Auth: Profilo Biometrico", desc: "Registrazione utente con tracking di peso corporeo, età e sesso.", priority: "Alta" },
+                { title: "Analytics: Dashboard Progressi", desc: "Visualizzazione grafica dell'andamento dei massimali e del volume totale.", priority: "Media" }
+              ].map((req, idx) => (
+                <div key={idx} className="bg-white p-5 rounded-xl border border-slate-200 flex items-start gap-4 hover:border-blue-300 transition-colors">
+                  <div className="bg-blue-50 text-[#001540] p-2 rounded-lg font-mono text-sm font-bold">RF0{idx+1}</div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <h4 className="font-bold text-lg">{req.title}</h4>
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase ${
+                        req.priority === 'Alta' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
+                      }`}>Priorità {req.priority}</span>
+                    </div>
+                    <p className="text-slate-600 text-sm">{req.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'requisiti-non-funzionali' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-4xl font-black text-[#001540] mb-8 uppercase italic">3. Requisiti Non Funzionali</h1>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { title: "Correttezza", icon: <CheckCircle2 className="w-5 h-5" />, text: "La logica di calcolo del volume totale e dei massimali deve essere priva di errori matematici." },
+                { title: "Prestazioni", icon: <Clock className="w-5 h-5" />, text: "Tempo di risposta delle API inferiore a 200ms per garantire fluidità durante l'allenamento." },
+                { title: "Affidabilità", icon: <ShieldCheck className="w-5 h-5" />, text: "Disponibilità del servizio 99.9% grazie all'infrastruttura Cloud Firebase." },
+                { title: "Robustezza", icon: <Zap className="w-5 h-5" />, text: "Gestione dei crash e salvataggio locale dei dati in caso di perdita momentanea di rete." },
+                { title: "Scalabilità", icon: <Users className="w-5 h-5" />, text: "Architettura pronta a supportare fino a 10.000 utenti simultanei." },
+                { title: "Sicurezza", icon: <ShieldCheck className="w-5 h-5" />, text: "Crittografia dei dati sensibili e autenticazione tramite protocolli sicuri (OAuth)." },
+                { title: "Usabilità", icon: <Smartphone className="w-5 h-5" />, text: "Interfaccia ottimizzata per l'uso con una sola mano e feedback tattili chiari." }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-3">
+                  <div className="flex items-center gap-3 text-[#001540]">
+                    {item.icon}
+                    <h4 className="font-bold">{item.title}</h4>
+                  </div>
+                  <p className="text-slate-500 text-sm leading-relaxed">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'architettura' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-4xl font-black text-[#001540] mb-8 uppercase italic">4. Architettura & Strumenti</h1>
+            
+            <div className="space-y-12">
+               <div>
+                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                   <div className="w-1.5 h-6 bg-[#001540] rounded-full"></div>
+                   Stack Tecnologico (Saqlain's Choice)
+                 </h3>
+                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                   <div className="p-6 bg-white border rounded-2xl text-center">
+                     <div className="font-bold text-[#001540] mb-1 italic">Frontend</div>
+                     <div className="text-xs text-slate-400">React + Tailwind</div>
+                   </div>
+                   <div className="p-6 bg-white border rounded-2xl text-center">
+                     <div className="font-bold text-[#001540] mb-1 italic">Backend</div>
+                     <div className="text-xs text-slate-400">Firebase Auth</div>
+                   </div>
+                   <div className="p-6 bg-white border rounded-2xl text-center">
+                     <div className="font-bold text-[#001540] mb-1 italic">Database</div>
+                     <div className="text-xs text-slate-400">Firestore (NoSQL)</div>
+                   </div>
+                   <div className="p-6 bg-white border rounded-2xl text-center">
+                     <div className="font-bold text-[#001540] mb-1 italic">Charts</div>
+                     <div className="text-xs text-slate-400">Chart.js</div>
+                   </div>
+                 </div>
+               </div>
+
+               <div>
+                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                   <div className="w-1.5 h-6 bg-[#001540] rounded-full"></div>
+                   Ambiente di Lavoro
+                 </h3>
+                 <div className="bg-slate-900 rounded-3xl p-8 text-white">
+                   <div className="grid md:grid-cols-3 gap-8">
+                      <div>
+                        <div className="text-blue-400 text-xs font-bold uppercase mb-2">Editor</div>
+                        <p className="text-sm">VS Code con estensioni per React & Debugging.</p>
+                      </div>
+                      <div>
+                        <div className="text-blue-400 text-xs font-bold uppercase mb-2">Version Control</div>
+                        <p className="text-sm">Git & GitHub per la collaborazione Davide-Saqlain.</p>
+                      </div>
+                      <div>
+                        <div className="text-blue-400 text-xs font-bold uppercase mb-2">Hosting</div>
+                        <p className="text-sm">Vercel per il deployment rapido della WebApp.</p>
+                      </div>
+                   </div>
+                 </div>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'ambito' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-4xl font-black text-[#001540] mb-8 uppercase italic">5. Ambito del Progetto</h1>
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-emerald-600 flex items-center gap-2">
+                  <CheckCircle2 /> In Ambito (In Scope)
+                </h3>
+                <ul className="space-y-3">
+                  {["Web App Mobile-Responsive", "Sistema di Login/Registrazione", "Database esercizi dinamico", "Grafici riepilogativi volume", "Segnalazione affollamento"].map((t, i) => (
+                    <li key={i} className="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl text-emerald-800 text-sm font-medium">
+                      <ChevronRight className="w-4 h-4 opacity-50" /> {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-red-600 flex items-center gap-2">
+                  <XCircle /> Fuori Ambito (Out of Scope)
+                </h3>
+                <ul className="space-y-3">
+                  {["App Native (Android/iOS Store)", "Pagamenti reali (Simulati)", "Sensori IoT nelle palestre", "Social Network interno", "Store di integratori"].map((t, i) => (
+                    <li key={i} className="flex items-center gap-3 p-3 bg-red-50 rounded-xl text-red-800 text-sm font-medium">
+                      <ChevronRight className="w-4 h-4 opacity-50" /> {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'definizioni' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="text-4xl font-black text-[#001540] mb-8 uppercase italic">6. Definizioni</h1>
+            <div className="bg-white rounded-2xl border overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-slate-50 border-b">
+                    <th className="px-6 py-4 font-bold text-sm">Termine / Acronimo</th>
+                    <th className="px-6 py-4 font-bold text-sm">Significato</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {[
+                    { t: "Liftly", d: "Nome ufficiale del progetto (Brand)." },
+                    { t: "SRS", d: "Software Requirements Specification (Documento attuale)." },
+                    { t: "PRM", d: "Personal Records (Massimali sollevati)." },
+                    { t: "Crowdsourcing", d: "Modello in cui i dati vengono forniti volontariamente dagli utenti." },
+                    { t: "Freemium", d: "Strategia di prezzo che offre un prodotto gratis con opzioni a pagamento." },
+                    { t: "NoSQL", d: "Database non relazionale, scelto per flessibilità e velocità (Firestore)." }
+                  ].map((row, i) => (
+                    <tr key={i} className="hover:bg-blue-50/30 transition-colors">
+                      <td className="px-6 py-4 font-bold text-[#001540]">{row.t}</td>
+                      <td className="px-6 py-4 text-slate-600 text-sm">{row.d}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default App;
