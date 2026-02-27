@@ -1,3 +1,5 @@
+.keep
+
 name: Deploy to Altervista
 
 on:
