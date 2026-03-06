@@ -1,2 +1,2 @@
 # Liftly
-Docs: https://saqlain.altervista.org/Liftly/Documenti/
+Docs: [Liftly Docs](https://saqlain.altervista.org/Liftly/Documenti/) {:target="_blank"}
