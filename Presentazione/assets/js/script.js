@@ -1,8 +1,60 @@
 // assets/js/script.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Lucide icons
+    // 1. Inizializza Icone Lucide
     lucide.createIcons();
 
+    // 2. Genera Sfondo con Icone Palestra Fluttuanti
+    const backgroundContainer = document.getElementById('floating-bg');
+    if (backgroundContainer) {
+        const gymIcons = [
+            'dumbbell',      // Manubrio base
+            'weight',        // Peso/Disco
+            'biceps-flexed', // Bicipite
+            'activity',      // Battito
+            'timer',         // Cronometro
+            'flame',         // Calorie/Fuoco
+            'trophy',        // Trofeo
+            'target',        // Obiettivo
+            'zap'            // Energia
+        ];
+
+        // Creiamo gli elementi fluttuanti dinamicamente per averne di più senza ingombrare l'HTML
+        for (let i = 0; i < 15; i++) {
+            const iconElement = document.createElement('i');
+            
+            // Scegli icona casuale
+            const randomIcon = gymIcons[Math.floor(Math.random() * gymIcons.length)];
+            iconElement.setAttribute('data-lucide', randomIcon);
+            
+            // Aggiungi classe base
+            iconElement.classList.add('floating-item');
+            
+            // Posizione e animazione casuali inline per sovrascrivere il CSS e dare più varianza
+            const leftPos = Math.random() * 95; // 0% - 95%
+            const duration = 20 + Math.random() * 25; // 20s - 45s
+            const delay = Math.random() * 15; // 0s - 15s
+            const size = 60 + Math.random() * 100; // 60px - 160px
+            const opacity = 0.02 + Math.random() * 0.04; // 0.02 - 0.06
+            
+            iconElement.style.left = `${leftPos}%`;
+            iconElement.style.animationDuration = `${duration}s`;
+            iconElement.style.animationDelay = `${delay}s`;
+            iconElement.style.width = `${size}px`;
+            iconElement.style.height = `${size}px`;
+            iconElement.style.opacity = `${opacity}`;
+            
+            // Per permettere a Lucide di renderizzare l'icona e mantenere le dimensioni personalizzate
+            iconElement.style.strokeWidth = "1";
+            
+            backgroundContainer.appendChild(iconElement);
+        }
+        
+        // Re-inizializza per renderizzare le nuove icone inserite
+        lucide.createIcons();
+    }
+
+    // 3. Logica Presentazione (Slide Navigation)
     const slides = document.querySelectorAll('.slide');
     const dotsContainer = document.getElementById('dots-container');
     const prevBtn = document.getElementById('prevBtn');
@@ -11,17 +63,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSlide = 0;
     let isAnimating = false;
 
-    // Create Navigation Dots
-    slides.forEach((_, index) => {
-        const dot = document.createElement('button');
-        // Initial state for dot
-        dot.className = `transition-all duration-500 ease-in-out ${index === 0 ? 'w-10 h-3 rounded-full bg-blue-500 glow-box' : 'w-3 h-3 rounded-full bg-slate-600 hover:bg-slate-400'}`;
-        dot.setAttribute('aria-label', `Vai alla slide ${index + 1}`);
-        dot.addEventListener('click', () => goToSlide(index));
-        dotsContainer.appendChild(dot);
-    });
+    // Crea Navigation Dots
+    if (dotsContainer) {
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.className = `transition-all duration-300 ease-out ${index === 0 ? 'w-12 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'w-4 h-2 rounded-full bg-slate-700 hover:bg-slate-500'}`;
+            dot.setAttribute('aria-label', `Vai alla slide ${index + 1}`);
+            dot.addEventListener('click', () => goToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+    }
 
-    const dots = dotsContainer.querySelectorAll('button');
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('button') : [];
 
     function goToSlide(index) {
         if (isAnimating || index === currentSlide || index < 0 || index >= slides.length) return;
@@ -31,16 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const next = slides[index];
         const direction = index > currentSlide ? 'next' : 'prev';
 
-        // Update Dots styling
+        // Aggiorna Dots
         dots.forEach((dot, i) => {
             if (i === index) {
-                dot.className = 'transition-all duration-500 ease-in-out w-10 h-3 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]';
+                dot.className = 'transition-all duration-300 ease-out w-12 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]';
             } else {
-                dot.className = 'transition-all duration-500 ease-in-out w-3 h-3 rounded-full bg-slate-600 hover:bg-slate-400';
+                dot.className = 'transition-all duration-300 ease-out w-4 h-2 rounded-full bg-slate-700 hover:bg-slate-500';
             }
         });
 
-        // Set direction classes for animation
+        // Applica classi per animazione in entrata/uscita
         current.classList.remove('active');
         if (direction === 'next') {
             current.classList.add('prev');
@@ -51,42 +104,38 @@ document.addEventListener('DOMContentLoaded', () => {
         next.classList.remove('prev');
         next.classList.add('active');
 
-        // Unlock animation lock
+        // Sblocca navigazione a fine transizione CSS (0.6s)
         setTimeout(() => {
             currentSlide = index;
             isAnimating = false;
             updateButtons();
-        }, 800); // matches CSS transition duration
+        }, 600);
     }
 
-    // Update opacity and pointer-events for Next/Prev buttons
+    // Aggiorna stato pulsanti
     function updateButtons() {
         if (prevBtn) {
             if (currentSlide === 0) {
                 prevBtn.classList.add('opacity-30', 'pointer-events-none');
-                prevBtn.classList.remove('hover:bg-white/10');
             } else {
                 prevBtn.classList.remove('opacity-30', 'pointer-events-none');
-                prevBtn.classList.add('hover:bg-white/10');
             }
         }
         
         if (nextBtn) {
             if (currentSlide === slides.length - 1) {
                 nextBtn.classList.add('opacity-30', 'pointer-events-none');
-                nextBtn.classList.remove('hover:from-blue-500', 'hover:to-indigo-500');
             } else {
                 nextBtn.classList.remove('opacity-30', 'pointer-events-none');
-                nextBtn.classList.add('hover:from-blue-500', 'hover:to-indigo-500');
             }
         }
     }
 
-    // Button Listeners
+    // Event Listeners Pulsanti
     if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
     if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
 
-    // Keyboard Navigation
+    // Navigazione Tastiera
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'Space') {
             e.preventDefault();
@@ -97,73 +146,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Mouse Wheel / Trackpad Scroll Navigation (with debouncing/throttling)
+    // Navigazione Rotellina (Debounced)
     let wheelTimeout;
     window.addEventListener('wheel', (e) => {
         if (isAnimating) return;
         clearTimeout(wheelTimeout);
         wheelTimeout = setTimeout(() => {
-            if (e.deltaY > 30) goToSlide(currentSlide + 1);
-            if (e.deltaY < -30) goToSlide(currentSlide - 1);
+            if (e.deltaY > 50) goToSlide(currentSlide + 1);
+            if (e.deltaY < -50) goToSlide(currentSlide - 1);
         }, 50);
     }, {passive: true});
 
-    // Swipe gestures on touch devices
+    // Navigazione Touch (Swipe)
     let touchStartY = 0;
-    let touchStartX = 0;
-
+    
     window.addEventListener('touchstart', e => {
         touchStartY = e.touches[0].clientY;
-        touchStartX = e.touches[0].clientX;
     }, {passive: true});
 
     window.addEventListener('touchend', e => {
         const touchEndY = e.changedTouches[0].clientY;
-        const touchEndX = e.changedTouches[0].clientX;
-        
-        const deltaX = touchStartX - touchEndX;
         const deltaY = touchStartY - touchEndY;
 
-        // Ensure swipe distance is significant
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-            if (deltaX > 0) goToSlide(currentSlide + 1); // Swiped left -> Next
-            else goToSlide(currentSlide - 1); // Swiped right -> Prev
-        } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
-            if (deltaY > 0) goToSlide(currentSlide + 1); // Swiped up -> Next
-            else goToSlide(currentSlide - 1); // Swiped down -> Prev
+        if (Math.abs(deltaY) > 50) {
+            if (deltaY > 0) goToSlide(currentSlide + 1); // Up
+            else goToSlide(currentSlide - 1); // Down
         }
     }, {passive: true});
 
-    // Add a custom glowing background cursor follower effect
-    const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    document.body.appendChild(cursor);
-
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-    
-    // Add interaction to clickable elements to grow cursor
-    const interactiveElements = document.querySelectorAll('button, a, .glass-panel');
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.style.width = '800px';
-            cursor.style.height = '800px';
-            cursor.style.opacity = '0.5';
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.style.width = '600px';
-            cursor.style.height = '600px';
-            cursor.style.opacity = '1';
-        });
-    });
-
-    // Initial setup
+    // Inizializzazione finale
     updateButtons();
-
-    // Trigger initial animations
     setTimeout(() => {
-        slides[0].classList.add('active');
+        if(slides.length > 0) {
+            slides[0].classList.add('active');
+        }
     }, 100);
 });

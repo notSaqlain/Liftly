@@ -1,48 +1,188 @@
 /* assets/css/style.css */
 
-/* Custom Cursor Tracker */
-.custom-cursor {
+/* Core Resets */
+:root {
+    --primary-color: #3b82f6;
+    /* Tailwind Blue 500 */
+    --accent-color: #f59e0b;
+    /* Tailwind Amber 500 */
+    --dark-bg: #0f172a;
+    /* Tailwind Slate 900 */
+    --panel-bg: rgba(15, 23, 42, 0.7);
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: #f8fafc;
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+}
+
+/* 
+  ========================================
+  Animazioni Sfondo (Floating Gym Objects)
+  ========================================
+*/
+
+.floating-bg {
     position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 60%);
-    pointer-events: none;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     z-index: 0;
-    transition: 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) width, 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) height;
+    pointer-events: none;
+    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
 }
 
-/* Glassmorphism */
+.floating-item {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.03);
+    /* Molto trasparente */
+    animation: floatUp linear infinite;
+    bottom: -150px;
+    z-index: 1;
+}
+
+/* Diverse durate, ritardi e posizioni per un effetto casuale */
+.floating-item:nth-child(1) {
+    left: 10%;
+    animation-duration: 25s;
+    animation-delay: 0s;
+    font-size: 80px;
+}
+
+.floating-item:nth-child(2) {
+    left: 25%;
+    animation-duration: 35s;
+    animation-delay: 4s;
+    font-size: 120px;
+}
+
+.floating-item:nth-child(3) {
+    left: 40%;
+    animation-duration: 28s;
+    animation-delay: 2s;
+    font-size: 90px;
+}
+
+.floating-item:nth-child(4) {
+    left: 60%;
+    animation-duration: 40s;
+    animation-delay: 8s;
+    font-size: 150px;
+}
+
+.floating-item:nth-child(5) {
+    left: 75%;
+    animation-duration: 30s;
+    animation-delay: 1s;
+    font-size: 100px;
+}
+
+.floating-item:nth-child(6) {
+    left: 90%;
+    animation-duration: 38s;
+    animation-delay: 5s;
+    font-size: 130px;
+}
+
+.floating-item:nth-child(7) {
+    left: 15%;
+    animation-duration: 45s;
+    animation-delay: 10s;
+    font-size: 160px;
+}
+
+.floating-item:nth-child(8) {
+    left: 50%;
+    animation-duration: 32s;
+    animation-delay: 15s;
+    font-size: 110px;
+}
+
+.floating-item:nth-child(9) {
+    left: 85%;
+    animation-duration: 26s;
+    animation-delay: 7s;
+    font-size: 85px;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-120vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 
+  ========================================
+  Glassmorphism & Componenti UI
+  ========================================
+*/
+
 .glass-panel {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-radius: 24px;
 }
 
-/* Background Gradients Animation */
-.bg-gradient-flow {
-    background: linear-gradient(-45deg, #09090b, #001540, #172554, #0a0a0a);
-    background-size: 400% 400%;
-    animation: gradientBG 20s ease infinite;
+.premium-card {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
 }
 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+.premium-card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(59, 130, 246, 0.2),
+        /* Glow effect */
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Slide Transitions */
+/*
+  ========================================
+  Transizioni Slide
+  ========================================
+*/
+
+#presentation-container {
+    position: relative;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+}
+
 .slide {
     position: absolute;
     inset: 0;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: scale(0.95) translateY(50px);
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Effetto bounce */
+    transform: scale(0.9) translateY(40px);
     z-index: 1;
 }
 
@@ -54,15 +194,15 @@
 }
 
 .slide.prev {
-    transform: scale(1.05) translateY(-50px);
+    transform: scale(1.1) translateY(-40px);
     opacity: 0;
 }
 
-/* Staggered text and elements animations */
+/* Staggered text animations */
 .slide .animate-element {
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .slide.active .animate-element {
@@ -70,25 +210,47 @@
     transform: translateY(0);
 }
 
-/* Delay classes */
-.delay-100 { transition-delay: 100ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
-.delay-600 { transition-delay: 600ms; }
-
-/* Effects */
-.glow-box {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+.delay-100 {
+    transition-delay: 100ms;
 }
 
-.perspective-1000 {
-    perspective: 1000px;
+.delay-200 {
+    transition-delay: 200ms;
+}
+
+.delay-300 {
+    transition-delay: 300ms;
+}
+
+.delay-400 {
+    transition-delay: 400ms;
+}
+
+.delay-500 {
+    transition-delay: 500ms;
+}
+
+/* Tipografia Avanzata */
+.text-gradient {
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-accent {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.accent-glow {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
 }
 
 /* Custom Selection */
 ::selection {
-    background: rgba(59, 130, 246, 0.3);
+    background: var(--primary-color);
     color: white;
 }
