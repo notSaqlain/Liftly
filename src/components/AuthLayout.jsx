@@ -22,7 +22,7 @@ export default function AuthLayout({ children, title, subtitle }) {
               LIFTLY
             </h1>
             <p className="text-blue-300/60 text-xs font-semibold tracking-[0.3em] uppercase mt-1">
-              by DDKS
+              by MuscleStack
             </p>
           </Link>
         </div>
