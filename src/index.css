@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* -- Liftly Design Tokens --
+   Il nostro blu aziendale e le variabili di design principali.
+   Tutto parte da qui, cosi restiamo consistenti ovunque. */
+
+@theme {
+  --color-brand: #001540;
+  --color-brand-light: #002a80;
+  --color-brand-lighter: #0040bf;
+  --color-brand-surface: #e8eef8;
+  --color-accent: #3b82f6;
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
