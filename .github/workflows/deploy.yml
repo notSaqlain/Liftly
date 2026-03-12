@@ -13,6 +13,21 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
+      # 1. Installa Node.js
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 2. Installa le dipendenze (librerie)
+      - name: 📦 Install Dependencies
+        run: npm install
+
+      # 3. Compila l'app React (crea la cartella statica)
+      - name: 🔨 Build Project
+        run: npm run build
+
+      # 4. Carica su Altervista SOLO la cartella compilata
       - name: 📂 Sync with Altervista
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -20,11 +35,8 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          local-dir: ./
+          local-dir: ./dist/
           server-dir: /Liftly/
-          
-          # EXTRA SAFETY:
-          # We explicitly tell the script to ignore this file entirely.
           exclude: |
             **/.git*
             **/.git*/**
