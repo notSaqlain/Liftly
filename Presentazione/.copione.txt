@@ -1,0 +1,29 @@
+Slide 1: Copertina
+[Davide]: "Buongiorno a tutti, io sono Davide Dolce, Project Manager di questo progetto..."
+[Saqlain]: "...e io sono Saqlain Khalid, Lead Developer. Oggi siamo qui per presentarvi LIFTLY, un progetto sviluppato per il corso di GPO che punta a ridefinire il futuro dell'allenamento in palestra."
+
+Slide 2: La nostra Roadmap
+[Davide]: "Per questa presentazione abbiamo strutturato un percorso chiaro. Partiremo dal problema che abbiamo individuato e dalla nostra 'Visione' per risolverlo. Passeremo poi ad analizzare il nostro 'Target di Mercato' e le 'Funzionalità Tecniche' principali dell'app.
+Successivamente, ci concentreremo sul cuore organizzativo, ovvero come abbiamo 'Gestito il Progetto' rispettando vincoli rigidi, per chiudere infine con la nostra 'Mission' e il passaggio alla documentazione ufficiale."
+
+Slide 3: Visione & Contesto
+[Saqlain]: "Tutto nasce da un problema reale che viviamo spesso: le palestre sono affollate, le macchine sono occupate e tracciare i propri progressi su schede di carta o sulle note del telefono è caotico.
+Con Liftly non abbiamo voluto pensare a una semplice app, ma a un vero e proprio ecosistema. Da un lato offriamo un tracciamento intelligente e scalabile degli esercizi, dall'altro introduciamo un concetto innovativo nel fitness: il Social Crowdsourcing, permettendo agli utenti di collaborare per evitare le code in sala pesi."
+
+Slide 4: Target di Mercato
+[Davide]: "A chi ci rivolgiamo? Il nostro target principale è composto dalla Gen Z e dai Millennials. Parliamo di utenti che sono già abituati alla tecnologia e che cercano la gamification in ogni esperienza, compreso l'allenamento.
+Abbiamo notato che il mercato italiano manca di un'app che unisca un tracking rigoroso, quasi 'hardcore' per i più appassionati, a una funzione di 'Social-Utility'. Liftly va a riempire esattamente questo vuoto."
+
+Slide 5: Feature Stack (Sviluppo Tecnico)
+[Saqlain]: "A livello tecnico, su cosa si basa Liftly?
+Prima di tutto è una Mobile-First WebApp, progettata per essere veloce e usata comodamente con un solo pollice tra una serie e l'altra.
+Il core è lo Smart Logger, che permette di inserire pesi e ripetizioni in un istante, basato su un modello Freemium.
+La vera innovazione è però il Social Crowdsourcing: pensatelo come un 'Waze' per la palestra. Gli utenti segnalano l'affollamento in tempo reale. Infine, offriamo Advanced Analytics, ovvero grafici avanzati per analizzare i volumi e i progressi nel tempo."
+
+Slide 6: Gestione Progetto & Vincoli (GPO)
+[Davide]: "Ovviamente, un'idea del genere non si realizza da sola. Abbiamo dovuto affrontare due vincoli enormi: 3 mesi di tempo e 0€ di budget.
+Per non fallire, abbiamo applicato rigorosamente le metodologie di Gestione Progetto. Abbiamo steso un Project Charter per definire gli obiettivi, strutturato il lavoro con una WBS (Work Breakdown Structure) per dividere i pacchetti di lavoro, e assegnato le responsabilità con una matrice RACI. Infine, abbiamo schedulato le dipendenze dello sviluppo tramite un diagramma di Gantt."
+
+Slide 7: Brand & Mission
+[Saqlain]: "Il nome che abbiamo scelto è LIFTLY, che deriva dall'inglese 'sollevare'. È un brand corto, facile da ricordare e d'impatto.
+Il nostro obiettivo pratico è rilasciare una versione Beta funzionante entro l'8 Maggio 2026. Per misurare il nostro successo, ci siamo dati un KPI (Key Performance Indicator) molto chiaro: dobbiamo mantenere un'affidabilità del dato di crowdsourcing superiore all'80%, altrimenti l'app perde la sua utilità principale."
