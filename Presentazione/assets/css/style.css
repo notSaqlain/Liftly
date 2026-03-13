@@ -1,172 +1,196 @@
-/* assets/css/style.css */
+/* =========================================
+   LIFTLY PRESENTATION – DYNAMIC STYLESHEET
+   ========================================= */
 
-/* Core Resets */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap');
+
+/* ---- Variables ---- */
 :root {
-    --primary-color: #3b82f6;
-    /* Tailwind Blue 500 */
-    --accent-color: #f59e0b;
-    /* Tailwind Amber 500 */
-    --dark-bg: #0f172a;
-    /* Tailwind Slate 900 */
-    --panel-bg: rgba(15, 23, 42, 0.7);
+    --bg-deep: #020617;
+    --bg-dark: #0f172a;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+    --purple: #8b5cf6;
+    --amber: #f59e0b;
+    --emerald: #10b981;
+    --rose: #f43f5e;
 }
+
+/* ---- Base ---- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background-color: var(--dark-bg);
-    color: #f8fafc;
     font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    color: #e2e8f0;
     overflow: hidden;
+    min-height: 100vh;
 }
 
-/* 
-  ========================================
-  Animazioni Sfondo (Floating Gym Objects)
-  ========================================
-*/
+::selection {
+    background: rgba(59, 130, 246, 0.4);
+    color: #fff;
+}
+
+/* =========================================
+   ANIMATED BACKGROUND
+   ========================================= */
+
+/* Canvas sits behind everything */
+#bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Mesh gradient orbs that drift continuously */
+.orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.orb-1 {
+    width: 600px; height: 600px;
+    background: var(--blue);
+    top: -10%; left: -5%;
+    animation: orbDrift1 20s ease-in-out infinite alternate;
+}
+.orb-2 {
+    width: 500px; height: 500px;
+    background: var(--purple);
+    bottom: -15%; right: -10%;
+    animation: orbDrift2 25s ease-in-out infinite alternate;
+}
+.orb-3 {
+    width: 400px; height: 400px;
+    background: var(--cyan);
+    top: 40%; left: 50%;
+    animation: orbDrift3 18s ease-in-out infinite alternate;
+}
+
+@keyframes orbDrift1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(15vw, 20vh) scale(1.3); }
+}
+@keyframes orbDrift2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-20vw, -15vh) scale(1.2); }
+}
+@keyframes orbDrift3 {
+    0%   { transform: translate(0, 0) scale(1); opacity: 0.1; }
+    100% { transform: translate(-10vw, 15vh) scale(1.4); opacity: 0.2; }
+}
+
+/* Grid overlay (subtle) */
+.grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridScroll 30s linear infinite;
+}
+
+@keyframes gridScroll {
+    0%   { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+}
+
+/* =========================================
+   FLOATING GYM ICONS
+   ========================================= */
 
 .floating-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    z-index: 0;
+    inset: 0;
+    z-index: 3;
     pointer-events: none;
-    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+    overflow: hidden;
 }
 
 .floating-item {
     position: absolute;
-    color: rgba(255, 255, 255, 0.03);
-    /* Molto trasparente */
+    bottom: -120px;
     animation: floatUp linear infinite;
-    bottom: -150px;
-    z-index: 1;
-}
-
-/* Diverse durate, ritardi e posizioni per un effetto casuale */
-.floating-item:nth-child(1) {
-    left: 10%;
-    animation-duration: 25s;
-    animation-delay: 0s;
-    font-size: 80px;
-}
-
-.floating-item:nth-child(2) {
-    left: 25%;
-    animation-duration: 35s;
-    animation-delay: 4s;
-    font-size: 120px;
-}
-
-.floating-item:nth-child(3) {
-    left: 40%;
-    animation-duration: 28s;
-    animation-delay: 2s;
-    font-size: 90px;
-}
-
-.floating-item:nth-child(4) {
-    left: 60%;
-    animation-duration: 40s;
-    animation-delay: 8s;
-    font-size: 150px;
-}
-
-.floating-item:nth-child(5) {
-    left: 75%;
-    animation-duration: 30s;
-    animation-delay: 1s;
-    font-size: 100px;
-}
-
-.floating-item:nth-child(6) {
-    left: 90%;
-    animation-duration: 38s;
-    animation-delay: 5s;
-    font-size: 130px;
-}
-
-.floating-item:nth-child(7) {
-    left: 15%;
-    animation-duration: 45s;
-    animation-delay: 10s;
-    font-size: 160px;
-}
-
-.floating-item:nth-child(8) {
-    left: 50%;
-    animation-duration: 32s;
-    animation-delay: 15s;
-    font-size: 110px;
-}
-
-.floating-item:nth-child(9) {
-    left: 85%;
-    animation-duration: 26s;
-    animation-delay: 7s;
-    font-size: 85px;
+    opacity: 0;
 }
 
 @keyframes floatUp {
-    0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    90% {
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(-120vh) rotate(360deg);
-        opacity: 0;
-    }
+    0%   { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { transform: translateY(-115vh) rotate(360deg) scale(1); opacity: 0; }
 }
 
-/* 
-  ========================================
-  Glassmorphism & Componenti UI
-  ========================================
-*/
+/* =========================================
+   GLASSMORPHISM & CARDS
+   ========================================= */
 
 .glass-panel {
-    background: var(--panel-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     border-radius: 24px;
 }
 
 .premium-card {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+    border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+    overflow: hidden;
+}
+
+/* Animated shimmer border on hover */
+.premium-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 40%, rgba(59, 130, 246, 0.3), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+    animation: shimmer 3s linear infinite;
+    background-size: 200% 200%;
+}
+
+.premium-card:hover::before {
+    opacity: 1;
 }
 
 .premium-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
     box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.6),
-        0 0 20px rgba(59, 130, 246, 0.2),
-        /* Glow effect */
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        0 20px 50px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(59, 130, 246, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/*
-  ========================================
-  Transizioni Slide
-  ========================================
-*/
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* =========================================
+   SLIDE SYSTEM
+   ========================================= */
 
 #presentation-container {
     position: relative;
@@ -180,9 +204,8 @@ body {
     inset: 0;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    /* Effetto bounce */
-    transform: scale(0.9) translateY(40px);
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0.92) translateY(40px);
     z-index: 1;
 }
 
@@ -194,15 +217,15 @@ body {
 }
 
 .slide.prev {
-    transform: scale(1.1) translateY(-40px);
+    transform: scale(1.08) translateY(-40px);
     opacity: 0;
 }
 
-/* Staggered text animations */
+/* ---- Staggered element entrance ---- */
 .slide .animate-element {
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    transform: translateY(25px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .slide.active .animate-element {
@@ -210,47 +233,75 @@ body {
     transform: translateY(0);
 }
 
-.delay-100 {
-    transition-delay: 100ms;
-}
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
 
-.delay-200 {
-    transition-delay: 200ms;
-}
+/* =========================================
+   TYPOGRAPHY
+   ========================================= */
 
-.delay-300 {
-    transition-delay: 300ms;
-}
-
-.delay-400 {
-    transition-delay: 400ms;
-}
-
-.delay-500 {
-    transition-delay: 500ms;
-}
-
-/* Tipografia Avanzata */
 .text-gradient {
-    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-accent {
-    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.accent-glow {
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+/* Subtle pulsing glow on key headings */
+.glow-text {
+    animation: textGlow 4s ease-in-out infinite alternate;
 }
 
-/* Custom Selection */
-::selection {
-    background: var(--primary-color);
-    color: white;
+@keyframes textGlow {
+    0%   { text-shadow: 0 0 10px rgba(59,130,246,0.0); }
+    100% { text-shadow: 0 0 30px rgba(59,130,246,0.3); }
+}
+
+/* =========================================
+   PARTICLES (canvas-based, managed by JS)
+   ========================================= */
+
+#particle-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+/* =========================================
+   MISC UTILITIES
+   ========================================= */
+
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+/* Continuously rotating accent ring (used on hero logo) */
+.rotating-ring {
+    animation: spin 15s linear infinite;
+}
+
+@keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Pulse animation for icons */
+.pulse-slow {
+    animation: pulseSlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseSlow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.08); opacity: 0.8; }
 }
