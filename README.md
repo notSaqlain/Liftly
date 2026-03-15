@@ -21,10 +21,10 @@ With a strong focus on **Gen Z & Millennials**, Liftly goes beyond tracking by i
 
 ## 🛠️ Core Features
 
-- 📱 **Smart Logger**: Instantly record sets, reps, and weights.
-- 🎯 **Advanced Analytics**: Interactive charts for training volumes, historical progress, and weekly trend analysis.
-- 👥 **Social Crowdsourcing**: Real-time feedback on gym crowding directly from the weight room.
-- 💎 **Freemium Tier**: Accessible basic logging with advanced analytics and visual tools available in the premium tier. 
+- **Smart Logger**: Instantly record sets, reps, and weights.
+- **Advanced Analytics**: Interactive charts for training volumes, historical progress, and weekly trend analysis.
+- **Social Crowdsourcing**: Real-time feedback on gym crowding directly from the weight room.
+- **Freemium Tier**: Accessible basic logging with advanced analytics and visual tools available in the premium tier. 
 
 ## 🏗️ Technical Architecture (Planned)
 
@@ -39,8 +39,8 @@ Liftly is transitioning into a robust cross-platform mobile application.
 Built under rigorous organizational methodology to achieve an ambitious 3-month release window with a zero-euro budget. 
 
 All comprehensive project documentation (SRS, Gantt, WBS, Project Charter) is available online:
-* 📄 **[Consult the Official Technical Documentation](https://saqlain.altervista.org/Liftly/Docs/Documenti/)**
-* 🎤 **[View the Pitch Presentation](https://saqlain.altervista.org/Liftly/Docs/Presentazione/)**
+* **[Consult the Official Technical Documentation](https://saqlain.altervista.org/Liftly/Docs/Documenti/)**
+* **[View the Pitch Presentation](https://saqlain.altervista.org/Liftly/Docs/Presentazione/)**
 
 ---
 
