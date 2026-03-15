@@ -1,29 +1,11 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { Home, Dumbbell, BarChart3 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useEffect, useState } from 'react';
+import { Home, Dumbbell, BarChart3, Menu } from 'lucide-react';
+import { useState } from 'react';
 import clsx from 'clsx';
 import SideDrawer from './SideDrawer';
 
 const MainLayout = () => {
-  const { currentUser, getUserData } = useAuth();
-  const [photoURL, setPhotoURL] = useState('');
-  const [initials, setInitials] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    const load = async () => {
-      if (!currentUser) return;
-      try {
-        const data = await getUserData(currentUser.uid);
-        setPhotoURL(data?.photoURL || currentUser.photoURL || '');
-        setInitials((data?.firstName?.[0] || currentUser.email?.[0] || 'U').toUpperCase());
-      } catch {
-        setInitials((currentUser.email?.[0] || 'U').toUpperCase());
-      }
-    };
-    load();
-  }, [currentUser, getUserData]);
 
   return (
     <div className="flex justify-center bg-slate-100 min-h-screen">
@@ -42,13 +24,7 @@ const MainLayout = () => {
             onClick={() => setIsDrawerOpen(true)}
             className="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-600 focus:outline-none"
           >
-            {photoURL ? (
-              <img src={photoURL} alt="Menu" className={clsx("w-7 h-7 rounded-full object-cover transition-all", isDrawerOpen ? "ring-2 ring-liftly-teal" : "ring-1 ring-slate-200")} referrerPolicy="no-referrer" />
-            ) : (
-              <div className={clsx("w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all", isDrawerOpen ? "bg-liftly-teal text-white" : "bg-slate-200 text-slate-500")}>
-                {initials}
-              </div>
-            )}
+            <Menu size={24} className={clsx("transition-all", isDrawerOpen ? "text-liftly-teal" : "")} />
             <span className={clsx("text-[10px] mt-1", isDrawerOpen ? "text-liftly-teal font-semibold" : "text-slate-400")}>Menu</span>
           </button>
         </nav>

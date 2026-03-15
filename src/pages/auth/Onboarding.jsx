@@ -18,13 +18,15 @@ const Onboarding = () => {
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [trainingDays, setTrainingDays] = useState('');
+  const [experienceLevel, setExperienceLevel] = useState('');
   const [goal, setGoal] = useState('');
+  const [goalPace, setGoalPace] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!firstName || !lastName || !age || !sex || !weight || !height || !trainingDays || !goal) {
+    if (!firstName || !lastName || !age || !sex || !weight || !height || !trainingDays || !experienceLevel || !goal) {
       setError('Please fill in all fields to continue.');
       return;
     }
@@ -42,6 +44,7 @@ const Onboarding = () => {
         weight: parseFloat(weight),
         height: parseFloat(height),
         trainingDays: parseInt(trainingDays, 10),
+        experienceLevel,
         fitnessGoal: goal,
         onboardingComplete: true
       });
@@ -119,23 +122,36 @@ const Onboarding = () => {
               </div>
             </div>
 
-            <div>
-              <label className={labelClass}>Training Frequency</label>
-              <select className={selectClass} value={trainingDays} onChange={e => setTrainingDays(e.target.value)}>
-                <option value="" disabled>Days per week...</option>
-                <option value="1">1 day / week</option>
-                <option value="2">2 days / week</option>
-                <option value="3">3 days / week</option>
-                <option value="4">4 days / week</option>
-                <option value="5">5 days / week</option>
-                <option value="6">6 days / week</option>
-                <option value="7">Everyday (7 days)</option>
-              </select>
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <label className={labelClass}>Training Frequency</label>
+                <select className={selectClass} value={trainingDays} onChange={e => setTrainingDays(e.target.value)}>
+                  <option value="" disabled>Days/week...</option>
+                  <option value="1">1 day</option>
+                  <option value="2">2 days</option>
+                  <option value="3">3 days</option>
+                  <option value="4">4 days</option>
+                  <option value="5">5 days</option>
+                  <option value="6">6 days</option>
+                  <option value="7">Everyday</option>
+                </select>
+              </div>
+              <div className="w-1/2">
+                <label className={labelClass}>Experience Level</label>
+                <select className={selectClass} value={experienceLevel} onChange={e => setExperienceLevel(e.target.value)}>
+                  <option value="" disabled>Select level...</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+              </div>
             </div>
 
             <div>
               <label className={labelClass}>Primary Goal</label>
-              <select className={selectClass} value={goal} onChange={e => setGoal(e.target.value)}>
+              <select className={selectClass} value={goal} onChange={e => {
+                setGoal(e.target.value);
+              }}>
                 <option value="" disabled>Select your goal...</option>
                 <option value="Lose Weight (Caloric Deficit)">Lose Weight (Caloric Deficit)</option>
                 <option value="Maintain Weight">Maintain Weight</option>

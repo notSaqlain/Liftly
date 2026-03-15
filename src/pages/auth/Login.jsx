@@ -31,7 +31,7 @@ const Login = () => {
         const methods = await fetchSignInMethodsForEmail(auth, email);
         if (methods.includes('google.com') && !methods.includes('password')) {
           setIsGoogleAccount(true);
-          setError('This account uses Google Sign-In. Please use the "Continue with Google" button below.');
+          setError('Account linked with google. Please use the "Continue with Google" button below.');
         } else {
           setError('Failed to log in. Please check your credentials.');
         }

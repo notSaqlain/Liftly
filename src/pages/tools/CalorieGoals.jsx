@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Utensils, Target, Flame, ArrowLeft, TrendingUp } from 'lucide-react';
+import { Utensils, Target, Flame, ArrowLeft, TrendingUp, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CalorieGoals = () => {
@@ -28,18 +29,36 @@ const CalorieGoals = () => {
   else if (trainingDays >= 4 && trainingDays <= 5) multiplier = 1.55;
   else if (trainingDays >= 6) multiplier = 1.725;
 
+  const [selectedPace, setSelectedPace] = useState(
+    userData?.goalPace && userData.goalPace !== 'None' ? userData.goalPace : 'Moderate'
+  );
+
   const tdee = Math.round(bmr * multiplier);
 
-  // Goal Adjustments
-  let recommendedCalories = tdee;
-  let goalMessage = "To maintain your current body weight, consume these calories daily.";
-  
+  let calorieTarget = tdee;
+  let goalMessage = "Consume these calories daily to maintain your current body weight.";
+  let badgeText = "Maintenance";
+
   if (goal.includes('Lose Weight')) {
-    recommendedCalories = tdee - 500;
-    goalMessage = "A 500-calorie deficit for healthy and sustainable fat loss (~0.5 kg/week).";
+    let deficit = 500;
+    if (selectedPace === 'Slow') deficit = 250;
+    else if (selectedPace === 'Moderate') deficit = 500;
+    else if (selectedPace === 'Extreme') deficit = 1000;
+
+    calorieTarget = tdee - deficit;
+    const lossRate = deficit === 250 ? '0.25' : deficit === 500 ? '0.5' : '1.0';
+    goalMessage = `A ${deficit}-calorie deficit for ${selectedPace.toLowerCase()} fat loss (approx. ${lossRate} kg per week).`;
+    badgeText = "Deficit";
   } else if (goal.includes('Gain Muscle')) {
-    recommendedCalories = tdee + 300;
-    goalMessage = "A 300-calorie surplus to fuel muscle growth while minimizing fat gain.";
+    let surplus = 300;
+    if (selectedPace === 'Slow') surplus = 150;
+    else if (selectedPace === 'Moderate') surplus = 300;
+    else if (selectedPace === 'Extreme') surplus = 500;
+
+    calorieTarget = tdee + surplus;
+    const gainDesc = selectedPace === 'Extreme' ? 'muscle growth (will likely include fat gain)' : 'muscle growth while minimizing fat gain';
+    goalMessage = `A ${surplus}-calorie surplus to fuel ${selectedPace.toLowerCase()} ${gainDesc}.`;
+    badgeText = "Surplus";
   }
 
   return (
@@ -57,16 +76,53 @@ const CalorieGoals = () => {
       </div>
 
       <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col mb-4">
+        {/* Maintenance Info */}
+        <div className="flex items-center justify-between mb-8 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center">
+               <Activity size={20} />
+             </div>
+             <div>
+               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Maintenance (TDEE)</p>
+               <p className="font-black text-slate-800 text-lg">{tdee} kcal</p>
+             </div>
+          </div>
+        </div>
+
+        {/* Pace Selector (if not maintaining) */}
+        {!goal.includes('Maintain') && (
+          <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+            <button 
+              onClick={() => setSelectedPace('Slow')}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedPace === 'Slow' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Slow
+            </button>
+            <button 
+              onClick={() => setSelectedPace('Moderate')}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedPace === 'Moderate' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Moderate
+            </button>
+            <button 
+              onClick={() => setSelectedPace('Extreme')}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedPace === 'Extreme' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Extreme
+            </button>
+          </div>
+        )}
+
         <div className="flex justify-between items-center mb-6">
            <h2 className="text-lg font-bold text-slate-800 tracking-tight">Daily Target</h2>
            <span className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-             <Target size={14} /> {goal.split(' ')[0]}
+             <Target size={14} /> {badgeText}
            </span>
         </div>
         
         <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
            <span className="text-5xl font-black text-slate-800 tracking-tighter mb-2">
-             {recommendedCalories}
+             {calorieTarget}
            </span>
            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1">
              <Flame size={14} className="text-orange-500" /> Calories / Day
@@ -90,11 +146,11 @@ const CalorieGoals = () => {
           </div>
           <div className="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
              <span className="font-semibold text-slate-600">Fats</span>
-             <span className="font-bold text-slate-800">{Math.round((recommendedCalories * 0.25) / 9)}g</span>
+             <span className="font-bold text-slate-800">{Math.round((calorieTarget * 0.25) / 9)}g</span>
           </div>
           <div className="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
              <span className="font-semibold text-slate-600">Carbs</span>
-             <span className="font-bold text-slate-800">{Math.round((recommendedCalories - ((weight * 2.2 * 4) + ((recommendedCalories * 0.25)))) / 4)}g</span>
+             <span className="font-bold text-slate-800">{Math.round((calorieTarget - ((weight * 2.2 * 4) + ((calorieTarget * 0.25)))) / 4)}g</span>
           </div>
         </div>
       </div>

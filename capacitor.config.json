@@ -1,5 +1,11 @@
 {
   "appId": "com.ddks.liftly",
   "appName": "Liftly",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true
+    }
+  }
 }

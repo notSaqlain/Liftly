@@ -4,7 +4,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   linkWithPopup,
   verifyBeforeUpdateEmail,
   updatePassword as firebaseUpdatePassword,
@@ -57,34 +58,10 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // Sign in with Google
+  // Sign in with Google via Browser Redirect
   const loginWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
-
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        firstName: user.displayName?.split(' ')[0] || '',
-        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-        photoURL: user.photoURL || '',
-        googlePhotoURL: user.photoURL || '',
-        gender: 'Other',
-        age: 0,
-        weight: 0,
-        currentStreak: 0,
-        createdAt: serverTimestamp()
-      });
-    } else {
-      // Only update the separate googlePhotoURL field, never overwrite custom photoURL
-      if (user.photoURL) {
-        await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
-      }
-    }
-
-    return result;
+    // This will open the browser and redirect back to the app on success
+    await signInWithRedirect(auth, googleProvider);
   };
 
   // Link existing email/password account with Google
@@ -141,6 +118,37 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let unsubscribeUser = () => {};
+
+    // Check for standard redirect result from Google Login
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result && result.user) {
+          const user = result.user;
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (!userDoc.exists()) {
+            await setDoc(doc(db, 'users', user.uid), {
+              uid: user.uid,
+              email: user.email,
+              firstName: user.displayName?.split(' ')[0] || '',
+              lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+              photoURL: user.photoURL || '',
+              googlePhotoURL: user.photoURL || '',
+              currentStreak: 0,
+              onboardingComplete: false,
+              createdAt: serverTimestamp()
+            });
+          } else {
+            if (user.photoURL) {
+              await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error handling Google redirect result:", error);
+      }
+    };
+    handleRedirectResult();
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
