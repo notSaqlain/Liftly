@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import AccountSettings from './pages/AccountSettings';
 import PersonalInfo from './pages/PersonalInfo';
+import Stats from './pages/Stats';
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             {/* Placeholder routes for now */}
             <Route path="/workout" element={<div className="p-4">Workout logic here</div>} />
-            <Route path="/stats" element={<div className="p-4">Stats logic here</div>} />
+            <Route path="/stats" element={<Stats />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="/personal-info" element={<PersonalInfo />} />
