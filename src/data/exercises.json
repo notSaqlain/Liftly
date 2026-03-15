@@ -1,0 +1,33 @@
+[
+  { "id": "bench_press", "name": "Barbell Bench Press", "muscleGroup": "Chest", "equipment": "Barbell" },
+  { "id": "incline_db_press", "name": "Incline Dumbbell Press", "muscleGroup": "Chest", "equipment": "Dumbbells" },
+  { "id": "cable_flyes", "name": "Cable Crossovers", "muscleGroup": "Chest", "equipment": "Cables" },
+  { "id": "pushups", "name": "Push-ups", "muscleGroup": "Chest", "equipment": "Bodyweight" },
+  
+  { "id": "pullups", "name": "Pull-ups", "muscleGroup": "Back", "equipment": "Bodyweight" },
+  { "id": "lat_pulldown", "name": "Lat Pulldown", "muscleGroup": "Back", "equipment": "Cables" },
+  { "id": "barbell_row", "name": "Barbell Bent Over Row", "muscleGroup": "Back", "equipment": "Barbell" },
+  { "id": "seated_cable_row", "name": "Seated Cable Row", "muscleGroup": "Back", "equipment": "Cables" },
+  
+  { "id": "squat", "name": "Barbell Back Squat", "muscleGroup": "Legs", "equipment": "Barbell" },
+  { "id": "leg_press", "name": "Leg Press", "muscleGroup": "Legs", "equipment": "Machine" },
+  { "id": "romanian_deadlift", "name": "Romanian Deadlift", "muscleGroup": "Legs", "equipment": "Barbell" },
+  { "id": "leg_extension", "name": "Leg Extension", "muscleGroup": "Legs", "equipment": "Machine" },
+  { "id": "leg_curl", "name": "Lying Leg Curl", "muscleGroup": "Legs", "equipment": "Machine" },
+  { "id": "calf_raise", "name": "Standing Calf Raise", "muscleGroup": "Legs", "equipment": "Machine" },
+  
+  { "id": "overhead_press", "name": "Overhead Press", "muscleGroup": "Shoulders", "equipment": "Barbell" },
+  { "id": "lateral_raise", "name": "Dumbbell Lateral Raise", "muscleGroup": "Shoulders", "equipment": "Dumbbells" },
+  { "id": "face_pulls", "name": "Face Pulls", "muscleGroup": "Shoulders", "equipment": "Cables" },
+  
+  { "id": "barbell_curl", "name": "Barbell Bicep Curl", "muscleGroup": "Arms", "equipment": "Barbell" },
+  { "id": "hammer_curl", "name": "Dumbbell Hammer Curl", "muscleGroup": "Arms", "equipment": "Dumbbells" },
+  { "id": "tricep_extension", "name": "Tricep Rope Pushdown", "muscleGroup": "Arms", "equipment": "Cables" },
+  { "id": "skullcrushers", "name": "Skullcrushers", "muscleGroup": "Arms", "equipment": "EZ Bar" },
+  
+  { "id": "crunches", "name": "Crunches", "muscleGroup": "Core", "equipment": "Bodyweight" },
+  { "id": "plank", "name": "Plank", "muscleGroup": "Core", "equipment": "Bodyweight" },
+  { "id": "hanging_leg_raise", "name": "Hanging Leg Raise", "muscleGroup": "Core", "equipment": "Bodyweight" },
+  
+  { "id": "deadlift", "name": "Conventional Deadlift", "muscleGroup": "Full Body", "equipment": "Barbell" }
+]

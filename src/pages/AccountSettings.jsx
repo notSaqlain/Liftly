@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
-import { auth } from '../firebase';
-import { LogOut, Save, Loader2, Mail, Lock, ChevronLeft, ChevronRight, Link2, Trash2, ShieldAlert } from 'lucide-react';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase';
+import { LogOut, Save, Loader2, Mail, Lock, ChevronLeft, ChevronRight, Link2, Trash2, ShieldAlert, Dumbbell } from 'lucide-react';
 
 const AccountSettings = () => {
   const { 
@@ -24,6 +25,15 @@ const AccountSettings = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const availableSplits = {
+    3: ['Push', 'Pull', 'Legs'],
+    4: ['Upper', 'Lower', 'Upper 2', 'Lower 2'],
+    5: ['Chest', 'Back', 'Shoulders', 'Legs', 'Arms'],
+    6: ['Push 1', 'Pull 1', 'Legs 1', 'Push 2', 'Pull 2', 'Legs 2']
+  };
+  const [trainingDays, setTrainingDays] = useState(3);
+  const [currentSplit, setCurrentSplit] = useState(null);
+
   const googleLinked = isGoogleUser();
   const passwordLinked = hasPasswordProvider();
 
@@ -33,13 +43,34 @@ const AccountSettings = () => {
       setNewEmail(currentUser.email || '');
       try {
         const data = await getUserData(currentUser.uid);
-        if (data) setBackupEmail(data.backupEmail || '');
+        if (data) {
+          setBackupEmail(data.backupEmail || '');
+          setCurrentSplit(data.activeSplit || null);
+          if (data.activeSplit) {
+            setTrainingDays(data.activeSplit.length > 6 ? 6 : (data.activeSplit.length < 3 ? 3 : data.activeSplit.length));
+          }
+        }
       } catch (e) {
         console.error(e);
       }
     };
     load();
   }, [currentUser, getUserData]);
+
+  const handleSaveSplit = async () => {
+    setSaving(true);
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, { activeSplit: availableSplits[trainingDays] });
+      setCurrentSplit(availableSplits[trainingDays]);
+      showMessage('Workout split saved successfully!');
+      setActiveSection(null);
+    } catch (err) {
+      showMessage(err.message, 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const showMessage = (text, type = 'success') => {
     setMessage({ text, type });
@@ -142,6 +173,42 @@ const AccountSettings = () => {
           <span className="px-3 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full uppercase tracking-wider">Email/Password</span>
         )}
       </div>
+
+      {/* ─── Workout Split ─── */}
+      <AccordionItem 
+        title="Workout Split" 
+        subtitle={currentSplit ? `${currentSplit.length} Days/Week` : "Not configured"} 
+        icon={<Dumbbell size={20} />} 
+        iconBg="bg-orange-50 text-orange-500" 
+        isOpen={activeSection === 'split'} 
+        onToggle={() => setActiveSection(activeSection === 'split' ? null : 'split')}
+      >
+        <p className="text-slate-500 text-xs mb-3">How many days a week do you want to train?</p>
+        <div className="flex gap-2 mb-4">
+          {[3, 4, 5, 6].map(days => (
+            <button 
+              key={days}
+              onClick={() => setTrainingDays(days)}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold border transition-colors ${trainingDays === days ? 'bg-liftly-navy text-white border-liftly-navy' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
+            >
+              {days} Days
+            </button>
+          ))}
+        </div>
+        
+        <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl mb-4">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2">Suggested Split:</p>
+          <div className="flex flex-wrap gap-2">
+            {availableSplits[trainingDays].map((day, idx) => (
+              <span key={idx} className="bg-white border border-slate-200 text-liftly-navy text-xs px-2 py-1 rounded-md font-semibold">{day}</span>
+            ))}
+          </div>
+        </div>
+
+        <button onClick={handleSaveSplit} disabled={saving} className="w-full h-12 bg-liftly-teal hover:bg-teal-400 text-white font-bold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 disabled:opacity-60">
+          {saving ? <Loader2 size={18} className="animate-spin" /> : <><Save size={16} /><span>Save Split</span></>}
+        </button>
+      </AccordionItem>
 
       {/* ─── Email ─── */}
       {googleLinked && !passwordLinked ? (

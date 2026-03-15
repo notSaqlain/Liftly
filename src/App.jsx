@@ -8,6 +8,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import Workout from './pages/Workout';
 import AccountSettings from './pages/AccountSettings';
 import PersonalInfo from './pages/PersonalInfo';
 import Stats from './pages/Stats';
@@ -30,8 +31,7 @@ function App() {
 
           <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />
-            {/* Placeholder routes for now */}
-            <Route path="/workout" element={<div className="p-4">Workout logic here</div>} />
+            <Route path="/workout" element={<Workout />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<AccountSettings />} />
