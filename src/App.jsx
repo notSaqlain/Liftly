@@ -7,6 +7,7 @@ import MainLayout from './components/Layout/MainLayout';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
             {/* Placeholder routes for now */}
             <Route path="/workout" element={<div className="p-4">Workout logic here</div>} />
             <Route path="/stats" element={<div className="p-4">Stats logic here</div>} />
-            <Route path="/profile" element={<div className="p-4">Profile logic here</div>} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>

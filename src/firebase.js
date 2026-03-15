@@ -1,15 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -20,18 +14,32 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-if (!firebaseConfig.apiKey) {
-  console.error("FIREBASE ERROR: API Key is missing! 🚨");
-  console.error("Make sure your .env file is present and populated with VITE_FIREBASE_API_KEY.");
-  console.error("IMPORTANT: If you just created or modified the .env file, you MUST restart your Vite dev server (npm run dev) for the changes to take effect.");
+// Debug: log config to verify env vars are loaded (remove in production)
+if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+  console.error("🚨 FIREBASE CONFIG ERROR: Missing critical environment variables!");
+  console.error("Current config:", JSON.stringify(firebaseConfig, null, 2));
+  console.error("Make sure .env file exists at project root and restart `npm run dev`.");
 }
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-// Inizializza i servizi che useremo nel progetto
-export const auth = getAuth(app);        // Per la registrazione/login (RF1)
-export const db = getFirestore(app);     // Per il database degli allenamenti (RF2)
+// Initialize Analytics only in production (it can cause issues on localhost)
+let analytics = null;
+try {
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    import("firebase/analytics").then(({ getAnalytics }) => {
+      analytics = getAnalytics(app);
+    });
+  }
+} catch (e) {
+  console.warn("Analytics initialization skipped:", e.message);
+}
+
+// Initialize services
+export const auth = getAuth(app);
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({ tabManager: persistentSingleTabManager({}) })
+});
 
 export default app;
