@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "785818446640",
+    "project_id": "liftly-ddks",
+    "storage_bucket": "liftly-ddks.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785818446640:android:de63a3d1e1b52788e776f5",
+        "android_client_info": {
+          "package_name": "com.ddks.liftly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6Lo-uiR4_L2SYQsNgEVKpq3RdMdSGCSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
