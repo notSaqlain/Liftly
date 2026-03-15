@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Liftly</string>
+    <string name="title_activity_main">Liftly</string>
+    <string name="package_name">com.ddks.liftly</string>
+    <string name="custom_url_scheme">com.ddks.liftly</string>
+</resources>
