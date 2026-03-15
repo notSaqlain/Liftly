@@ -1,6 +1,10 @@
 // Inizializza Icone
 lucide.createIcons();
 
+let isSrsLoaded = false;
+let srsObserver = null;
+
+
 // Funzione per Aprire/Chiudere i sottomenu (Accordion)
 function toggleMenu(menuId, iconId) {
     const menu = document.getElementById(menuId);
@@ -19,6 +23,8 @@ function toggleMenu(menuId, iconId) {
 
 // Funzione per mostrare i contenuti principali caricandoli da file esterni (AJAX)
 async function showSection(sectionId, clickedElement, isSubmenu) {
+    isSrsLoaded = false;
+    if (srsObserver) srsObserver.disconnect();
 
     // 1. Carica il contenuto dal file HTML esterno in sections/
     try {
@@ -88,6 +94,74 @@ async function showSection(sectionId, clickedElement, isSubmenu) {
 
     // 5. Torna in cima alla pagina
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function scrollToSrsSection(targetId, clickedElement) {
+    if (!isSrsLoaded) {
+        try {
+            const response = await fetch(`sections/srs/srs-all.html`);
+            if (!response.ok) throw new Error("Errore Caricamento SRS");
+            const html = await response.text();
+            
+            const mainContainer = document.getElementById("main-content-area");
+            if (mainContainer) {
+                mainContainer.innerHTML = html;
+                lucide.createIcons();
+                const newSection = mainContainer.querySelector('.section-content');
+                if (newSection) newSection.classList.add('active');
+            }
+            isSrsLoaded = true;
+            
+            // Setup scrollspy
+            const sections = document.querySelectorAll('.srs-section');
+            if (srsObserver) srsObserver.disconnect();
+            
+            srsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        document.querySelectorAll('.srs-nav-link').forEach(link => {
+                            link.classList.remove('active-link');
+                        });
+                        const activeLink = document.querySelector(`.srs-nav-link[data-target="${id}"]`);
+                        if (activeLink) activeLink.classList.add('active-link');
+                    }
+                });
+            }, { 
+                root: document.querySelector('main'), 
+                rootMargin: '-5% 0px -80% 0px' 
+            });
+            
+            sections.forEach(sec => srsObserver.observe(sec));
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    
+    // Aggiorna gli stili dei link
+    document.querySelectorAll('.submenu-link').forEach(link => {
+        link.classList.remove('active-link');
+    });
+    document.querySelectorAll('.main-link').forEach(link => {
+        link.classList.remove('active-link', 'bg-[#001540]', 'text-white');
+        link.classList.add('text-slate-700', 'hover:bg-slate-50');
+    });
+    
+    if (clickedElement) {
+        clickedElement.classList.add('active-link');
+    }
+
+    if (window.innerWidth < 1024) {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+        setTimeout(() => { document.getElementById('sidebar').classList.add('hidden'); }, 300);
+    }
+    
+    // Scroll al target
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+        // Because main container might not be standard document scroll, let's use scrollIntoView 
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // Gestione Menu Mobile
