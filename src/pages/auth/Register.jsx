@@ -62,8 +62,8 @@ const Register = () => {
         
         <div className="z-10 w-full max-w-sm mt-8 mb-8">
           <div className="text-center mb-8">
-             <div className="inline-flex justify-center items-center w-16 h-16 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 mb-4 shadow-lg">
-              <img src={liftlyLogo} alt="Liftly" className="w-10 h-10 object-contain" />
+             <div className="inline-block items-center mb-4 mt-2">
+              <img src={liftlyLogo} alt="Liftly" className="w-32 h-auto object-contain" />
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight">Create Account</h1>
             <p className="text-slate-300 mt-2 font-medium">Join Liftly to track your progress</p>

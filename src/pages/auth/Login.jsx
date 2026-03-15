@@ -39,11 +39,10 @@ const Login = () => {
         
         <div className="z-10 w-full max-w-sm">
           <div className="text-center mb-10">
-            <div className="inline-flex justify-center items-center w-20 h-20 bg-white/10 rounded-3xl backdrop-blur-md border border-white/20 mb-6 shadow-xl mt-4">
-              <img src={liftlyLogo} alt="Liftly" className="w-12 h-12 object-contain" />
+            <div className="inline-block items-center mb-6 mt-4">
+              <img src={liftlyLogo} alt="Liftly" className="w-40 h-auto object-contain" />
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2">Liftly</h1>
-            <p className="text-slate-300 font-medium">Your personal gym companion</p>
+            <p className="text-slate-300 font-medium text-lg">Your personal gym companion</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
