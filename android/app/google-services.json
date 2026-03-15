@@ -12,7 +12,20 @@
           "package_name": "com.ddks.liftly"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "785818446640-oc3uub935gfqhjaod3e7oqqd1ogv6m4a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ddks.liftly",
+            "certificate_hash": "d34b52bcb37426293e258e8fa72177c542ff21ee"
+          }
+        },
+        {
+          "client_id": "785818446640-9qhgtmpss7stp9ftkrnpo19pjskah8a0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC6Lo-uiR4_L2SYQsNgEVKpq3RdMdSGCSc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785818446640-9qhgtmpss7stp9ftkrnpo19pjskah8a0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
