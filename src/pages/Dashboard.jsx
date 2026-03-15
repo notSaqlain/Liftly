@@ -43,7 +43,8 @@ const Dashboard = () => {
     }
   };
 
-  const displayName = currentUser?.email?.split('@')[0] || 'Lifter';
+  const displayName = userData?.firstName || currentUser?.displayName?.split(' ')[0] || currentUser?.email?.split('@')[0] || 'Lifter';
+  const photoURL = userData?.photoURL || currentUser?.photoURL || null;
 
   if (loading) {
     return (
@@ -61,11 +62,20 @@ const Dashboard = () => {
       
       {/* Header section with Greeting and Streak */}
       <div className="flex justify-between items-start pt-6">
-        <div>
-          <h1 className="text-4xl font-extrabold text-liftly-navy tracking-tight truncate max-w-[200px]">
-            Hi, <span className="capitalize">{displayName}</span>!
-          </h1>
-          <p className="text-slate-500 mt-1 font-medium">Ready to crush your goals?</p>
+        <div className="flex items-center gap-3">
+          {photoURL ? (
+            <img src={photoURL} alt="Profile" className="w-12 h-12 rounded-full object-cover ring-2 ring-liftly-teal/30 shrink-0" referrerPolicy="no-referrer" />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-liftly-navy flex items-center justify-center text-white font-bold text-lg shrink-0">
+              {displayName.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div>
+            <h1 className="text-2xl font-extrabold text-liftly-navy tracking-tight truncate max-w-[180px]">
+              Hi, <span className="capitalize">{displayName}</span>!
+            </h1>
+            <p className="text-slate-500 text-sm font-medium">Ready to crush your goals?</p>
+          </div>
         </div>
         
         <div className="bg-white px-4 py-2 rounded-2xl shadow-sm border border-orange-100 flex flex-col items-center shrink-0">

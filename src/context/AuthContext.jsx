@@ -4,12 +4,15 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut,
-  updateEmail as firebaseUpdateEmail,
+  signInWithPopup,
+  linkWithPopup,
+  verifyBeforeUpdateEmail,
   updatePassword as firebaseUpdatePassword,
-  updateProfile as firebaseUpdateProfile
+  updateProfile as firebaseUpdateProfile,
+  deleteUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '../firebase';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db, googleProvider } from '../firebase';
 
 const AuthContext = createContext();
 
@@ -19,12 +22,21 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Helper: check if user signed in with Google
+  const isGoogleUser = () => {
+    return currentUser?.providerData?.some(p => p.providerId === 'google.com') || false;
+  };
+
+  // Helper: check if user has email/password provider
+  const hasPasswordProvider = () => {
+    return currentUser?.providerData?.some(p => p.providerId === 'password') || false;
+  };
+
   // Sign up and create user document
   const register = async (email, password, biometricData) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Create user document in Firestore
     await setDoc(doc(db, 'users', user.uid), {
       uid: user.uid,
       email: user.email,
@@ -46,6 +58,53 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  // Sign in with Google
+  const loginWithGoogle = async () => {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) {
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        firstName: user.displayName?.split(' ')[0] || '',
+        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+        photoURL: user.photoURL || '',
+        googlePhotoURL: user.photoURL || '',
+        gender: 'Other',
+        age: 0,
+        weight: 0,
+        currentStreak: 0,
+        createdAt: serverTimestamp()
+      });
+    } else {
+      // Only update the separate googlePhotoURL field, never overwrite custom photoURL
+      if (user.photoURL) {
+        await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
+      }
+    }
+
+    return result;
+  };
+
+  // Link existing email/password account with Google
+  const linkGoogleAccount = async () => {
+    const result = await linkWithPopup(auth.currentUser, googleProvider);
+    const user = result.user;
+    const updates = {};
+    if (user.photoURL) updates.photoURL = user.photoURL;
+    if (user.displayName) {
+      const parts = user.displayName.split(' ');
+      if (!updates.firstName) updates.firstName = parts[0] || '';
+      if (!updates.lastName) updates.lastName = parts.slice(1).join(' ') || '';
+    }
+    if (Object.keys(updates).length > 0) {
+      await updateDoc(doc(db, 'users', user.uid), updates);
+    }
+    return result;
+  };
+
   // Fetch user document from Firestore
   const getUserData = async (uid) => {
     const docRef = doc(db, 'users', uid);
@@ -59,11 +118,9 @@ export const AuthProvider = ({ children }) => {
     await updateDoc(docRef, data);
   };
 
-  // Update Firebase Auth email
+  // Update Firebase Auth email (sends verification to new email first)
   const updateUserEmail = async (newEmail) => {
-    await firebaseUpdateEmail(auth.currentUser, newEmail);
-    // Sync to Firestore
-    await updateDoc(doc(db, 'users', auth.currentUser.uid), { email: newEmail });
+    await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
   };
 
   // Update Firebase Auth password
@@ -76,13 +133,19 @@ export const AuthProvider = ({ children }) => {
     await firebaseUpdateProfile(auth.currentUser, { displayName });
   };
 
+  // Permanently delete account and Firestore data
+  const deleteAccount = async () => {
+    const uid = auth.currentUser.uid;
+    await deleteDoc(doc(db, 'users', uid));
+    await deleteUser(auth.currentUser);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
     });
 
-    // Safety timeout: if Firebase takes too long, stop blocking the UI
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 4000);
@@ -97,12 +160,17 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     register,
     login,
+    loginWithGoogle,
+    linkGoogleAccount,
     logout,
     getUserData,
     updateUserProfile,
     updateUserEmail,
     updateUserPassword,
     updateDisplayName,
+    deleteAccount,
+    isGoogleUser,
+    hasPasswordProvider,
   };
 
   return (

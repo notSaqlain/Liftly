@@ -1,8 +1,28 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { Home, Dumbbell, BarChart3, User } from 'lucide-react';
+import { Home, Dumbbell, BarChart3 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 const MainLayout = () => {
+  const { currentUser, getUserData } = useAuth();
+  const [photoURL, setPhotoURL] = useState('');
+  const [initials, setInitials] = useState('');
+
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return;
+      try {
+        const data = await getUserData(currentUser.uid);
+        setPhotoURL(data?.photoURL || currentUser.photoURL || '');
+        setInitials((data?.firstName?.[0] || currentUser.email?.[0] || 'U').toUpperCase());
+      } catch {
+        setInitials((currentUser.email?.[0] || 'U').toUpperCase());
+      }
+    };
+    load();
+  }, [currentUser, getUserData]);
+
   return (
     <div className="flex justify-center bg-slate-100 min-h-screen">
       <div className="w-full max-w-[480px] bg-slate-50 min-h-screen relative shadow-2xl flex flex-col">
@@ -16,7 +36,28 @@ const MainLayout = () => {
           <NavItem to="/" icon={<Home size={24} />} label="Home" />
           <NavItem to="/workout" icon={<Dumbbell size={24} />} label="Workout" />
           <NavItem to="/stats" icon={<BarChart3 size={24} />} label="Stats" />
-          <NavItem to="/profile" icon={<User size={24} />} label="Profile" />
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              clsx(
+                "flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all duration-200",
+                isActive ? "text-liftly-teal font-semibold" : "text-slate-400 hover:text-slate-600"
+              )
+            }
+          >
+            {({ isActive }) => (
+              <>
+                {photoURL ? (
+                  <img src={photoURL} alt="Profile" className={clsx("w-7 h-7 rounded-full object-cover transition-all", isActive ? "ring-2 ring-liftly-teal" : "ring-1 ring-slate-200")} referrerPolicy="no-referrer" />
+                ) : (
+                  <div className={clsx("w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all", isActive ? "bg-liftly-teal text-white" : "bg-slate-200 text-slate-500")}>
+                    {initials}
+                  </div>
+                )}
+                <span className="text-[10px] mt-1">Profile</span>
+              </>
+            )}
+          </NavLink>
         </nav>
       </div>
     </div>
