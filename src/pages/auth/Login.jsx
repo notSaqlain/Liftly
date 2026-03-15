@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
+import { auth } from '../../firebase';
 import { Loader2 } from 'lucide-react';
 import liftlyLogo from '../../assets/liftly_white.png';
 
@@ -8,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isGoogleAccount, setIsGoogleAccount] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const { login, loginWithGoogle } = useAuth();
@@ -16,13 +19,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsGoogleAccount(false);
     setLoading(true);
     
     try {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError('Failed to log in. Please check your credentials.');
+      // Check if this email is registered as a Google-only account
+      try {
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        if (methods.includes('google.com') && !methods.includes('password')) {
+          setIsGoogleAccount(true);
+          setError('This account uses Google Sign-In. Please use the "Continue with Google" button below.');
+        } else {
+          setError('Failed to log in. Please check your credentials.');
+        }
+      } catch {
+        setError('Failed to log in. Please check your credentials.');
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -94,6 +109,7 @@ const Login = () => {
           <button
             onClick={async () => {
               setError('');
+              setIsGoogleAccount(false);
               setLoading(true);
               try {
                 await loginWithGoogle();
@@ -105,7 +121,7 @@ const Login = () => {
               }
             }}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 h-14 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-base rounded-2xl transition-all active:scale-95 disabled:opacity-70 shadow-sm"
+            className={`w-full flex items-center justify-center gap-3 h-14 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-base rounded-2xl transition-all active:scale-95 disabled:opacity-70 shadow-sm ${isGoogleAccount ? 'ring-2 ring-liftly-teal animate-pulse' : ''}`}
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
