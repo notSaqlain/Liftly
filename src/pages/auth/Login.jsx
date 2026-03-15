@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Dumbbell, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import liftlyLogo from '../../assets/liftly_white.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +40,7 @@ const Login = () => {
         <div className="z-10 w-full max-w-sm">
           <div className="text-center mb-10">
             <div className="inline-flex justify-center items-center w-20 h-20 bg-white/10 rounded-3xl backdrop-blur-md border border-white/20 mb-6 shadow-xl mt-4">
-              <Dumbbell size={40} className="text-liftly-teal" />
+              <img src={liftlyLogo} alt="Liftly" className="w-12 h-12 object-contain" />
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight mb-2">Liftly</h1>
             <p className="text-slate-300 font-medium">Your personal gym companion</p>

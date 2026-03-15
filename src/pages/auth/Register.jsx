@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Dumbbell, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import liftlyLogo from '../../assets/liftly_white.png';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -62,7 +63,7 @@ const Register = () => {
         <div className="z-10 w-full max-w-sm mt-8 mb-8">
           <div className="text-center mb-8">
              <div className="inline-flex justify-center items-center w-16 h-16 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 mb-4 shadow-lg">
-              <Dumbbell size={32} className="text-liftly-teal" />
+              <img src={liftlyLogo} alt="Liftly" className="w-10 h-10 object-contain" />
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight">Create Account</h1>
             <p className="text-slate-300 mt-2 font-medium">Join Liftly to track your progress</p>
