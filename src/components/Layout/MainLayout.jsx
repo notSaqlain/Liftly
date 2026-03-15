@@ -3,11 +3,13 @@ import { Home, Dumbbell, BarChart3 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import SideDrawer from './SideDrawer';
 
 const MainLayout = () => {
   const { currentUser, getUserData } = useAuth();
   const [photoURL, setPhotoURL] = useState('');
   const [initials, setInitials] = useState('');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -36,29 +38,22 @@ const MainLayout = () => {
           <NavItem to="/" icon={<Home size={24} />} label="Home" />
           <NavItem to="/workout" icon={<Dumbbell size={24} />} label="Workout" />
           <NavItem to="/stats" icon={<BarChart3 size={24} />} label="Stats" />
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              clsx(
-                "flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all duration-200",
-                isActive ? "text-liftly-teal font-semibold" : "text-slate-400 hover:text-slate-600"
-              )
-            }
+          <button
+            onClick={() => setIsDrawerOpen(true)}
+            className="flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-600 focus:outline-none"
           >
-            {({ isActive }) => (
-              <>
-                {photoURL ? (
-                  <img src={photoURL} alt="Profile" className={clsx("w-7 h-7 rounded-full object-cover transition-all", isActive ? "ring-2 ring-liftly-teal" : "ring-1 ring-slate-200")} referrerPolicy="no-referrer" />
-                ) : (
-                  <div className={clsx("w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all", isActive ? "bg-liftly-teal text-white" : "bg-slate-200 text-slate-500")}>
-                    {initials}
-                  </div>
-                )}
-                <span className="text-[10px] mt-1">Profile</span>
-              </>
+            {photoURL ? (
+              <img src={photoURL} alt="Menu" className={clsx("w-7 h-7 rounded-full object-cover transition-all", isDrawerOpen ? "ring-2 ring-liftly-teal" : "ring-1 ring-slate-200")} referrerPolicy="no-referrer" />
+            ) : (
+              <div className={clsx("w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all", isDrawerOpen ? "bg-liftly-teal text-white" : "bg-slate-200 text-slate-500")}>
+                {initials}
+              </div>
             )}
-          </NavLink>
+            <span className={clsx("text-[10px] mt-1", isDrawerOpen ? "text-liftly-teal font-semibold" : "text-slate-400")}>Menu</span>
+          </button>
         </nav>
+        
+        <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
       </div>
     </div>
   );

@@ -8,10 +8,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    confirmPassword: '',
-    age: '',
-    weight: '',
-    gender: 'Other'
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,19 +27,11 @@ const Register = () => {
     if (formData.password !== formData.confirmPassword) {
       return setError('Passwords do not match');
     }
-    
-    if (!formData.age || !formData.weight) {
-      return setError('Please fill in your body metrics');
-    }
 
     setLoading(true);
     
     try {
-      await register(formData.email, formData.password, {
-        age: formData.age,
-        weight: formData.weight,
-        gender: formData.gender
-      });
+      await register(formData.email, formData.password);
       navigate('/');
     } catch (err) {
       setError('Failed to create an account: ' + err.message);
@@ -105,56 +94,6 @@ const Register = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
               />
-            </div>
-
-            <div className="h-px w-full bg-white/10 my-8"></div>
-
-            <div className="space-y-4">
-              <h2 className="text-xs font-bold text-liftly-teal uppercase tracking-wider pl-1">Your Body Profile</h2>
-              
-              <div className="flex space-x-3">
-                <input
-                  name="age"
-                  type="number"
-                  placeholder="Age"
-                  required
-                  min="12"
-                  max="120"
-                  className="w-1/2 h-14 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl px-5 text-white placeholder:text-slate-400 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-colors"
-                  value={formData.age}
-                  onChange={handleChange}
-                />
-                <input
-                  name="weight"
-                  type="number"
-                  placeholder="Weight (kg)"
-                  required
-                  step="0.1"
-                  min="20"
-                  max="300"
-                  className="w-1/2 h-14 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl px-5 text-white placeholder:text-slate-400 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-colors"
-                  value={formData.weight}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="relative">
-                <select
-                  name="gender"
-                  required
-                  className="w-full h-14 bg-[#0a1e47] backdrop-blur-md border border-white/10 rounded-2xl px-5 text-white focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-colors appearance-none"
-                  value={formData.gender}
-                  onChange={handleChange}
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-                {/* Custom dropdown arrow */}
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-white">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                </div>
-              </div>
             </div>
             
             <button

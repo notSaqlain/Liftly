@@ -11,7 +11,7 @@ import {
   updateProfile as firebaseUpdateProfile,
   deleteUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../firebase';
 
 const AuthContext = createContext();
@@ -20,6 +20,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Helper: check if user signed in with Google
@@ -33,17 +34,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Sign up and create user document
-  const register = async (email, password, biometricData) => {
+  const register = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
     await setDoc(doc(db, 'users', user.uid), {
       uid: user.uid,
       email: user.email,
-      gender: biometricData.gender,
-      age: parseInt(biometricData.age, 10),
-      weight: parseFloat(biometricData.weight),
       currentStreak: 0,
+      onboardingComplete: false,
       createdAt: serverTimestamp()
     });
     
@@ -141,9 +140,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let unsubscribeUser = () => {};
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      setLoading(false);
+      if (user) {
+        unsubscribeUser = onSnapshot(doc(db, 'users', user.uid), (docS) => {
+          if (docS.exists()) {
+            setUserData({ ...docS.data(), id: docS.id });
+          } else {
+            setUserData(null);
+          }
+          setLoading(false);
+        });
+      } else {
+        setUserData(null);
+        setLoading(false);
+      }
     });
 
     const timeout = setTimeout(() => {
@@ -151,13 +164,15 @@ export const AuthProvider = ({ children }) => {
     }, 4000);
 
     return () => {
-      unsubscribe();
+      unsubscribeAuth();
+      unsubscribeUser();
       clearTimeout(timeout);
     };
   }, []);
 
   const value = {
     currentUser,
+    userData,
     register,
     login,
     loginWithGoogle,

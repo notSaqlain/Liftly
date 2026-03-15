@@ -11,6 +11,10 @@ import Profile from './pages/Profile';
 import AccountSettings from './pages/AccountSettings';
 import PersonalInfo from './pages/PersonalInfo';
 import Stats from './pages/Stats';
+import Onboarding from './pages/auth/Onboarding';
+import BmiCalculator from './pages/tools/BmiCalculator';
+import CalorieGoals from './pages/tools/CalorieGoals';
+import WeightTracker from './pages/tools/WeightTracker';
 
 function App() {
   return (
@@ -22,6 +26,8 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Protected Routes (Require Authentication) */}
+          <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+
           <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />
             {/* Placeholder routes for now */}
@@ -30,6 +36,11 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="/personal-info" element={<PersonalInfo />} />
+            
+            {/* Tools */}
+            <Route path="/tools/bmi" element={<BmiCalculator />} />
+            <Route path="/tools/calories" element={<CalorieGoals />} />
+            <Route path="/tools/weight" element={<WeightTracker />} />
           </Route>
         </Routes>
       </BrowserRouter>
