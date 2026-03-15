@@ -118,18 +118,28 @@ async function scrollToSrsSection(targetId, clickedElement) {
             
             srsObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) {
+                    // Only update active link if we are scrolling naturally, not right after a click
+                    if (entry.isIntersecting && !window.isSrsScrollingFromClick) {
                         const id = entry.target.id;
                         document.querySelectorAll('.srs-nav-link').forEach(link => {
                             link.classList.remove('active-link');
                         });
                         const activeLink = document.querySelector(`.srs-nav-link[data-target="${id}"]`);
                         if (activeLink) activeLink.classList.add('active-link');
+                        
+                        // Also expand the SRS menu if it happens to be closed
+                        const srsMenu = document.getElementById('menu-srs');
+                        const srsIcon = document.getElementById('icon-srs');
+                        if (srsMenu && srsMenu.classList.contains('hidden')) {
+                            srsMenu.classList.remove('hidden');
+                            srsMenu.classList.add('block');
+                            srsIcon.classList.add('rotate-180');
+                        }
                     }
                 });
             }, { 
-                root: document.querySelector('main'), 
-                rootMargin: '-5% 0px -80% 0px' 
+                root: null, // Use browser viewport
+                rootMargin: '-20% 0px -60% 0px' 
             });
             
             sections.forEach(sec => srsObserver.observe(sec));
@@ -156,11 +166,20 @@ async function scrollToSrsSection(targetId, clickedElement) {
         setTimeout(() => { document.getElementById('sidebar').classList.add('hidden'); }, 300);
     }
     
+    window.isSrsScrollingFromClick = true;
+    
     // Scroll al target
     const targetEl = document.getElementById(targetId);
     if (targetEl) {
         // Because main container might not be standard document scroll, let's use scrollIntoView 
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Reset flag after animation completes (approx)
+        setTimeout(() => {
+            window.isSrsScrollingFromClick = false;
+        }, 800);
+    } else {
+        window.isSrsScrollingFromClick = false;
     }
 }
 
