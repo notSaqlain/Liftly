@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="Docs/Documenti/liftly.png" alt="Liftly Logo" width="150" height="auto" />
-  <h1>Liftly</h1>
+  <img src="Docs/Documenti/liftly_white.png" alt="Liftly Logo" width="150" height="auto" />
   <p><strong>The future of workout tracking. Smart, social, and mobile-first.</strong></p>
   
   [![Documentation](https://img.shields.io/badge/docs-read_now-blue)](https://saqlain.altervista.org/Liftly/Docs/Documenti/)
