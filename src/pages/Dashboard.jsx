@@ -1,15 +1,94 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight } from 'lucide-react';
+import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar } from 'lucide-react';
+
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const Dashboard = () => {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
   const [reportedStatus, setReportedStatus] = useState(false);
   const [showSplitPicker, setShowSplitPicker] = useState(false);
+
+  // Calendar state
+  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+  const [workoutDates, setWorkoutDates] = useState(new Set());
+
+  // Fetch workout dates for the displayed month
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    const fetchWorkoutDates = async () => {
+      const startOfMonth = new Date(calendarYear, calendarMonth, 1);
+      const endOfMonth = new Date(calendarYear, calendarMonth + 1, 0, 23, 59, 59);
+      
+      try {
+        const q = query(
+          collection(db, 'users', currentUser.uid, 'user_workouts'),
+          where('completedAt', '>=', Timestamp.fromDate(startOfMonth)),
+          where('completedAt', '<=', Timestamp.fromDate(endOfMonth))
+        );
+        const snap = await getDocs(q);
+        const dates = new Set();
+        snap.forEach(doc => {
+          const d = doc.data().completedAt?.toDate();
+          if (d) dates.add(d.getDate());
+        });
+        setWorkoutDates(dates);
+      } catch (error) {
+        console.error("Error fetching workout dates:", error);
+      }
+    };
+    
+    fetchWorkoutDates();
+  }, [currentUser, calendarMonth, calendarYear]);
+
+  // Calendar grid computation
+  const calendarDays = useMemo(() => {
+    const firstDay = new Date(calendarYear, calendarMonth, 1);
+    // getDay() returns 0 for Sunday, adjust so Monday=0
+    let startOffset = firstDay.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+    
+    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const cells = [];
+    
+    // Empty cells before first day
+    for (let i = 0; i < startOffset; i++) {
+      cells.push(null);
+    }
+    // Days of the month
+    for (let d = 1; d <= daysInMonth; d++) {
+      cells.push(d);
+    }
+    return cells;
+  }, [calendarMonth, calendarYear]);
+
+  const today = new Date();
+  const isCurrentMonth = calendarMonth === today.getMonth() && calendarYear === today.getFullYear();
+
+  const prevMonth = () => {
+    if (calendarMonth === 0) {
+      setCalendarMonth(11);
+      setCalendarYear(y => y - 1);
+    } else {
+      setCalendarMonth(m => m - 1);
+    }
+  };
+
+  const nextMonth = () => {
+    if (calendarMonth === 11) {
+      setCalendarMonth(0);
+      setCalendarYear(y => y + 1);
+    } else {
+      setCalendarMonth(m => m + 1);
+    }
+  };
 
   const reportCrowd = async (status) => {
     if (!currentUser || reportedStatus) return;
@@ -123,6 +202,77 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Workout Calendar */}
+      <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-slate-200/60">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Calendar size={18} className="text-liftly-teal" />
+            <h3 className="font-bold text-slate-800 text-sm">Workout Calendar</h3>
+          </div>
+          <div className="flex items-center gap-1">
+            <button onClick={prevMonth} className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+              <ChevronLeft size={14} />
+            </button>
+            <span className="text-xs font-bold text-slate-600 min-w-[110px] text-center">
+              {MONTHS[calendarMonth]} {calendarYear}
+            </span>
+            <button onClick={nextMonth} className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Day Headers */}
+        <div className="grid grid-cols-7 gap-1 mb-1">
+          {DAYS.map(d => (
+            <div key={d} className="text-center text-[9px] font-bold uppercase tracking-wider text-slate-400 py-1">{d}</div>
+          ))}
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {calendarDays.map((day, i) => {
+            if (day === null) return <div key={`empty-${i}`} />;
+            
+            const isToday = isCurrentMonth && day === today.getDate();
+            const hasWorkout = workoutDates.has(day);
+            
+            return (
+              <div
+                key={day}
+                className={`relative aspect-square flex items-center justify-center rounded-lg text-xs font-bold transition-colors ${
+                  isToday
+                    ? 'bg-liftly-navy text-white'
+                    : hasWorkout
+                    ? 'bg-liftly-teal/15 text-liftly-teal'
+                    : 'text-slate-600'
+                }`}
+              >
+                {day}
+                {hasWorkout && !isToday && (
+                  <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-liftly-teal" />
+                )}
+                {hasWorkout && isToday && (
+                  <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-sm bg-liftly-navy" />
+            <span className="text-[10px] font-medium text-slate-400">Today</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-sm bg-liftly-teal/30" />
+            <span className="text-[10px] font-medium text-slate-400">Workout</span>
+          </div>
+        </div>
+      </div>
+
       {/* Crowdsourcing Widget */}
       <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60">
         <div className="flex items-center space-x-2 mb-5">
@@ -205,6 +355,8 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Spacer for bottom nav */}
+      <div className="h-4"></div>
     </div>
   );
 };
