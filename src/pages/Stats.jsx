@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
-import { Activity, Dumbbell, Trophy, Target, TrendingUp, CalendarDays } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { Activity, Dumbbell, Trophy, Target, TrendingUp, CalendarDays, Radar as RadarIcon } from 'lucide-react';
 
 // Placeholder data for Weekly Progress (e.g., total weight lifted per day or workouts)
 const weeklyData = [
@@ -22,6 +22,16 @@ const monthlyProgressData = [
   { month: 'Apr', weight: 70 },
   { month: 'May', weight: 75 },
   { month: 'Jun', weight: 80 },
+];
+
+// Placeholder data for Muscle Group Radar
+const muscleGroupData = [
+  { muscle: 'Chest', value: 75 },
+  { muscle: 'Back', value: 60 },
+  { muscle: 'Legs', value: 85 },
+  { muscle: 'Shoulders', value: 50 },
+  { muscle: 'Arms', value: 65 },
+  { muscle: 'Core', value: 40 },
 ];
 
 const Stats = () => {
@@ -94,6 +104,36 @@ const Stats = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Muscle Group Radar Chart */}
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 pt-6">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <RadarIcon size={18} className="text-purple-500" />
+            <h3 className="font-black text-slate-800">Muscle Focus</h3>
+          </div>
+          <span className="text-xs font-bold bg-purple-50 text-purple-600 px-2 py-1 rounded-lg">All Time</span>
+        </div>
+        
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart cx="50%" cy="50%" outerRadius="75%" data={muscleGroupData}>
+              <PolarGrid stroke="#e2e8f0" />
+              <PolarAngleAxis dataKey="muscle" tick={{ fontSize: 11, fill: '#64748b', fontWeight: 600 }} />
+              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+              <Radar
+                name="Training Volume"
+                dataKey="value"
+                stroke="#8b5cf6"
+                fill="#8b5cf6"
+                fillOpacity={0.25}
+                strokeWidth={2}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+        <p className="text-center text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-1">Training distribution by muscle group</p>
       </div>
 
       {/* Monthly Max Lift Progress Chart */}

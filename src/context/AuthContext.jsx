@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   linkWithPopup,
@@ -58,10 +59,29 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // Sign in with Google via Browser Redirect
+  // Sign in with Google — popup shows native account picker on Android
   const loginWithGoogle = async () => {
-    // This will open the browser and redirect back to the app on success
-    await signInWithRedirect(auth, googleProvider);
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) {
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        firstName: user.displayName?.split(' ')[0] || '',
+        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+        photoURL: user.photoURL || '',
+        googlePhotoURL: user.photoURL || '',
+        currentStreak: 0,
+        onboardingComplete: false,
+        createdAt: serverTimestamp()
+      });
+    } else {
+      if (user.photoURL) {
+        await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
+      }
+    }
+    return result;
   };
 
   // Link existing email/password account with Google

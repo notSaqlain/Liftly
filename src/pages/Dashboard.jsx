@@ -1,33 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Flame, Users, Activity, CheckCircle2, Play } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight } from 'lucide-react';
 
 const Dashboard = () => {
-  const { currentUser } = useAuth();
-  const [userData, setUserData] = useState(null);
+  const { currentUser, userData } = useAuth();
+  const navigate = useNavigate();
   const [reportedStatus, setReportedStatus] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!currentUser) return;
-      try {
-        const docRef = doc(db, 'users', currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [currentUser]);
+  const [showSplitPicker, setShowSplitPicker] = useState(false);
 
   const reportCrowd = async (status) => {
     if (!currentUser || reportedStatus) return;
@@ -45,8 +27,22 @@ const Dashboard = () => {
 
   const displayName = userData?.firstName || currentUser?.displayName?.split(' ')[0] || currentUser?.email?.split('@')[0] || 'Lifter';
   const photoURL = userData?.photoURL || currentUser?.photoURL || null;
+  const activeSplit = userData?.activeSplit || null;
 
-  if (loading) {
+  const handleStartWorkout = () => {
+    if (!activeSplit || activeSplit.length === 0) {
+      navigate('/workout');
+      return;
+    }
+    setShowSplitPicker(true);
+  };
+
+  const handleSelectDay = (dayName) => {
+    setShowSplitPicker(false);
+    navigate(`/active-workout?day=${encodeURIComponent(dayName)}`);
+  };
+
+  if (!userData) {
     return (
       <div className="flex justify-center items-center p-6 h-[80vh]">
         <div className="animate-pulse flex flex-col items-center">
@@ -89,13 +85,18 @@ const Dashboard = () => {
 
       {/* Start Workout Primary Action */}
       <div className="pt-2">
-        <button className="w-full relative overflow-hidden group bg-liftly-navy rounded-[2rem] p-6 shadow-xl active:scale-95 transition-all duration-200 border border-slate-800 h-44 flex flex-col justify-end text-left focus:outline-none focus:ring-4 focus:ring-liftly-teal/50">
+        <button 
+          onClick={handleStartWorkout}
+          className="w-full relative overflow-hidden group bg-liftly-navy rounded-[2rem] p-6 shadow-xl active:scale-95 transition-all duration-200 border border-slate-800 h-44 flex flex-col justify-end text-left focus:outline-none focus:ring-4 focus:ring-liftly-teal/50"
+        >
           <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/20 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-liftly-teal/30 transition-colors"></div>
           
           <div className="flex justify-between items-end w-full relative z-10">
             <div>
               <h2 className="text-white text-3xl font-extrabold mb-1 tracking-tight">Start Workout</h2>
-              <p className="text-slate-300 font-medium text-sm">Log a new session</p>
+              <p className="text-slate-300 font-medium text-sm">
+                {activeSplit ? `${activeSplit.length}-day split active` : 'Log a new session'}
+              </p>
             </div>
             <div className="w-14 h-14 rounded-2xl bg-liftly-teal text-white flex items-center justify-center shadow-[0_4px_20px_0_rgba(0,173,181,0.4)] transform group-hover:scale-110 group-active:scale-95 transition-all duration-300 shrink-0">
               <Play size={28} className="ml-1 fill-white" />
@@ -104,8 +105,26 @@ const Dashboard = () => {
         </button>
       </div>
 
+      {/* Today's Split Quick Links */}
+      {activeSplit && activeSplit.length > 0 && (
+        <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-slate-200/60">
+          <h3 className="font-bold text-slate-800 text-sm mb-3">What are we hitting today?</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {activeSplit.map((dayName, idx) => (
+              <button 
+                key={idx}
+                onClick={() => handleSelectDay(dayName)}
+                className="py-3 px-2 rounded-xl bg-slate-50 hover:bg-liftly-teal/10 border border-slate-100 hover:border-liftly-teal/30 transition-all active:scale-95 text-center group"
+              >
+                <p className="text-xs font-bold text-slate-700 group-hover:text-liftly-teal truncate">{dayName}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Crowdsourcing Widget */}
-      <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60 mt-4">
+      <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60">
         <div className="flex items-center space-x-2 mb-5">
           <span className="bg-blue-50 text-blue-500 p-2 rounded-xl">
             <Users size={20} />
@@ -149,6 +168,42 @@ const Dashboard = () => {
           </>
         )}
       </div>
+
+      {/* Split Day Picker Modal */}
+      {showSplitPicker && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-[400px] rounded-[2rem] p-6 shadow-2xl animate-in slide-in-from-bottom-8 duration-300">
+            <h3 className="text-xl font-bold text-slate-800 mb-2">What are we hitting today?</h3>
+            <p className="text-slate-500 text-sm mb-6">Select today's workout</p>
+            
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+              {activeSplit.map((dayName, idx) => {
+                const dayExercises = userData?.customRoutines?.[dayName] || [];
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectDay(dayName)}
+                    className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors text-left active:scale-[0.98]"
+                  >
+                    <div>
+                      <span className="font-bold text-slate-700">{dayName}</span>
+                      <p className="text-xs text-slate-400">{dayExercises.length} exercises</p>
+                    </div>
+                    <ChevronRight size={18} className="text-slate-300" />
+                  </button>
+                );
+              })}
+            </div>
+            
+            <button 
+              onClick={() => setShowSplitPicker(false)}
+              className="w-full mt-6 py-4 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -16,6 +16,7 @@ import Onboarding from './pages/auth/Onboarding';
 import BmiCalculator from './pages/tools/BmiCalculator';
 import CalorieGoals from './pages/tools/CalorieGoals';
 import WeightTracker from './pages/tools/WeightTracker';
+import ActiveWorkout from './pages/ActiveWorkout';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
 
           {/* Protected Routes (Require Authentication) */}
           <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+          <Route path="/active-workout" element={<ProtectedRoute><ActiveWorkout /></ProtectedRoute>} />
 
           <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />
