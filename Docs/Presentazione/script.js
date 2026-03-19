@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!mockupImgElement) return;
         currentMockupIndex = (index + mockupImages.length) % mockupImages.length;
         mockupImgElement.style.opacity = '0';
-        
+
         clearTimeout(transitionTimeout);
         transitionTimeout = setTimeout(() => {
             // Reset onerror for the new image attempt to ensure missing items always get a placeholder
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startMockupSlider() {
         mockupInterval = setInterval(() => {
             updateMockup(currentMockupIndex + 1);
-        }, 5000);
+        }, 8000);
     }
 
     function stopMockupSlider() {

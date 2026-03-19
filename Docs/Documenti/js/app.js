@@ -3,7 +3,25 @@ lucide.createIcons();
 
 let isSrsLoaded = false;
 let srsObserver = null;
-
+// Funzione specifica per il click sul pulsante principale SRS
+function handleSrsClick() {
+    if (!isSrsLoaded) {
+        // Carica la pagina SRS e apri il menu se è chiuso
+        const firstSrsLink = document.querySelector('.srs-nav-link[data-target="introduzione"]');
+        scrollToSrsSection('introduzione', firstSrsLink);
+        
+        const menu = document.getElementById('menu-srs');
+        const icon = document.getElementById('icon-srs');
+        if (menu && menu.classList.contains('hidden')) {
+            menu.classList.remove('hidden');
+            menu.classList.add('block');
+            icon.classList.add('rotate-180');
+        }
+    } else {
+        // Se SRS è già in visualizzazione, comporta come un normale toggle
+        toggleMenu('menu-srs', 'icon-srs');
+    }
+}
 
 // Funzione per Aprire/Chiudere i sottomenu (Accordion)
 function toggleMenu(menuId, iconId) {
