@@ -72,7 +72,19 @@ document.addEventListener('DOMContentLoaded', () => {
         'assets/mockup/mockup2.png',
         'assets/mockup/mockup3.png',
         'assets/mockup/mockup4.png',
-        'assets/mockup/mockup5.png'
+        'assets/mockup/mockup5.png',
+        'assets/mockup/mockup6.png',
+        'assets/mockup/mockup7.png',
+        'assets/mockup/mockup8.png',
+        'assets/mockup/mockup9.png',
+        'assets/mockup/mockup10.png',
+        'assets/mockup/mockup11.png',
+        'assets/mockup/mockup12.png',
+        'assets/mockup/mockup13.png',
+        'assets/mockup/mockup14.png',
+        'assets/mockup/mockup15.png',
+        'assets/mockup/mockup16.png'
+
     ];
     let currentMockupIndex = 0;
     const mockupImgElement = document.getElementById('mockupImage');
