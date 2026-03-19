@@ -112,13 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         clearTimeout(transitionTimeout);
         transitionTimeout = setTimeout(() => {
-            // Reset onerror for the new image attempt to ensure missing items always get a placeholder
-            mockupImgElement.onerror = function () {
-                this.onerror = null; // prevent infinite loop
-                this.src = `https://via.placeholder.com/375x812/1e293b/ffffff?text=Mockup+${currentMockupIndex + 1}`;
+            const nextImg = new Image();
+            nextImg.onload = () => {
+                mockupImgElement.src = nextImg.src;
+                mockupImgElement.style.opacity = '1';
             };
-            mockupImgElement.src = mockupImages[currentMockupIndex];
-            mockupImgElement.style.opacity = '1';
+            nextImg.onerror = function () {
+                mockupImgElement.src = `https://via.placeholder.com/375x812/1e293b/ffffff?text=Mockup+${currentMockupIndex + 1}`;
+                mockupImgElement.style.opacity = '1';
+            };
+            nextImg.src = mockupImages[currentMockupIndex];
         }, 300);
     }
 
