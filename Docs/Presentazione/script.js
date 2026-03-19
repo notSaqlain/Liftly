@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'assets/mockup/mockup1.png',
         'assets/mockup/mockup2.png',
         'assets/mockup/mockup3.png',
-        'assets/mockup/mockup4.png',
         'assets/mockup/mockup5.png',
         'assets/mockup/mockup6.png',
         'assets/mockup/mockup7.png',
