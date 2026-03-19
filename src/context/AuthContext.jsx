@@ -11,8 +11,12 @@ import {
   verifyBeforeUpdateEmail,
   updatePassword as firebaseUpdatePassword,
   updateProfile as firebaseUpdateProfile,
-  deleteUser
+  deleteUser,
+  signInWithCredential,
+  GoogleAuthProvider
 } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../firebase';
 
@@ -61,8 +65,24 @@ export const AuthProvider = ({ children }) => {
 
   // Sign in with Google — popup shows native account picker on Android
   const loginWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
+    let result, user;
+
+    if (Capacitor.isNativePlatform()) {
+      // Use native Capacitor plugin for Android/iOS
+      const nativeResult = await FirebaseAuthentication.signInWithGoogle();
+      const idToken = nativeResult.credential?.idToken;
+      if (!idToken) {
+        throw new Error('Google Sign-In failed: No ID token returned.');
+      }
+      const credential = GoogleAuthProvider.credential(idToken);
+      result = await signInWithCredential(auth, credential);
+      user = result.user;
+    } else {
+      // Web fallback
+      result = await signInWithPopup(auth, googleProvider);
+      user = result.user;
+    }
+
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (!userDoc.exists()) {
       await setDoc(doc(db, 'users', user.uid), {
