@@ -167,8 +167,20 @@
                 </div>
                 <div class="w-full md:w-5/12 animate-element delay-500 perspective-1000 hidden md:block">
                     <div
-                        class="glass-panel p-4 border border-white/20 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] transform rotate-y-[-15deg] rotate-x-[10deg] flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-                        <img src="assets/app_mockup.webp" alt="App UI Preview" class="w-full rounded-[2rem] shadow-2xl">
+                        class="glass-panel p-3 border border-white/20 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] transform rotate-y-[-15deg] rotate-x-[10deg] flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 h-[500px] relative overflow-hidden group">
+                        
+                        <!-- Mockup Image Container -->
+                        <div class="w-full h-full rounded-[2.5rem] overflow-hidden relative flex items-center justify-center">
+                            <img id="mockupImage" src="assets/mockup/mockup1.png" onerror="this.src='https://via.placeholder.com/375x812/1e293b/ffffff?text=Mockup+1'" alt="App Mockup" class="w-full h-full object-cover transition-opacity duration-300">
+                        </div>
+
+                        <!-- Manual Navigation Buttons -->
+                        <button id="mockupPrev" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <button id="mockupNext" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 </div>
             </div>

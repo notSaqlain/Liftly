@@ -66,5 +66,66 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
     });
 
+    // --- Mockup Slider Logic ---
+    const mockupImages = [
+        'assets/mockup/mockup1.png',
+        'assets/mockup/mockup2.png',
+        'assets/mockup/mockup3.png',
+        'assets/mockup/mockup4.png',
+        'assets/mockup/mockup5.png'
+    ];
+    let currentMockupIndex = 0;
+    const mockupImgElement = document.getElementById('mockupImage');
+    const mockupPrevBtn = document.getElementById('mockupPrev');
+    const mockupNextBtn = document.getElementById('mockupNext');
+    let mockupInterval;
+
+    function updateMockup(index) {
+        if (!mockupImgElement) return;
+        currentMockupIndex = (index + mockupImages.length) % mockupImages.length;
+        mockupImgElement.style.opacity = '0';
+        setTimeout(() => {
+            mockupImgElement.src = mockupImages[currentMockupIndex];
+            // If image fails to load, create a placeholder via onerror (handled in HTML, but we can reset opacity)
+            mockupImgElement.style.opacity = '1';
+        }, 300);
+    }
+
+    function startMockupSlider() {
+        mockupInterval = setInterval(() => {
+            updateMockup(currentMockupIndex + 1);
+        }, 2000);
+    }
+
+    function stopMockupSlider() {
+        clearInterval(mockupInterval);
+    }
+
+    if (mockupImgElement) {
+        // Fallback for missing images dynamic error handling
+        mockupImgElement.onerror = function () {
+            this.onerror = null; // prevent infinite loop
+            this.src = `https://via.placeholder.com/375x812/1e293b/ffffff?text=Mockup+${currentMockupIndex + 1}`;
+        };
+
+        startMockupSlider();
+
+        if (mockupPrevBtn) {
+            mockupPrevBtn.addEventListener('click', () => {
+                stopMockupSlider();
+                updateMockup(currentMockupIndex - 1);
+                startMockupSlider();
+            });
+        }
+
+        if (mockupNextBtn) {
+            mockupNextBtn.addEventListener('click', () => {
+                stopMockupSlider();
+                updateMockup(currentMockupIndex + 1);
+                startMockupSlider();
+            });
+        }
+    }
+
     updateUI();
 });
