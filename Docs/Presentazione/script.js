@@ -47,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function goToSlide(index) {
         if (index < 0 || index >= slides.length) return;
 
+        if (mockupImgElement && slides[currentSlide].contains(mockupImgElement) && currentSlide !== index) {
+            stopMockupSlider();
+        }
+
         slides[currentSlide].classList.remove('active');
         dots[currentSlide].className = 'w-3 h-3 rounded-full transition-all duration-500 cursor-pointer bg-slate-600 hover:bg-slate-400';
 
@@ -56,6 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
         dots[currentSlide].className = 'w-3 h-3 rounded-full transition-all duration-500 cursor-pointer bg-blue-500 w-8';
 
         updateUI();
+
+        if (mockupImgElement && slides[currentSlide].contains(mockupImgElement)) {
+            stopMockupSlider();
+            currentMockupIndex = 0;
+            mockupImgElement.src = mockupImages[0];
+            mockupImgElement.style.opacity = '1';
+            startMockupSlider();
+        }
     }
 
     nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
@@ -91,14 +103,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const mockupPrevBtn = document.getElementById('mockupPrev');
     const mockupNextBtn = document.getElementById('mockupNext');
     let mockupInterval;
+    let transitionTimeout;
 
     function updateMockup(index) {
         if (!mockupImgElement) return;
         currentMockupIndex = (index + mockupImages.length) % mockupImages.length;
         mockupImgElement.style.opacity = '0';
-        setTimeout(() => {
+        
+        clearTimeout(transitionTimeout);
+        transitionTimeout = setTimeout(() => {
+            // Reset onerror for the new image attempt to ensure missing items always get a placeholder
+            mockupImgElement.onerror = function () {
+                this.onerror = null; // prevent infinite loop
+                this.src = `https://via.placeholder.com/375x812/1e293b/ffffff?text=Mockup+${currentMockupIndex + 1}`;
+            };
             mockupImgElement.src = mockupImages[currentMockupIndex];
-            // If image fails to load, create a placeholder via onerror (handled in HTML, but we can reset opacity)
             mockupImgElement.style.opacity = '1';
         }, 300);
     }
@@ -114,13 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (mockupImgElement) {
-        // Fallback for missing images dynamic error handling
-        mockupImgElement.onerror = function () {
-            this.onerror = null; // prevent infinite loop
-            this.src = `https://via.placeholder.com/375x812/1e293b/ffffff?text=Mockup+${currentMockupIndex + 1}`;
-        };
-
-        startMockupSlider();
+        if (slides[currentSlide].contains(mockupImgElement)) {
+            currentMockupIndex = 0;
+            mockupImgElement.src = mockupImages[0];
+            mockupImgElement.style.opacity = '1';
+            startMockupSlider();
+        }
 
         if (mockupPrevBtn) {
             mockupPrevBtn.addEventListener('click', () => {
