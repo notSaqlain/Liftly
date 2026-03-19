@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startMockupSlider() {
         mockupInterval = setInterval(() => {
             updateMockup(currentMockupIndex + 1);
-        }, 2000);
+        }, 5000);
     }
 
     function stopMockupSlider() {
