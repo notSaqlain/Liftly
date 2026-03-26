@@ -1,6 +1,6 @@
 Slide 1: Copertina
-[Davide]: "Buongiorno a tutti, io sono Davide Dolce, Project Manager di questo progetto..."
-[Saqlain]: "...e io sono Saqlain Khalid, Lead Developer. Oggi siamo qui per presentarvi LIFTLY, un progetto sviluppato per il corso di GPO che punta a ridefinire il futuro dell'allenamento in palestra."
+[Davide]: "Buongiorno a tutti, io sono Davide Dolce, Project Manager di questo progetto..." ----- Oggi siamo qui per presentarvi LIFTLY, un progetto sviluppato per il corso di GPO che punta a ridefinire il futuro dell'allenamento in palestra."
+[Saqlain]: "...e io sono Saqlain Khalid, Lead Developer. 
 
 Slide 2: La nostra Roadmap
 [Davide]: "Per questa presentazione abbiamo strutturato un percorso chiaro. Partiremo dal problema che abbiamo individuato e dalla nostra 'Visione' per risolverlo. Passeremo poi ad analizzare il nostro 'Target di Mercato' e le 'Funzionalità Tecniche' principali dell'app.
@@ -18,7 +18,7 @@ Slide 5: Feature Stack (Sviluppo Tecnico)
 [Saqlain]: "A livello tecnico, su cosa si basa Liftly?
 Prima di tutto è una Mobile-First WebApp, progettata per essere veloce e usata comodamente con un solo pollice tra una serie e l'altra.
 Il core è lo Smart Logger, che permette di inserire pesi e ripetizioni in un istante, basato su un modello Freemium.
-La vera innovazione è però il Social Crowdsourcing: pensatelo come un 'Waze' per la palestra. Gli utenti segnalano l'affollamento in tempo reale. Infine, offriamo Advanced Analytics, ovvero grafici avanzati per analizzare i volumi e i progressi nel tempo."
+La vera innovazione è però LiftChat: una funzione integrata che permette ai palestrati della stessa struttura di chattare tra loro come in un vero e proprio gruppo esclusivo. Infine, offriamo Advanced Analytics, ovvero grafici avanzati per analizzare i volumi e i progressi nel tempo."
 
 Slide 6: Gestione Progetto & Vincoli (GPO)
 [Davide]: "Ovviamente, un'idea del genere non si realizza da sola. Abbiamo dovuto affrontare due vincoli enormi: 3 mesi di tempo e 0€ di budget.
@@ -26,4 +26,4 @@ Per non fallire, abbiamo applicato rigorosamente le metodologie di Gestione Prog
 
 Slide 7: Brand & Mission
 [Davide]: "Il nome che abbiamo scelto è LIFTLY, che deriva dall'inglese 'sollevare'. È un brand corto, facile da ricordare e d'impatto.
-Il nostro obiettivo pratico è rilasciare una versione Beta funzionante entro l'8 Maggio 2026. Per misurare il nostro successo, ci siamo dati un KPI (Key Performance Indicator) molto chiaro: dobbiamo mantenere un'affidabilità del dato di crowdsourcing superiore all'80%, altrimenti l'app perde la sua utilità principale."
+Il nostro obiettivo pratico è rilasciare una versione Beta funzionante entro l'8 Maggio 2026. Per misurare il nostro successo, ci siamo dati un KPI (Key Performance Indicator) molto chiaro: dobbiamo avere oltre il 60% degli utenti attivi settimanalmente su LiftChat, altrimenti l'app perde la sua componente social principale."
