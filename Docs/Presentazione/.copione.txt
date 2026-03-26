@@ -25,5 +25,5 @@ Slide 6: Gestione Progetto & Vincoli (GPO)
 Per non fallire, abbiamo applicato rigorosamente le metodologie di Gestione Progetto. Abbiamo steso un Project Charter per definire gli obiettivi, strutturato il lavoro con una WBS (Work Breakdown Structure) per dividere i pacchetti di lavoro, e assegnato le responsabilità con una matrice RACI. Infine, abbiamo schedulato le dipendenze dello sviluppo tramite un diagramma di Gantt."
 
 Slide 7: Brand & Mission
-[Saqlain]: "Il nome che abbiamo scelto è LIFTLY, che deriva dall'inglese 'sollevare'. È un brand corto, facile da ricordare e d'impatto.
+[Davide]: "Il nome che abbiamo scelto è LIFTLY, che deriva dall'inglese 'sollevare'. È un brand corto, facile da ricordare e d'impatto.
 Il nostro obiettivo pratico è rilasciare una versione Beta funzionante entro l'8 Maggio 2026. Per misurare il nostro successo, ci siamo dati un KPI (Key Performance Indicator) molto chiaro: dobbiamo mantenere un'affidabilità del dato di crowdsourcing superiore all'80%, altrimenti l'app perde la sua utilità principale."
