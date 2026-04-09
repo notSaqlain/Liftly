@@ -27,8 +27,8 @@
                 <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Data
                         Inizio</span> <span class="font-bold text-[#001540]">13/02/2026</span></div>
                 <div class="flex justify-between border-b pb-2"><span
-                        class="text-slate-500 font-semibold">Data Fine</span> <span
-                        class="font-bold text-[#001540]">08/05/2026</span></div>
+                        class="text-slate-500 font-semibold">Versione</span> <span
+                        class="font-bold text-[#001540]">1.0</span></div>
                 <div class="flex justify-between border-b pb-2"><span
                         class="text-slate-500 font-semibold">Sponsor</span> <span
                         class="font-bold text-[#001540]">RedBull</span></div>
@@ -42,416 +42,478 @@
     <!-- Tabella WBS -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
         <div class="overflow-x-auto">
-            <table class="w-full text-left" style="min-width: 900px;">
+            <table class="w-full text-left">
                 <thead>
-                    <tr class="bg-[#001540]">
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs text-center w-16">
-                            WBS</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs">
+                    <tr class="bg-slate-50 border-b">
+                        <th
+                            class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center bg-slate-100 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            Codice</th>
+                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm">Fase /
                             Attività</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs text-center w-28">
-                            Data Avvio</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs text-center w-28">
-                            Data Chiusura</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs text-center w-16">
-                            Ore</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs text-center w-12"
-                            title="Project Manager">PM</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs text-center w-12"
-                            title="Tecnico">TEC</th>
-                        <th class="px-4 py-4 font-black text-white uppercase tracking-wider text-xs">
+                        <th
+                            class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center">
+                            Durata</th>
+                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm">
                             Descrizione</th>
+                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center"
+                            title="Project Manager">PM</th>
+                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center"
+                            title="Tecnico">TEC</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm">
+                <tbody class="text-sm bg-slate-50/30">
 
-                    <!-- ═══════════════════════════════════════ -->
-                    <!-- 1.0 FASE D'AVVIO                       -->
-                    <!-- ═══════════════════════════════════════ -->
-                    <tr class="border-b-2 border-emerald-300" style="background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);">
-                        <td class="px-4 py-3 text-center font-black text-white text-sm">
+                    <!-- 1.0 -->
+                    <tr class="bg-blue-50 border-y border-blue-100">
+                        <td
+                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
                             1.0</td>
-                        <td class="px-4 py-3 font-black text-white text-sm uppercase tracking-wide">Fase d'Avvio</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">13/02/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">25/02/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white">7</td>
-                        <td class="px-4 py-3" colspan="3"></td>
+                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Avvio progetto</td>
                     </tr>
-                    <tr class="bg-emerald-50/60 hover:bg-emerald-50 transition-colors border-b border-emerald-100" style="border-left: 3px solid #10b981;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-emerald-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             1.1</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Setup ambiente di lavoro</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">13/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">14/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Raccolta requisiti</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Raccolta richieste (diario, storico, affollamento)</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Configurazione strumenti condivisi e organizzazione iniziale</td>
                     </tr>
-                    <tr class="bg-white hover:bg-emerald-50/40 transition-colors border-b border-emerald-100/60" style="border-left: 3px solid #10b981;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-emerald-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             1.2</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Definizione team e ruoli</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">14/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">18/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Analisi funzionale</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Definizione timer, salvataggio e grafici</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-purple-100 text-purple-700 items-center justify-center font-bold text-xs shadow-sm">I</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Definizione del team, stima risorse, pianificazione tempi</td>
                     </tr>
-                    <tr class="bg-emerald-50/60 hover:bg-emerald-50 transition-colors border-b border-emerald-100" style="border-left: 3px solid #10b981;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-emerald-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             1.3</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Setup strumenti (Flutter, Supabase, Figma)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">18/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">21/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-purple-100 text-purple-700 items-center justify-center font-bold text-xs shadow-sm">I</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Definizione architettura base</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Organizzazione db, auth e struttura generale</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Installazione e configurazione di Flutter, Supabase e Figma</td>
                     </tr>
-                    <tr class="bg-white hover:bg-emerald-50/40 transition-colors border-b-2 border-emerald-200" style="border-left: 3px solid #10b981;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-emerald-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             1.4</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Analisi tecnologie</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">21/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">25/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">1</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Struttura pagine e flusso utente</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Definizione schermate (login, diario, statistiche)</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Studio delle tecnologie necessarie allo sviluppo dell'app</td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            1.5</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Pianificazione attività</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Creazione WBS, RACI e diagramma di Gantt</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
+                        </td>
                     </tr>
 
-                    <!-- ═══════════════════════════════════════ -->
-                    <!-- 2.0 PIANIFICAZIONE                     -->
-                    <!-- ═══════════════════════════════════════ -->
-                    <tr class="border-b-2 border-amber-300" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);">
-                        <td class="px-4 py-3 text-center font-black text-white text-sm">
+                    <!-- 2.0 -->
+                    <tr class="bg-blue-50 border-y border-blue-100">
+                        <td
+                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
                             2.0</td>
-                        <td class="px-4 py-3 font-black text-white text-sm uppercase tracking-wide">Pianificazione</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">27/02/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">27/03/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white">15</td>
-                        <td class="px-4 py-3" colspan="3"></td>
+                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Pianificazione</td>
                     </tr>
-                    <tr class="bg-amber-50/60 hover:bg-amber-50 transition-colors border-b border-amber-100" style="border-left: 3px solid #f59e0b;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-amber-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             2.1</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Analisi requisiti (SRS)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">27/02/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">06/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Specifiche tecniche complete</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Dettaglio moduli account, stat e crowdsourcing</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-orange-100 text-orange-700 items-center justify-center font-bold text-xs shadow-sm">C</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Definizione esigenze dell'app e dei requisiti funzionali</td>
                     </tr>
-                    <tr class="bg-white hover:bg-amber-50/40 transition-colors border-b border-amber-100/60" style="border-left: 3px solid #f59e0b;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-amber-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             2.2</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Definizione funzionalità</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">06/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">13/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Progettazione UI / UX</td>
+                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Progettazione interfaccia, ottimizzata mobile</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Identificazione funzionalità: diario, statistiche, social, chat</td>
                     </tr>
-                    <tr class="bg-amber-50/60 hover:bg-amber-50 transition-colors border-b border-amber-100" style="border-left: 3px solid #f59e0b;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-amber-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             2.3</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Progettazione database (ER + SQL)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">13/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">18/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Scelta stack tecnico</td>
+                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
+                        <td class="px-6 py-4 text-slate-600">Conferma tecnologie web, github, firebase</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Creazione schema ER e struttura database Supabase</td>
                     </tr>
-                    <tr class="bg-white hover:bg-amber-50/40 transition-colors border-b border-amber-100/60" style="border-left: 3px solid #f59e0b;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-amber-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             2.4</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Progettazione UI/UX (Figma)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">18/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">24/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">3</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Prototipo grafico semplice</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Bozza visiva dell'app LIFTLY</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-orange-100 text-orange-700 items-center justify-center font-bold text-xs shadow-sm">C</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Creazione mockup per l'interfaccia utente dell'app</td>
-                    </tr>
-                    <tr class="bg-amber-50/60 hover:bg-amber-50 transition-colors border-b-2 border-amber-200" style="border-left: 3px solid #f59e0b;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-amber-50/80">
-                            2.5</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Pianificazione sviluppo (Gantt)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">24/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">27/03/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
-                        </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-purple-100 text-purple-700 items-center justify-center font-bold text-xs shadow-sm">I</span>
-                        </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Creazione Gantt e organizzazione attività di sviluppo</td>
                     </tr>
 
-                    <!-- ═══════════════════════════════════════ -->
-                    <!-- 3.0 REALIZZAZIONE                      -->
-                    <!-- ═══════════════════════════════════════ -->
-                    <tr class="border-b-2 border-blue-300" style="background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%);">
-                        <td class="px-4 py-3 text-center font-black text-white text-sm">
+                    <!-- 3.0 -->
+                    <tr class="bg-blue-50 border-y border-blue-100">
+                        <td
+                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
                             3.0</td>
-                        <td class="px-4 py-3 font-black text-white text-sm uppercase tracking-wide">Realizzazione</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">01/04/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">08/05/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white">35</td>
-                        <td class="px-4 py-3" colspan="3"></td>
+                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Sviluppo Core (Realizzazione)</td>
                     </tr>
-                    <tr class="bg-blue-50/60 hover:bg-blue-50 transition-colors border-b border-blue-100" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.1</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Setup backend (Supabase)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">01/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">03/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Sviluppo gestione account</td>
+                        <td class="px-6 py-4 text-center text-slate-500">4 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Registrazione, login e dati biometrici</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Configurazione Supabase e connessione database</td>
                     </tr>
-                    <tr class="bg-white hover:bg-blue-50/40 transition-colors border-b border-blue-100/60" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.2</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Implementazione database</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">03/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">08/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Sviluppo diario di allenamento</td>
+                        <td class="px-6 py-4 text-center text-slate-500">6 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Registrazione set, rep, peso e timer</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Creazione tabelle e relazioni nel database</td>
                     </tr>
-                    <tr class="bg-blue-50/60 hover:bg-blue-50 transition-colors border-b border-blue-100" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.3</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Sviluppo gestione account</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">08/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">14/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Sviluppo modulo statistiche</td>
+                        <td class="px-6 py-4 text-center text-slate-500">5 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Grafici progresso e sistema streak</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Registrazione, login e gestione dati biometrici</td>
                     </tr>
-                    <tr class="bg-white hover:bg-blue-50/40 transition-colors border-b border-blue-100/60" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.4</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Sviluppo diario di allenamento</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">14/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">21/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">6</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Modulo Social (Crowdsourcing & LiftChat)</td>
+                        <td class="px-6 py-4 text-center text-slate-500">6 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Crowdsourcing stato palestra e chat telegram-style</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Registrazione set, ripetizioni, peso e timer riposo</td>
                     </tr>
-                    <tr class="bg-blue-50/60 hover:bg-blue-50 transition-colors border-b border-blue-100" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.5</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Sviluppo modulo statistiche</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">21/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">24/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">5</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Gestione routine (Premium)</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Simulazione flag db per routine illimitate</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Grafici progresso, radar chart e sistema streak</td>
                     </tr>
-                    <tr class="bg-white hover:bg-blue-50/40 transition-colors border-b border-blue-100/60" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.6</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Modulo Social (Crowdsourcing & LiftChat)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">24/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">29/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">6</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Integrazione componenti</td>
+                        <td class="px-6 py-4 text-center text-slate-500">4 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Unione db, logica di business e UI</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Crowdsourcing stato palestra e chat telegram-style</td>
                     </tr>
-                    <tr class="bg-blue-50/60 hover:bg-blue-50 transition-colors border-b border-blue-100" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             3.7</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Gestione routine (Premium)</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">29/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">01/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Versione beta</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Pubblicazione di una versione funzionante</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Simulazione flag db per routine illimitate premium</td>
-                    </tr>
-                    <tr class="bg-white hover:bg-blue-50/40 transition-colors border-b-2 border-blue-200" style="border-left: 3px solid #3b82f6;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-blue-50/40">
-                            3.8</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Integrazione backend + frontend</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">01/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">06/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
-                        </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
-                        </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Collegamento tra frontend Flutter e backend Supabase</td>
                     </tr>
 
-                    <!-- ═══════════════════════════════════════ -->
-                    <!-- 4.0 CHIUSURA                           -->
-                    <!-- ═══════════════════════════════════════ -->
-                    <tr class="border-b-2 border-rose-300" style="background: linear-gradient(135deg, #be123c 0%, #e11d48 50%, #fb7185 100%);">
-                        <td class="px-4 py-3 text-center font-black text-white text-sm">
+                    <!-- 4.0 -->
+                    <tr class="bg-blue-50 border-y border-blue-100">
+                        <td
+                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
                             4.0</td>
-                        <td class="px-4 py-3 font-black text-white text-sm uppercase tracking-wide">Chiusura</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">20/04/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white/90 text-xs">08/05/2026</td>
-                        <td class="px-4 py-3 text-center font-bold text-white">13</td>
-                        <td class="px-4 py-3" colspan="3"></td>
+                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Test e collaudo</td>
                     </tr>
-                    <tr class="bg-rose-50/60 hover:bg-rose-50 transition-colors border-b border-rose-100" style="border-left: 3px solid #e11d48;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-rose-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             4.1</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Testing funzionalità</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">20/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">26/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">3</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Test funzionali</td>
+                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Controllo salvataggio dati esercizi e timer</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Verifica funzionamento generale dell'app</td>
                     </tr>
-                    <tr class="bg-white hover:bg-rose-50/40 transition-colors border-b border-rose-100/60" style="border-left: 3px solid #e11d48;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-rose-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             4.2</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Debug e correzione bug</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">26/04/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">02/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">4</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Test compatibilità mobile</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Verifica ottimizzazione smartphone</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Correzione errori e bug riscontrati nei test</td>
                     </tr>
-                    <tr class="bg-rose-50/60 hover:bg-rose-50 transition-colors border-b border-rose-100" style="border-left: 3px solid #e11d48;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-rose-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             4.3</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Ottimizzazione</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">02/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">04/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">2</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Test componenti social</td>
+                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Verifica crowdsourcing e stabilità LiftChat</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Miglioramento prestazioni e UX dell'app</td>
                     </tr>
-                    <tr class="bg-white hover:bg-rose-50/40 transition-colors border-b border-rose-100/60" style="border-left: 3px solid #e11d48;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-rose-50/40">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             4.4</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Documentazione finale</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">04/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">07/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">3</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Correzione bug</td>
+                        <td class="px-6 py-4 text-center text-slate-500">4 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Risoluzione errori Beta</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Creazione documenti finali e manuale d'uso</td>
                     </tr>
-                    <tr class="bg-rose-50/60 hover:bg-rose-50 transition-colors border-b-2 border-rose-200" style="border-left: 3px solid #e11d48;">
-                        <td class="px-4 py-3 text-center text-[#001540] font-bold bg-rose-50/80">
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
                             4.5</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">Consegna progetto</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">08/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-500 text-xs">08/05/2026</td>
-                        <td class="px-4 py-3 text-center text-slate-600 font-semibold">1</td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 items-center justify-center font-bold text-xs shadow-sm">R</span>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Validazione del PM</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Controllo e approvazione versione testata</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
                         </td>
-                        <td class="px-4 py-3 text-center"><span
-                                class="inline-flex w-7 h-7 rounded-lg bg-blue-100 text-blue-700 items-center justify-center font-bold text-xs shadow-sm">A</span>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-xs">Preparazione e consegna progetto finale</td>
                     </tr>
 
-                    <!-- TOTALE -->
-                    <tr class="bg-[#001540]">
-                        <td class="px-4 py-3 text-center font-black text-white text-sm" colspan="4">TOTALE ORE LAVORO UOMO</td>
-                        <td class="px-4 py-3 text-center font-black text-white text-lg">70</td>
-                        <td class="px-4 py-3" colspan="3"></td>
+                    <!-- 5.0 -->
+                    <tr class="bg-blue-50 border-y border-blue-100">
+                        <td
+                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
+                            5.0</td>
+                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Installazione e rilascio</td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            5.1</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Configurazione ambiente</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Setup firebase e github actions</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            5.2</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Prove finali funzionamento</td>
+                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
+                        <td class="px-6 py-4 text-slate-600">Verifiche in ambiente produzione simulato</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            5.3</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Rilascio App LIFTLY</td>
+                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
+                        <td class="px-6 py-4 text-slate-600">Rilascio versione Beta</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                    </tr>
+
+                    <!-- 6.0 -->
+                    <tr class="bg-blue-50 border-y border-blue-100">
+                        <td
+                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
+                            6.0</td>
+                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Documentazione e chiusura</td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            6.1</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Revisione codice e metriche</td>
+                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Analisi acquisizione competenze tecniche</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            6.2</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Documentazione finale</td>
+                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
+                        <td class="px-6 py-4 text-slate-600">Preparazione manuale d'uso e SRS</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                    </tr>
+                    <tr
+                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
+                        <td
+                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
+                            6.3</td>
+                        <td class="px-6 py-4 font-semibold text-slate-800">Consegna e chiusura progetto</td>
+                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
+                        <td class="px-6 py-4 text-slate-600">Consegna del prodotto e chiusura</td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
+                        </td>
+                        <td class="px-6 py-4 text-center"><span
+                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -463,22 +525,22 @@
         <h3 class="font-bold text-[#001540] mb-4">Legenda Ruoli (RACI)</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shadow-sm">R</span>
+                    class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center font-bold">R</span>
                 <span class="text-sm font-semibold text-slate-600">Responsible<br><span
                         class="text-xs font-normal text-slate-400">Esecutore</span></span>
             </div>
             <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold shadow-sm">A</span>
+                    class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold">A</span>
                 <span class="text-sm font-semibold text-slate-600">Accountable<br><span
                         class="text-xs font-normal text-slate-400">Approvatore</span></span>
             </div>
             <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center font-bold shadow-sm">C</span>
+                    class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold">C</span>
                 <span class="text-sm font-semibold text-slate-600">Consulted<br><span
                         class="text-xs font-normal text-slate-400">Consultato</span></span>
             </div>
             <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold shadow-sm">I</span>
+                    class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold">I</span>
                 <span class="text-sm font-semibold text-slate-600">Informed<br><span
                         class="text-xs font-normal text-slate-400">Informato</span></span>
             </div>
