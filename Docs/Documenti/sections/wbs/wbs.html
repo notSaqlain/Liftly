@@ -27,8 +27,8 @@
                 <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Data
                         Inizio</span> <span class="font-bold text-[#001540]">13/02/2026</span></div>
                 <div class="flex justify-between border-b pb-2"><span
-                        class="text-slate-500 font-semibold">Versione</span> <span
-                        class="font-bold text-[#001540]">1.0</span></div>
+                        class="text-slate-500 font-semibold">Data Fine</span> <span
+                        class="font-bold text-[#001540]">08/05/2026</span></div>
                 <div class="flex justify-between border-b pb-2"><span
                         class="text-slate-500 font-semibold">Sponsor</span> <span
                         class="font-bold text-[#001540]">RedBull</span></div>
@@ -38,512 +38,432 @@
         </div>
     </div>
 
+    <style>
+        /* ── WBS Table Premium Styles ── */
+        .wbs-table-wrap {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.03);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .wbs-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: .8125rem;
+            line-height: 1.55;
+        }
+
+        /* ── Header ── */
+        .wbs-table thead th {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #001540;
+            font-weight: 900;
+            font-size: .6875rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: .875rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            white-space: nowrap;
+        }
+
+        .wbs-table thead th:first-child {
+            text-align: center;
+            background: linear-gradient(180deg, #eef2ff 0%, #e0e7ff 100%);
+            border-right: 2px solid #e2e8f0;
+            min-width: 60px;
+        }
+
+        /* ── Phase Row (coloured band) ── */
+        .phase-row td {
+            padding: .75rem 1rem;
+            font-weight: 900;
+            font-size: .8125rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            border-bottom: 1px solid transparent;
+        }
+
+        .phase-row .phase-code {
+            text-align: center;
+            border-right: 2px solid rgba(255,255,255,.25);
+            font-size: .875rem;
+        }
+
+        /* Phase colour variants  */
+        .phase-avvio td       { background: linear-gradient(90deg, #0ea5e9, #38bdf8); color: #fff; }
+        .phase-pianif td      { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #78350f; }
+        .phase-realiz td      { background: linear-gradient(90deg, #22c55e, #4ade80); color: #14532d; }
+        .phase-chiusura td    { background: linear-gradient(90deg, #ef4444, #f87171); color: #fff; }
+
+        /* ── Activity Rows ── */
+        .wbs-table tbody tr.act-row {
+            transition: background .15s;
+        }
+        .wbs-table tbody tr.act-row:hover {
+            background: #f8fafc;
+        }
+        .wbs-table tbody tr.act-row td {
+            padding: .65rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+        .wbs-table tbody tr.act-row td:first-child {
+            text-align: center;
+            font-weight: 700;
+            color: #001540;
+            background: #fafbfd;
+            border-right: 2px solid #e2e8f0;
+        }
+        .act-row .act-name { font-weight: 600; color: #1e293b; }
+        .act-row .act-date { text-align: center; color: #64748b; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .act-row .act-ore  { text-align: center; color: #475569; font-weight: 600; }
+        .act-row .act-desc { color: #64748b; }
+
+        /* ── RACI Badges ── */
+        .raci {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.65rem;
+            height: 1.65rem;
+            border-radius: .375rem;
+            font-weight: 700;
+            font-size: .65rem;
+            letter-spacing: .02em;
+            line-height: 1;
+        }
+        .raci-r { background: #dcfce7; color: #16a34a; }
+        .raci-a { background: #dbeafe; color: #2563eb; }
+        .raci-c { background: #ffedd5; color: #ea580c; }
+        .raci-i { background: #f3e8ff; color: #9333ea; }
+        .raci-ar { background: linear-gradient(135deg, #dbeafe, #dcfce7); color: #0369a1; }
+        .raci-ra { background: linear-gradient(135deg, #dcfce7, #dbeafe); color: #15803d; }
+        td.raci-cell { text-align: center; }
+    </style>
 
     <!-- Tabella WBS -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+    <div class="wbs-table-wrap">
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="wbs-table">
                 <thead>
-                    <tr class="bg-slate-50 border-b">
-                        <th
-                            class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center bg-slate-100 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            Codice</th>
-                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm">Fase /
-                            Attività</th>
-                        <th
-                            class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center">
-                            Durata</th>
-                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm">
-                            Descrizione</th>
-                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center"
-                            title="Project Manager">PM</th>
-                        <th class="px-6 py-4 font-black text-[#001540] uppercase italic tracking-widest text-sm text-center"
-                            title="Tecnico">TEC</th>
+                    <tr>
+                        <th>WBS</th>
+                        <th>Attività</th>
+                        <th style="text-align:center">Data Avvio</th>
+                        <th style="text-align:center">Data Chiusura</th>
+                        <th style="text-align:center">Ore Uomo</th>
+                        <th style="text-align:center" title="Project Manager">PM</th>
+                        <th style="text-align:center" title="Tecnico">TEC</th>
+                        <th>Descrizione</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm bg-slate-50/30">
+                <tbody>
 
-                    <!-- 1.0 -->
-                    <tr class="bg-blue-50 border-y border-blue-100">
-                        <td
-                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
-                            1.0</td>
-                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Avvio progetto</td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            1.1</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Raccolta requisiti</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Raccolta richieste (diario, storico, affollamento)</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            1.2</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Analisi funzionale</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Definizione timer, salvataggio e grafici</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            1.3</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Definizione architettura base</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Organizzazione db, auth e struttura generale</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            1.4</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Struttura pagine e flusso utente</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Definizione schermate (login, diario, statistiche)</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            1.5</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Pianificazione attività</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Creazione WBS, RACI e diagramma di Gantt</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
+                    <!-- ═══════════════════  1.0 – FASE D'AVVIO  ═══════════════════ -->
+                    <tr class="phase-row phase-avvio">
+                        <td class="phase-code">1.0</td>
+                        <td colspan="7">Fase d'Avvio</td>
                     </tr>
 
-                    <!-- 2.0 -->
-                    <tr class="bg-blue-50 border-y border-blue-100">
-                        <td
-                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
-                            2.0</td>
-                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Pianificazione</td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            2.1</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Specifiche tecniche complete</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Dettaglio moduli account, stat e crowdsourcing</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            2.2</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Progettazione UI / UX</td>
-                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Progettazione interfaccia, ottimizzata mobile</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            2.3</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Scelta stack tecnico</td>
-                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
-                        <td class="px-6 py-4 text-slate-600">Conferma tecnologie web, github, firebase</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            2.4</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Prototipo grafico semplice</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Bozza visiva dell'app LIFTLY</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
+                    <tr class="act-row">
+                        <td>1.1</td>
+                        <td class="act-name">Setup ambiente di lavoro</td>
+                        <td class="act-date">13/02/2026</td>
+                        <td class="act-date">13/02/2026</td>
+                        <td class="act-ore">2</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Configurazione strumenti condivisi e organizzazione iniziale del progetto</td>
                     </tr>
 
-                    <!-- 3.0 -->
-                    <tr class="bg-blue-50 border-y border-blue-100">
-                        <td
-                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
-                            3.0</td>
-                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Sviluppo Core (Realizzazione)</td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.1</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Sviluppo gestione account</td>
-                        <td class="px-6 py-4 text-center text-slate-500">4 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Registrazione, login e dati biometrici</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.2</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Sviluppo diario di allenamento</td>
-                        <td class="px-6 py-4 text-center text-slate-500">6 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Registrazione set, rep, peso e timer</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.3</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Sviluppo modulo statistiche</td>
-                        <td class="px-6 py-4 text-center text-slate-500">5 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Grafici progresso e sistema streak</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.4</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Modulo Social (Crowdsourcing & LiftChat)</td>
-                        <td class="px-6 py-4 text-center text-slate-500">6 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Crowdsourcing stato palestra e chat telegram-style</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.5</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Gestione routine (Premium)</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Simulazione flag db per routine illimitate</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.6</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Integrazione componenti</td>
-                        <td class="px-6 py-4 text-center text-slate-500">4 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Unione db, logica di business e UI</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            3.7</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Versione beta</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Pubblicazione di una versione funzionante</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
+                    <tr class="act-row">
+                        <td>1.2</td>
+                        <td class="act-name">Definizione team e ruoli</td>
+                        <td class="act-date">13/02/2026</td>
+                        <td class="act-date">18/02/2026</td>
+                        <td class="act-ore">2</td>
+                        <td class="raci-cell"><span class="raci raci-ar">A,R</span></td>
+                        <td class="raci-cell"><span class="raci raci-i">I</span></td>
+                        <td class="act-desc">Definizione del team, stima delle risorse, pianificazione dei tempi e dei costi</td>
                     </tr>
 
-                    <!-- 4.0 -->
-                    <tr class="bg-blue-50 border-y border-blue-100">
-                        <td
-                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
-                            4.0</td>
-                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Test e collaudo</td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            4.1</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Test funzionali</td>
-                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Controllo salvataggio dati esercizi e timer</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            4.2</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Test compatibilità mobile</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Verifica ottimizzazione smartphone</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            4.3</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Test componenti social</td>
-                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Verifica crowdsourcing e stabilità LiftChat</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            4.4</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Correzione bug</td>
-                        <td class="px-6 py-4 text-center text-slate-500">4 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Risoluzione errori Beta</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            4.5</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Validazione del PM</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Controllo e approvazione versione testata</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
+                    <tr class="act-row">
+                        <td>1.3</td>
+                        <td class="act-name">Setup strumenti (Flutter, Supabase, Figma)</td>
+                        <td class="act-date">20/02/2026</td>
+                        <td class="act-date">20/02/2026</td>
+                        <td class="act-ore">2</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Installazione e configurazione di Flutter, Supabase e Figma</td>
                     </tr>
 
-                    <!-- 5.0 -->
-                    <tr class="bg-blue-50 border-y border-blue-100">
-                        <td
-                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
-                            5.0</td>
-                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Installazione e rilascio</td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            5.1</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Configurazione ambiente</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Setup firebase e github actions</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            5.2</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Prove finali funzionamento</td>
-                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
-                        <td class="px-6 py-4 text-slate-600">Verifiche in ambiente produzione simulato</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                    </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            5.3</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Rilascio App LIFTLY</td>
-                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
-                        <td class="px-6 py-4 text-slate-600">Rilascio versione Beta</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
+                    <tr class="act-row">
+                        <td>1.4</td>
+                        <td class="act-name">Analisi tecnologie</td>
+                        <td class="act-date">25/02/2026</td>
+                        <td class="act-date">25/02/2026</td>
+                        <td class="act-ore">1</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Studio delle tecnologie necessarie allo sviluppo dell'app</td>
                     </tr>
 
-                    <!-- 6.0 -->
-                    <tr class="bg-blue-50 border-y border-blue-100">
-                        <td
-                            class="px-6 py-4 text-center font-black text-[#001540] bg-blue-100/60 border-r border-blue-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.05)]">
-                            6.0</td>
-                        <td class="px-6 py-4 font-bold text-[#001540]" colspan="5">Documentazione e chiusura</td>
+                    <!-- ═══════════════════  2.0 – PIANIFICAZIONE  ═══════════════════ -->
+                    <tr class="phase-row phase-pianif">
+                        <td class="phase-code">2.0</td>
+                        <td colspan="7">Pianificazione</td>
                     </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            6.1</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Revisione codice e metriche</td>
-                        <td class="px-6 py-4 text-center text-slate-500">2 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Analisi acquisizione competenze tecniche</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
+
+                    <tr class="act-row">
+                        <td>2.1</td>
+                        <td class="act-name">Analisi requisiti (SRS)</td>
+                        <td class="act-date">27/02/2026</td>
+                        <td class="act-date">04/03/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
+                        <td class="act-desc">Definizione delle esigenze dell'app e dei requisiti funzionali</td>
                     </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            6.2</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Documentazione finale</td>
-                        <td class="px-6 py-4 text-center text-slate-500">3 ore</td>
-                        <td class="px-6 py-4 text-slate-600">Preparazione manuale d'uso e SRS</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/C</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
+
+                    <tr class="act-row">
+                        <td>2.2</td>
+                        <td class="act-name">Definizione funzionalità</td>
+                        <td class="act-date">06/03/2026</td>
+                        <td class="act-date">11/03/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
+                        <td class="act-desc">Identificazione delle funzionalità principali (diario, statistiche, social, LiftChat)</td>
                     </tr>
-                    <tr
-                        class="odd:bg-white even:bg-slate-50/50 hover:bg-slate-100 transition-colors border-b border-slate-100">
-                        <td
-                            class="px-6 py-4 text-center text-[#001540] font-bold bg-slate-50 border-r border-slate-200 shadow-[inset_-2px_0_0_0_rgba(0,0,0,0.02)]">
-                            6.3</td>
-                        <td class="px-6 py-4 font-semibold text-slate-800">Consegna e chiusura progetto</td>
-                        <td class="px-6 py-4 text-center text-slate-500">1 ora</td>
-                        <td class="px-6 py-4 text-slate-600">Consegna del prodotto e chiusura</td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs mx-auto">R</span>
-                        </td>
-                        <td class="px-6 py-4 text-center"><span
-                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mx-auto">A/I</span>
-                        </td>
+
+                    <tr class="act-row">
+                        <td>2.3</td>
+                        <td class="act-name">Progettazione database (ER + SQL)</td>
+                        <td class="act-date">13/03/2026</td>
+                        <td class="act-date">18/03/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Creazione schema ER e struttura database Supabase</td>
                     </tr>
+
+                    <tr class="act-row">
+                        <td>2.4</td>
+                        <td class="act-name">Progettazione UI/UX (Figma)</td>
+                        <td class="act-date">13/03/2026</td>
+                        <td class="act-date">18/03/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-ar">R/A</span></td>
+                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
+                        <td class="act-desc">Creazione mockup per l'interfaccia utente dell'app</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>2.5</td>
+                        <td class="act-name">Pianificazione sviluppo (Gantt)</td>
+                        <td class="act-date">27/03/2026</td>
+                        <td class="act-date">27/03/2026</td>
+                        <td class="act-ore">2</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-i">I</span></td>
+                        <td class="act-desc">Creazione Gantt e organizzazione attività</td>
+                    </tr>
+
+                    <!-- ═══════════════════  3.0 – REALIZZAZIONE  ═══════════════════ -->
+                    <tr class="phase-row phase-realiz">
+                        <td class="phase-code">3.0</td>
+                        <td colspan="7">Realizzazione</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>3.1</td>
+                        <td class="act-name">Setup backend (Supabase)</td>
+                        <td class="act-date">01/04/2026</td>
+                        <td class="act-date">03/04/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-ar">A/R</span></td>
+                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
+                        <td class="act-desc">Configurazione Supabase e connessione database</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>3.2</td>
+                        <td class="act-name">Implementazione database</td>
+                        <td class="act-date">08/04/2026</td>
+                        <td class="act-date">10/04/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Creazione tabelle e relazioni nel database</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>3.3</td>
+                        <td class="act-name">Sviluppo frontend (Flutter)</td>
+                        <td class="act-date">13/04/2026</td>
+                        <td class="act-date">24/04/2026</td>
+                        <td class="act-ore">8</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Sviluppo interfaccia app con Flutter (diario, statistiche, social)</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>3.4</td>
+                        <td class="act-name">Login / registrazione utenti</td>
+                        <td class="act-date">22/04/2026</td>
+                        <td class="act-date">24/04/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell">&nbsp;</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="act-desc">Implementazione sistema autenticazione utenti</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>3.5</td>
+                        <td class="act-name">Modulo Social (Crowdsourcing & LiftChat)</td>
+                        <td class="act-date">29/04/2026</td>
+                        <td class="act-date">06/05/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell">&nbsp;</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="act-desc">Crowdsourcing stato palestra e chat telegram-style</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>3.6</td>
+                        <td class="act-name">Integrazione backend + frontend</td>
+                        <td class="act-date">06/05/2026</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Collegamento tra frontend e backend</td>
+                    </tr>
+
+                    <!-- ═══════════════════  4.0 – CHIUSURA  ═══════════════════ -->
+                    <tr class="phase-row phase-chiusura">
+                        <td class="phase-code">4.0</td>
+                        <td colspan="7">Chiusura</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>4.1</td>
+                        <td class="act-name">Testing funzionalità</td>
+                        <td class="act-date">29/04/2026</td>
+                        <td class="act-date">01/05/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Verifica funzionamento generale dell'app</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>4.2</td>
+                        <td class="act-name">Debug</td>
+                        <td class="act-date">06/05/2026</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Correzione errori e bug</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>4.3</td>
+                        <td class="act-name">Ottimizzazione</td>
+                        <td class="act-date">04/05/2026</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Miglioramento prestazioni e UX</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>4.4</td>
+                        <td class="act-name">Documentazione finale</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-ore">4</td>
+                        <td class="raci-cell"><span class="raci raci-ar">A/R</span></td>
+                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
+                        <td class="act-desc">Creazione documenti finali e manuale d'uso</td>
+                    </tr>
+
+                    <tr class="act-row">
+                        <td>4.5</td>
+                        <td class="act-name">Consegna e chiusura progetto</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-date">08/05/2026</td>
+                        <td class="act-ore">1</td>
+                        <td class="raci-cell"><span class="raci raci-ar">A/R</span></td>
+                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
+                        <td class="act-desc">Preparazione e consegna progetto finale</td>
+                    </tr>
+
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Legenda Matrice RACI -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-        <h3 class="font-bold text-[#001540] mb-4">Legenda Ruoli (RACI)</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center font-bold">R</span>
-                <span class="text-sm font-semibold text-slate-600">Responsible<br><span
-                        class="text-xs font-normal text-slate-400">Esecutore</span></span>
-            </div>
-            <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold">A</span>
-                <span class="text-sm font-semibold text-slate-600">Accountable<br><span
-                        class="text-xs font-normal text-slate-400">Approvatore</span></span>
-            </div>
-            <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold">C</span>
-                <span class="text-sm font-semibold text-slate-600">Consulted<br><span
-                        class="text-xs font-normal text-slate-400">Consultato</span></span>
-            </div>
-            <div class="flex items-center gap-3"><span
-                    class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold">I</span>
-                <span class="text-sm font-semibold text-slate-600">Informed<br><span
-                        class="text-xs font-normal text-slate-400">Informato</span></span>
+    <!-- ── Legenda RACI + Info Fasi ── -->
+    <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- Legenda Ruoli -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+            <h3 class="font-bold text-[#001540] mb-4 text-sm uppercase tracking-widest">Legenda Ruoli (RACI)</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex items-center gap-3"><span class="raci raci-r" style="width:2rem;height:2rem;">R</span>
+                    <span class="text-sm font-semibold text-slate-600">Responsible<br><span
+                            class="text-xs font-normal text-slate-400">Esecutore</span></span>
+                </div>
+                <div class="flex items-center gap-3"><span class="raci raci-a" style="width:2rem;height:2rem;">A</span>
+                    <span class="text-sm font-semibold text-slate-600">Accountable<br><span
+                            class="text-xs font-normal text-slate-400">Approvatore</span></span>
+                </div>
+                <div class="flex items-center gap-3"><span class="raci raci-c" style="width:2rem;height:2rem;">C</span>
+                    <span class="text-sm font-semibold text-slate-600">Consulted<br><span
+                            class="text-xs font-normal text-slate-400">Consultato</span></span>
+                </div>
+                <div class="flex items-center gap-3"><span class="raci raci-i" style="width:2rem;height:2rem;">I</span>
+                    <span class="text-sm font-semibold text-slate-600">Informed<br><span
+                            class="text-xs font-normal text-slate-400">Informato</span></span>
+                </div>
             </div>
         </div>
+
+        <!-- Legenda Fasi -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+            <h3 class="font-bold text-[#001540] mb-4 text-sm uppercase tracking-widest">Fasi del Progetto</h3>
+            <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"></span>
+                    <span class="text-sm text-slate-600"><strong class="text-slate-800">1.0</strong> Fase d'Avvio &mdash; <span class="text-slate-400">13/02 → 25/02</span></span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"></span>
+                    <span class="text-sm text-slate-600"><strong class="text-slate-800">2.0</strong> Pianificazione &mdash; <span class="text-slate-400">27/02 → 27/03</span></span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#22c55e,#4ade80)"></span>
+                    <span class="text-sm text-slate-600"><strong class="text-slate-800">3.0</strong> Realizzazione &mdash; <span class="text-slate-400">01/04 → 08/05</span></span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#ef4444,#f87171)"></span>
+                    <span class="text-sm text-slate-600"><strong class="text-slate-800">4.0</strong> Chiusura &mdash; <span class="text-slate-400">29/04 → 08/05</span></span>
+                </div>
+            </div>
+        </div>
+
     </div>
+
 </section>
