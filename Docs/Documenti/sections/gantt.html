@@ -31,6 +31,10 @@
 
     <!-- ═══════════════  GANTT CHART  ═══════════════ -->
     <style>
+        /* ── Forza il contenitore a usare tutta la larghezza ── */
+        #gantt { max-width: none !important; }
+        #gantt ~ *, #main-content-area:has(#gantt) { max-width: none !important; }
+
         /* ── Gantt Container ── */
         .gantt-wrapper {
             background: #ffffff;
