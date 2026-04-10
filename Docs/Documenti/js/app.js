@@ -59,6 +59,17 @@ async function showSection(sectionId, clickedElement, isSubmenu) {
             // Reinizializza le icone lucide nel nuovo HTML appena caricato
             lucide.createIcons();
 
+            // Esegui gli script contenuti nel nuovo HTML (innerHTML non li esegue)
+            mainContainer.querySelectorAll('script').forEach(oldScript => {
+                const newScript = document.createElement('script');
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+
             // Applica l'animazione
             const newSection = mainContainer.querySelector('.section-content');
             if (newSection) newSection.classList.add('active');
