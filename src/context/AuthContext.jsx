@@ -63,6 +63,12 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  // Helper: detect mobile web browser (not native Capacitor)
+  const isMobileWeb = () => {
+    if (Capacitor.isNativePlatform()) return false;
+    return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+  };
+
   // Sign in with Google — popup shows native account picker on Android
   const loginWithGoogle = async () => {
     let result, user;
@@ -77,8 +83,12 @@ export const AuthProvider = ({ children }) => {
       const credential = GoogleAuthProvider.credential(idToken);
       result = await signInWithCredential(auth, credential);
       user = result.user;
+    } else if (isMobileWeb()) {
+      // Mobile web: use redirect (popups are blocked on mobile browsers)
+      await signInWithRedirect(auth, googleProvider);
+      return; // Page will reload; redirect result handled in useEffect
     } else {
-      // Web fallback
+      // Desktop web: use popup
       result = await signInWithPopup(auth, googleProvider);
       user = result.user;
     }
