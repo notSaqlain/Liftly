@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/Layout/MainLayout';
@@ -17,6 +17,21 @@ import BmiCalculator from './pages/tools/BmiCalculator';
 import CalorieGoals from './pages/tools/CalorieGoals';
 import WeightTracker from './pages/tools/WeightTracker';
 import ActiveWorkout from './pages/ActiveWorkout';
+import LiftChat from './pages/LiftChat';
+
+// 404
+const NotFound = () => (
+  <div className="flex justify-center bg-slate-100 min-h-screen">
+    <div className="w-full max-w-[480px] bg-liftly-navy min-h-screen flex flex-col items-center justify-center text-white p-8">
+      <div className="text-8xl font-black text-liftly-teal mb-4">404</div>
+      <h1 className="text-2xl font-bold mb-2">Page not found</h1>
+      <p className="text-slate-400 text-sm text-center mb-8">The page you're looking for doesn't exist.</p>
+      <a href="/" className="px-6 py-3 bg-liftly-teal text-white font-bold rounded-2xl active:scale-95 transition-all">
+        Go Home
+      </a>
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -35,15 +50,19 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/workout" element={<Workout />} />
             <Route path="/stats" element={<Stats />} />
+            <Route path="/chat" element={<LiftChat />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="/personal-info" element={<PersonalInfo />} />
-            
+
             {/* Tools */}
             <Route path="/tools/bmi" element={<BmiCalculator />} />
             <Route path="/tools/calories" element={<CalorieGoals />} />
             <Route path="/tools/weight" element={<WeightTracker />} />
           </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

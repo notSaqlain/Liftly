@@ -3,15 +3,17 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import exercisesData from '../data/exercises.json';
-import { Search, Heart, Plus, ChevronRight, Activity, CalendarDays, Dumbbell } from 'lucide-react';
+import { Search, Heart, Plus, X, Activity, CalendarDays, Dumbbell, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
+
+const MUSCLE_FILTERS = ['All', 'Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
 
 const Workout = () => {
   const { currentUser, userData } = useAuth();
   const [activeTab, setActiveTab] = useState('split');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Local state for UI responsiveness before Firebase syncs back
+  const [muscleFilter, setMuscleFilter] = useState('All');
+
   const [favorites, setFavorites] = useState([]);
   const [customRoutines, setCustomRoutines] = useState({});
   const [activeSplit, setActiveSplit] = useState(null);
@@ -27,29 +29,20 @@ const Workout = () => {
 
   const toggleFavorite = async (exerciseId) => {
     if (!currentUser) return;
-    
     const isFavorite = favorites.includes(exerciseId);
     const userRef = doc(db, 'users', currentUser.uid);
-    
-    // Optimistic UI update
-    setFavorites(prev => 
-      isFavorite ? prev.filter(id => id !== exerciseId) : [...prev, exerciseId]
-    );
-
+    setFavorites(prev => isFavorite ? prev.filter(id => id !== exerciseId) : [...prev, exerciseId]);
     try {
-      await updateDoc(userRef, {
-        favoriteExercises: isFavorite ? arrayRemove(exerciseId) : arrayUnion(exerciseId)
-      });
+      await updateDoc(userRef, { favoriteExercises: isFavorite ? arrayRemove(exerciseId) : arrayUnion(exerciseId) });
     } catch (error) {
-      console.error("Error toggling favorite:", error);
-      // Revert optimistic update
+      console.error('Error toggling favorite:', error);
       setFavorites(userData?.favoriteExercises || []);
     }
   };
 
   const handleAddClick = (exerciseId) => {
     if (!activeSplit || activeSplit.length === 0) {
-      alert("Please configure a split in your Account Settings first!");
+      alert('Please configure a split in Account Settings first!');
       return;
     }
     setAddingExerciseId(exerciseId);
@@ -57,233 +50,295 @@ const Workout = () => {
 
   const saveToRoutine = async (dayName) => {
     if (!addingExerciseId || !currentUser) return;
-    
-    // Optimistic UI update
     const updatedRoutines = { ...customRoutines };
     if (!updatedRoutines[dayName]) updatedRoutines[dayName] = [];
     if (!updatedRoutines[dayName].includes(addingExerciseId)) {
-        updatedRoutines[dayName] = [...updatedRoutines[dayName], addingExerciseId];
+      updatedRoutines[dayName] = [...updatedRoutines[dayName], addingExerciseId];
     }
     setCustomRoutines(updatedRoutines);
     setAddingExerciseId(null);
-    
     try {
       const userRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userRef, {
-        [`customRoutines.${dayName}`]: arrayUnion(addingExerciseId)
-      });
+      await updateDoc(userRef, { [`customRoutines.${dayName}`]: arrayUnion(addingExerciseId) });
     } catch (error) {
-      console.error("Error adding to routine:", error);
-      setCustomRoutines(userData?.customRoutines || {}); // Revert
+      console.error('Error adding to routine:', error);
+      setCustomRoutines(userData?.customRoutines || {});
     }
   };
 
   const removeExercise = async (dayName, exerciseId) => {
     if (!currentUser) return;
-    
-    // Optimistic UI update
     const updatedRoutines = { ...customRoutines };
     if (updatedRoutines[dayName]) {
       updatedRoutines[dayName] = updatedRoutines[dayName].filter(id => id !== exerciseId);
       setCustomRoutines(updatedRoutines);
     }
-    
     try {
       const userRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userRef, {
-        [`customRoutines.${dayName}`]: arrayRemove(exerciseId)
-      });
+      await updateDoc(userRef, { [`customRoutines.${dayName}`]: arrayRemove(exerciseId) });
     } catch (error) {
-      console.error("Error removing exercise:", error);
-      setCustomRoutines(userData?.customRoutines || {}); // Revert
+      console.error('Error removing exercise:', error);
+      setCustomRoutines(userData?.customRoutines || {});
     }
   };
 
-  const filteredExercises = exercisesData.filter(ex => 
-    ex.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    ex.muscleGroup.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredExercises = exercisesData.filter(ex => {
+    const matchSearch = ex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ex.muscleGroup.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchMuscle = muscleFilter === 'All' || ex.muscleGroup.toLowerCase().includes(muscleFilter.toLowerCase());
+    return matchSearch && matchMuscle;
+  });
+
+  const favoriteExercises = exercisesData.filter(ex => favorites.includes(ex.id));
+
+  const TABS = [
+    { key: 'split', icon: <CalendarDays size={15} />, label: 'My Split' },
+    { key: 'exercises', icon: <Dumbbell size={15} />, label: 'Exercises' },
+    { key: 'favorites', icon: <Heart size={15} />, label: 'Favorites' },
+  ];
+
+  const getMuscleColor = (group = '') => {
+    const g = group.toLowerCase();
+    if (g.includes('chest')) return 'bg-red-50 text-red-600';
+    if (g.includes('back') || g.includes('lat')) return 'bg-blue-50 text-blue-600';
+    if (g.includes('leg') || g.includes('quad') || g.includes('glute') || g.includes('hamstr')) return 'bg-green-50 text-green-600';
+    if (g.includes('shoulder')) return 'bg-purple-50 text-purple-600';
+    if (g.includes('arm') || g.includes('bicep') || g.includes('tricep')) return 'bg-orange-50 text-orange-600';
+    if (g.includes('core') || g.includes('abs')) return 'bg-yellow-50 text-yellow-600';
+    return 'bg-slate-100 text-slate-500';
+  };
 
   return (
     <div className="flex flex-col h-full bg-slate-50 relative">
-      <div className="pt-6 px-6 pb-2 bg-white sticky top-0 z-20 shadow-sm">
-        <h1 className="text-2xl font-black text-liftly-navy mb-4 tracking-tight">Workout Hub</h1>
-        
-        {/* Tabs */}
-        <div className="flex bg-slate-100 p-1 rounded-xl mb-2">
-          <button 
-            onClick={() => setActiveTab('split')}
-            className={clsx(
-              "flex-1 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all",
-              activeTab === 'split' ? "bg-white text-liftly-teal shadow-sm" : "text-slate-500 hover:text-slate-700"
-            )}
-          >
-            <CalendarDays size={16} />
-            My Split
-          </button>
-          <button 
-            onClick={() => setActiveTab('exercises')}
-            className={clsx(
-              "flex-1 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all",
-              activeTab === 'exercises' ? "bg-white text-liftly-teal shadow-sm" : "text-slate-500 hover:text-slate-700"
-            )}
-          >
-            <Dumbbell size={16} />
-            Exercises
-          </button>
+
+      {/* Sticky Header */}
+      <div className="bg-white border-b border-slate-100 sticky top-0 z-20 shadow-sm">
+        <div className="px-5 pt-12 pb-3">
+          <h1 className="text-2xl font-black text-liftly-navy mb-4 tracking-tight">Workout Hub</h1>
+
+          {/* Tabs */}
+          <div className="flex bg-slate-100 p-1 rounded-2xl gap-1">
+            {TABS.map(({ key, icon, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={clsx(
+                  'flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all duration-200',
+                  activeTab === key
+                    ? 'bg-white text-liftly-teal shadow-sm'
+                    : 'text-slate-400 hover:text-slate-600'
+                )}
+              >
+                {icon} {label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Search & Filter (exercises tab) */}
+        {activeTab === 'exercises' && (
+          <div className="px-5 pb-3 space-y-2">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search exercises or muscles…"
+                className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
+              {MUSCLE_FILTERS.map(f => (
+                <button
+                  key={f}
+                  onClick={() => setMuscleFilter(f)}
+                  className={clsx(
+                    'px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 border transition-all active:scale-95',
+                    muscleFilter === f
+                      ? 'bg-liftly-teal text-white border-liftly-teal shadow-teal'
+                      : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300'
+                  )}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
+
+        {/* ── My Split ── */}
         {activeTab === 'split' && (
-          <div className="animate-in fade-in duration-300">
+          <div className="animate-fade-in">
             {!activeSplit ? (
-              <div className="bg-white rounded-[2rem] p-8 text-center border border-slate-200 shadow-sm mt-4">
-                <div className="w-16 h-16 bg-blue-50 text-liftly-teal rounded-full flex items-center justify-center mx-auto mb-4">
-                   <Activity size={32} />
+              <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-card mt-4">
+                <div className="w-16 h-16 bg-liftly-teal/10 text-liftly-teal rounded-3xl flex items-center justify-center mx-auto mb-4">
+                  <Activity size={28} />
                 </div>
-                <h3 className="font-bold text-lg text-slate-800 mb-2">No Split Configured</h3>
-                <p className="text-slate-500 text-sm mb-6">Head over to your Account Settings to set up your weekly workout split.</p>
+                <h3 className="font-black text-lg text-slate-800 mb-2">No Split Configured</h3>
+                <p className="text-slate-400 text-sm">Head to Account Settings to set up your weekly workout split.</p>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="font-bold text-lg text-slate-800">Your Current Routine</h2>
-                  <span className="bg-liftly-teal/10 text-liftly-teal px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{activeSplit.length} Days</span>
+                <div className="flex justify-between items-center">
+                  <h2 className="font-black text-lg text-slate-800">Your Routine</h2>
+                  <span className="bg-liftly-teal/10 text-liftly-teal px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">{activeSplit.length} Days</span>
                 </div>
-                
+
                 {activeSplit.map((dayName, idx) => {
                   const dayExercises = customRoutines[dayName] || [];
                   return (
-                    <div key={idx} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                      <div className="flex justify-between items-center mb-3">
-                        <h3 className="font-bold text-slate-800">{dayName}</h3>
-                        <span className="text-xs font-semibold text-slate-400">{dayExercises.length} exercises</span>
+                    <div key={idx} className="bg-white rounded-3xl border border-slate-100 shadow-card overflow-hidden">
+                      <div className="px-5 py-4 border-b border-slate-50 flex justify-between items-center">
+                        <div>
+                          <h3 className="font-black text-slate-800">{dayName}</h3>
+                          <p className="text-xs text-slate-400 font-semibold">{dayExercises.length} exercise{dayExercises.length !== 1 ? 's' : ''}</p>
+                        </div>
+                        {dayExercises.length > 0 && (
+                          <span className="text-[10px] font-black text-liftly-teal bg-liftly-teal/10 px-2 py-0.5 rounded-lg">Active</span>
+                        )}
                       </div>
-                      
-                      {dayExercises.length > 0 ? (
-                        <div className="space-y-2">
-                          {dayExercises.map(exId => {
+
+                      <div className="p-4 space-y-2">
+                        {dayExercises.length > 0 ? (
+                          dayExercises.map(exId => {
                             const ex = exercisesData.find(e => e.id === exId);
                             if (!ex) return null;
                             return (
-                              <div key={exId} className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 border border-slate-100">
-                                <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400">
-                                   <Dumbbell size={16} />
+                              <div key={exId} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                                <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                                  <Dumbbell size={15} className="text-slate-400" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-bold text-slate-700 truncate">{ex.name}</p>
-                                  <p className="text-[10px] uppercase font-bold text-slate-400">{ex.muscleGroup}</p>
+                                  <span className={`text-[9px] uppercase font-black px-1.5 py-0.5 rounded-md ${getMuscleColor(ex.muscleGroup)}`}>{ex.muscleGroup}</span>
                                 </div>
-                                <button 
+                                <button
                                   onClick={() => removeExercise(dayName, exId)}
-                                  className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                  className="w-8 h-8 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
                                 >
-                                  <Activity size={16} className="rotate-45" /> {/* pseudo-X mark */}
+                                  <Trash2 size={14} />
                                 </button>
                               </div>
                             );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center">
-                           <p className="text-sm text-slate-500 font-medium">No exercises added yet.</p>
-                           <p className="text-xs text-slate-400 mt-1">Browse exercises and add them here.</p>
-                        </div>
-                      )}
+                          })
+                        ) : (
+                          <div className="p-4 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 text-center">
+                            <p className="text-sm text-slate-400 font-semibold">No exercises added yet</p>
+                            <p className="text-xs text-slate-300 mt-0.5">Browse the Exercises tab to add some</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             )}
           </div>
         )}
 
+        {/* ── Exercises ── */}
         {activeTab === 'exercises' && (
-          <div className="animate-in fade-in duration-300">
-            <div className="relative mb-6">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-slate-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search exercises or muscles..."
-                className="w-full h-12 bg-white border border-slate-200 rounded-xl pl-11 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-3">
-              {filteredExercises.map(exercise => {
-                const isFav = favorites.includes(exercise.id);
-                return (
-                  <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-                    <div className="flex-1 min-w-0">
-                       <h3 className="font-bold text-slate-800 text-sm truncate">{exercise.name}</h3>
-                       <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-liftly-teal bg-liftly-teal/10 px-2 py-0.5 rounded-md">{exercise.muscleGroup}</span>
-                          <span className="text-[10px] font-bold text-slate-400">{exercise.equipment}</span>
-                       </div>
-                    </div>
-                    
-                    <button 
-                      onClick={() => toggleFavorite(exercise.id)}
-                      className={clsx(
-                        "p-2 rounded-full transition-all active:scale-95",
-                        isFav ? "bg-red-50 text-red-500" : "bg-slate-50 text-slate-400 hover:text-red-400"
-                      )}
-                    >
-                      <Heart size={20} className={isFav ? "fill-red-500" : ""} />
-                    </button>
-                    
-                    <button 
-                      onClick={() => handleAddClick(exercise.id)}
-                      className="p-2 bg-liftly-navy text-white rounded-full transition-all active:scale-95 shadow-md"
-                    >
-                      <Plus size={20} />
-                    </button>
+          <div className="animate-fade-in space-y-3">
+            {filteredExercises.map(exercise => {
+              const isFav = favorites.includes(exercise.id);
+              return (
+                <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                    <Dumbbell size={18} className="text-slate-300" />
                   </div>
-                );
-              })}
-              
-              {filteredExercises.length === 0 && (
-                <div className="text-center py-10">
-                  <Dumbbell className="mx-auto text-slate-300 w-12 h-12 mb-3" />
-                  <p className="text-slate-500 font-medium">No exercises found</p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-black text-slate-800 text-sm truncate">{exercise.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${getMuscleColor(exercise.muscleGroup)}`}>{exercise.muscleGroup}</span>
+                      <span className="text-[10px] font-semibold text-slate-300">{exercise.equipment}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleFavorite(exercise.id)}
+                    className={clsx('w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0', isFav ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-300 hover:text-red-400')}
+                  >
+                    <Heart size={17} className={isFav ? 'fill-red-500' : ''} />
+                  </button>
+                  <button
+                    onClick={() => handleAddClick(exercise.id)}
+                    className="w-9 h-9 bg-liftly-navy text-white rounded-xl flex items-center justify-center transition-all active:scale-90 shadow-navy shrink-0"
+                  >
+                    <Plus size={17} />
+                  </button>
                 </div>
-              )}
-            </div>
+              );
+            })}
+            {filteredExercises.length === 0 && (
+              <div className="text-center py-12">
+                <Dumbbell className="mx-auto text-slate-200 w-12 h-12 mb-3" />
+                <p className="text-slate-400 font-bold">No exercises found</p>
+                <p className="text-slate-300 text-sm">Try a different search or filter</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Favorites ── */}
+        {activeTab === 'favorites' && (
+          <div className="animate-fade-in space-y-3">
+            {favoriteExercises.length === 0 ? (
+              <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-card">
+                <div className="w-14 h-14 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                  <Heart size={24} className="text-red-400" />
+                </div>
+                <h3 className="font-black text-slate-800 mb-2">No favorites yet</h3>
+                <p className="text-slate-400 text-sm">Tap the heart on any exercise to save it here.</p>
+              </div>
+            ) : (
+              favoriteExercises.map(exercise => (
+                <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
+                    <Heart size={18} className="text-red-400 fill-red-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-black text-slate-800 text-sm truncate">{exercise.name}</h3>
+                    <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${getMuscleColor(exercise.muscleGroup)}`}>{exercise.muscleGroup}</span>
+                  </div>
+                  <button onClick={() => toggleFavorite(exercise.id)} className="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center active:scale-90 transition-all">
+                    <Heart size={17} className="fill-red-500" />
+                  </button>
+                  <button onClick={() => handleAddClick(exercise.id)} className="w-9 h-9 bg-liftly-navy text-white rounded-xl flex items-center justify-center active:scale-90 shadow-navy shrink-0">
+                    <Plus size={17} />
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>
 
       {/* Add To Routine Modal */}
       {addingExerciseId && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-[400px] rounded-[2rem] p-6 shadow-2xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Add to Routine</h3>
-            <p className="text-slate-500 text-sm mb-6">Select which day in your split to add this exercise to.</p>
-            
-            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
+            <div className="w-8 h-1 bg-slate-200 rounded-full mx-auto mb-5" />
+            <h3 className="text-xl font-black text-slate-800 mb-1">Add to Routine</h3>
+            <p className="text-slate-400 text-sm mb-5">Which day in your split?</p>
+            <div className="space-y-2.5 max-h-[55vh] overflow-y-auto no-scrollbar">
               {activeSplit?.map((dayName, idx) => (
                 <button
                   key={idx}
                   onClick={() => saveToRoutine(dayName)}
-                  className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-liftly-teal/5 border border-slate-100 hover:border-liftly-teal/20 transition-all active:scale-[0.98] text-left"
                 >
-                  <span className="font-bold text-slate-700">{dayName}</span>
-                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-slate-200 text-liftly-teal">
-                    <Plus size={16} />
+                  <div className="w-9 h-9 rounded-xl bg-liftly-teal/10 flex items-center justify-center">
+                    <Plus size={16} className="text-liftly-teal" />
                   </div>
+                  <span className="font-black text-slate-700">{dayName}</span>
                 </button>
               ))}
             </div>
-            
-            <button 
-              onClick={() => setAddingExerciseId(null)}
-              className="w-full mt-6 py-4 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
-            >
+            <button onClick={() => setAddingExerciseId(null)} className="w-full mt-5 py-4 rounded-2xl font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">
               Cancel
             </button>
           </div>

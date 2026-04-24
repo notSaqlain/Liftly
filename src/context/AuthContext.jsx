@@ -66,6 +66,8 @@ export const AuthProvider = ({ children }) => {
   // Helper: detect mobile web browser (not native Capacitor)
   const isMobileWeb = () => {
     if (Capacitor.isNativePlatform()) return false;
+    // Don't use redirect flow on localhost as it causes issues, even in mobile view
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return false;
     return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
   };
 
@@ -249,11 +251,22 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={value}>
       {loading ? (
-        <div className="flex justify-center bg-slate-100 min-h-screen">
-          <div className="w-full max-w-[480px] bg-liftly-navy min-h-screen flex flex-col items-center justify-center shadow-2xl">
-            <div className="animate-pulse flex flex-col items-center">
-              <img src="/favicon.png" alt="Liftly" className="w-16 h-16 mb-4 opacity-80" />
-              <div className="w-8 h-1 bg-liftly-teal/50 rounded-full animate-[pulse_1s_ease-in-out_infinite]"></div>
+        <div className="flex justify-center min-h-screen" style={{ background: 'linear-gradient(160deg, #001540 0%, #001c5e 60%, #002280 100%)' }}>
+          <div className="w-full max-w-[480px] min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-liftly-teal/15 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none" />
+            <div className="relative flex flex-col items-center gap-5 z-10">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-3xl bg-liftly-teal/20 blur-xl scale-125" />
+                <div className="relative w-20 h-20 rounded-3xl bg-liftly-teal/10 border border-liftly-teal/20 flex items-center justify-center">
+                  <img src="/favicon.png" alt="Liftly" className="w-12 h-12 object-contain" />
+                </div>
+                <div className="absolute inset-0 rounded-3xl border-2 border-transparent border-t-liftly-teal animate-spin" style={{ animationDuration: '1.2s' }} />
+              </div>
+              <div className="text-center">
+                <p className="text-white font-black text-xl tracking-tight">Liftly</p>
+                <p className="text-white/30 text-xs font-semibold mt-1">Loading your profile…</p>
+              </div>
             </div>
           </div>
         </div>
@@ -261,3 +274,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
