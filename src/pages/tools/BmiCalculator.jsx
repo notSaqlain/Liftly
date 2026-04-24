@@ -6,11 +6,11 @@ const BmiCalculator = () => {
   const { userData } = useAuth();
   const navigate = useNavigate();
 
-  const weight = userData?.weight || 70;
-  const height = userData?.height || 175;
-  const heightInMeters = height / 100;
-  
-  const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+  const [weightInput, setWeightInput] = useState(userData?.weight || 70);
+  const [heightInput, setHeightInput] = useState(userData?.height || 175);
+
+  const heightInMeters = heightInput / 100;
+  const bmi = (weightInput / (heightInMeters * heightInMeters)).toFixed(1);
 
   let category = '';
   let colorClass = '';
@@ -62,6 +62,17 @@ const BmiCalculator = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
+        {/* Custom Inputs */}
+        <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100 flex gap-3">
+           <div className="flex-1">
+             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block px-1">Weight (kg)</label>
+             <input type="number" step="0.1" value={weightInput} onChange={e => setWeightInput(e.target.value)} className="w-full h-12 bg-slate-50 border border-slate-200 rounded-2xl px-4 font-black text-slate-800 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all text-center" />
+           </div>
+           <div className="flex-1">
+             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block px-1">Height (cm)</label>
+             <input type="number" value={heightInput} onChange={e => setHeightInput(e.target.value)} className="w-full h-12 bg-slate-50 border border-slate-200 rounded-2xl px-4 font-black text-slate-800 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all text-center" />
+           </div>
+        </div>
         <div className="bg-white rounded-3xl p-8 shadow-card border border-slate-100 flex flex-col items-center justify-center text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-emerald-400 to-red-400" />
           

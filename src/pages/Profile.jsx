@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { Loader2, User, ChevronRight, Camera, Settings, Trophy, Dumbbell, Flame, Calendar } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { Loader2, User, ChevronRight, Camera, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const ACHIEVEMENTS = [
+  { id: 'first', label: 'First Workout', icon: '🏋️', threshold: 1, stat: 'workouts' },
+  { id: 'ten', label: '10 Workouts', icon: '💪', threshold: 10, stat: 'workouts' },
+  { id: 'fifty', label: '50 Workouts', icon: '🔥', threshold: 50, stat: 'workouts' },
+  { id: 'streak7', label: '7-Day Streak', icon: '⚡', threshold: 7, stat: 'streak' },
+  { id: 'streak30', label: '30-Day Streak', icon: '🌟', threshold: 30, stat: 'streak' },
+  { id: 'volume100k', label: '100k kg Lifted', icon: '🏆', threshold: 100000, stat: 'volume' },
+];
+
 const Profile = () => {
-  const { currentUser, getUserData, updateUserProfile, isGoogleUser } = useAuth();
+  const { currentUser, userData, getUserData, updateUserProfile, isGoogleUser } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -18,7 +27,11 @@ const Profile = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [displayName, setDisplayName] = useState('');
   const [totalWorkouts, setTotalWorkouts] = useState(0);
+  const [totalVolume, setTotalVolume] = useState(0);
   const [memberSince, setMemberSince] = useState('');
+
+  // Read streak from live userData (fixes hardcoded 0 bug)
+  const streak = userData?.currentStreak || 0;
 
   const fileInputRef = { current: null };
 
@@ -38,9 +51,12 @@ const Profile = () => {
           setPhotoURL(currentUser.photoURL || '');
           setDisplayName(currentUser?.displayName?.split(' ')[0] || currentUser?.email?.split('@')[0] || 'User');
         }
-        // Fetch total workouts
+        // Fetch workouts for stats
         const snap = await getDocs(collection(db, 'users', currentUser.uid, 'user_workouts'));
         setTotalWorkouts(snap.size);
+        let vol = 0;
+        snap.forEach(d => { vol += d.data().totalVolume || 0; });
+        setTotalVolume(vol);
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
@@ -109,7 +125,15 @@ const Profile = () => {
 
   const currentPhoto = photoPreview || photoURL;
   const googleLinked = isGoogleUser();
-  const streak = 0; // loaded from userData via useAuth if needed
+
+  const fmtVolume = (v) => v >= 1000000 ? `${(v/1000000).toFixed(1)}M` : v >= 1000 ? `${(v/1000).toFixed(1)}k` : v.toString();
+
+  const unlockedAchievements = ACHIEVEMENTS.filter(a => {
+    if (a.stat === 'workouts') return totalWorkouts >= a.threshold;
+    if (a.stat === 'streak') return streak >= a.threshold;
+    if (a.stat === 'volume') return totalVolume >= a.threshold;
+    return false;
+  });
 
   return (
     <div className="bg-slate-50 min-h-full">
@@ -130,8 +154,9 @@ const Profile = () => {
 
       {/* Hero Header */}
       <div className="bg-liftly-navy relative overflow-hidden pt-12 pb-10 px-6 flex flex-col items-center">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/10 rounded-full blur-3xl -mr-16 -mt-10" />
-        <div className="absolute bottom-0 left-0 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl" />
+        <div className="absolute top-0 right-0 w-56 h-56 bg-liftly-teal/10 rounded-full blur-3xl -mr-16 -mt-10" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl" />
+        <div className="absolute top-1/3 left-1/3 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl" />
 
         {/* Avatar */}
         <div className="relative mb-4 z-10">
@@ -165,27 +190,67 @@ const Profile = () => {
         <p className="text-white/40 text-sm mt-1 z-10">{currentUser?.email}</p>
         {memberSince && <p className="text-liftly-teal/70 text-xs font-bold mt-1 z-10">Member since {memberSince}</p>}
 
-        {/* Stats Strip */}
-        <div className="grid grid-cols-2 gap-3 mt-6 w-full z-10">
-          <div className="bg-white/8 border border-white/10 rounded-2xl p-3 text-center">
+        {/* Stats Strip — 3 cards now */}
+        <div className="grid grid-cols-3 gap-2.5 mt-6 w-full z-10">
+          <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
             <div className="flex items-center justify-center gap-1 mb-0.5">
-              <Dumbbell size={13} className="text-liftly-teal" />
+              <Dumbbell size={12} className="text-liftly-teal" />
               <span className="text-white font-black text-xl">{totalWorkouts}</span>
             </div>
-            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Workouts</span>
+            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Sessions</span>
           </div>
-          <div className="bg-white/8 border border-white/10 rounded-2xl p-3 text-center">
+          <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
             <div className="flex items-center justify-center gap-1 mb-0.5">
-              <Flame size={13} className="text-orange-400" />
-              <span className="text-white font-black text-xl">{/* streak */}🔥</span>
+              <Flame size={12} className="text-orange-400" />
+              <span className="text-white font-black text-xl">{streak}</span>
             </div>
-            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">On Fire</span>
+            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Streak</span>
+          </div>
+          <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
+            <div className="flex items-center justify-center gap-1 mb-0.5">
+              <TrendingUp size={12} className="text-purple-400" />
+              <span className="text-white font-black text-xl">{fmtVolume(totalVolume)}</span>
+            </div>
+            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">kg Lifted</span>
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="px-5 py-5 space-y-3">
+
+        {/* Achievements */}
+        {unlockedAchievements.length > 0 && (
+          <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-yellow-50 flex items-center justify-center">
+                <Trophy size={15} className="text-yellow-500" />
+              </div>
+              <h2 className="font-black text-slate-800 text-sm">Achievements</h2>
+              <span className="ml-auto text-[10px] font-bold bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-lg">
+                {unlockedAchievements.length}/{ACHIEVEMENTS.length}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {ACHIEVEMENTS.map(a => {
+                const unlocked = unlockedAchievements.some(u => u.id === a.id);
+                return (
+                  <div
+                    key={a.id}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                      unlocked
+                        ? 'bg-yellow-50 border-yellow-200 text-yellow-700'
+                        : 'bg-slate-50 border-slate-100 text-slate-300'
+                    }`}
+                  >
+                    <span className={unlocked ? '' : 'grayscale opacity-40'}>{a.icon}</span>
+                    {a.label}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Photo Options */}
         {(googleLinked && googlePhotoURL) && (

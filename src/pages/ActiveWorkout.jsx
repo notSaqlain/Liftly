@@ -208,19 +208,27 @@ const ActiveWorkout = () => {
     <div className="min-h-screen bg-slate-50 flex flex-col">
 
       {/* Header */}
-      <div className="bg-white px-4 py-3 flex items-center justify-between sticky top-0 z-20 shadow-sm border-b border-slate-100">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-100 active:scale-95 transition-all">
-            <ChevronLeft size={18} />
-          </button>
-          <div>
-            <h1 className="text-base font-black text-liftly-navy leading-tight">{dayName}</h1>
-            <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">{exercises.length} exercises</p>
-          </div>
+      <div className="bg-liftly-navy px-4 pt-12 pb-4 flex flex-col sticky top-0 z-20 shadow-navy">
+        
+        {/* Progress Bar Top Edge */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-white/10">
+          <div className="h-full bg-liftly-teal transition-all duration-500 ease-out" style={{ width: `${exercises.length ? (totalSets / (exercises.length * 3)) * 100 : 0}%` }} />
         </div>
-        <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
-          <Timer size={12} className="text-slate-400" />
-          <ElapsedTime startTime={startTime} />
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center text-white active:scale-95 transition-all">
+              <ChevronLeft size={18} />
+            </button>
+            <div>
+              <h1 className="text-base font-black text-white leading-tight">{dayName}</h1>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-liftly-teal/80">{exercises.length} exercises</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 bg-white/10 border border-white/10 px-3 py-1.5 rounded-full">
+            <Timer size={12} className="text-liftly-teal" />
+            <ElapsedTime startTime={startTime} />
+          </div>
         </div>
       </div>
 
@@ -374,7 +382,7 @@ const ActiveWorkout = () => {
             <button
               onClick={handleFinishWorkout}
               disabled={saving || totalSets === 0}
-              className="w-full h-14 font-black text-liftly-navy text-lg rounded-3xl shadow-teal-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className={`w-full h-14 font-black text-liftly-navy text-lg rounded-3xl shadow-teal-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${totalSets > 0 ? 'animate-bounce-subtle' : ''}`}
               style={{ background: 'linear-gradient(135deg, #00ADB5 0%, #33c4cb 100%)' }}
             >
               {saving ? (

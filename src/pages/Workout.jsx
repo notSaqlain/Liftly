@@ -13,6 +13,12 @@ const Workout = () => {
   const [activeTab, setActiveTab] = useState('split');
   const [searchQuery, setSearchQuery] = useState('');
   const [muscleFilter, setMuscleFilter] = useState('All');
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
 
   const [favorites, setFavorites] = useState([]);
   const [customRoutines, setCustomRoutines] = useState({});
@@ -42,7 +48,7 @@ const Workout = () => {
 
   const handleAddClick = (exerciseId) => {
     if (!activeSplit || activeSplit.length === 0) {
-      alert('Please configure a split in Account Settings first!');
+      showToast('Please configure a split in Account Settings first!');
       return;
     }
     setAddingExerciseId(exerciseId);
@@ -60,8 +66,10 @@ const Workout = () => {
     try {
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, { [`customRoutines.${dayName}`]: arrayUnion(addingExerciseId) });
+      showToast(`Added to ${dayName}!`);
     } catch (error) {
       console.error('Error adding to routine:', error);
+      showToast("Error adding exercise.");
       setCustomRoutines(userData?.customRoutines || {});
     }
   };
@@ -110,6 +118,13 @@ const Workout = () => {
 
   return (
     <div className="flex flex-col h-full bg-slate-50 relative">
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] max-w-[420px] w-[90%] px-4 py-3 rounded-2xl text-sm font-bold text-center shadow-lg bg-emerald-500 text-white animate-slide-up">
+          {toastMessage}
+        </div>
+      )}
 
       {/* Sticky Header */}
       <div className="bg-white border-b border-slate-100 sticky top-0 z-20 shadow-sm">

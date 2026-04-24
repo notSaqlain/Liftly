@@ -145,7 +145,14 @@ const Stats = () => {
         <div className="grid grid-cols-2 gap-4">
           <StatCard icon={<Target size={20} />} value={hasData ? totalWorkouts : '—'} label="Total Workouts" color="bg-blue-50 text-blue-500" />
           <StatCard icon={<Dumbbell size={20} />} value={hasData ? fmtVol(totalVolume) : '—'} label="Volume (kg)" color="bg-emerald-50 text-emerald-500" />
-          <StatCard icon={<Flame size={20} />} value={streak} label="Day Streak" color="bg-orange-50 text-orange-500" />
+          <div className="bg-gradient-to-br from-orange-400 to-red-500 p-4 rounded-3xl shadow-lg flex flex-col items-center justify-center text-center relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-white/20 rounded-full blur-xl -mr-4 -mt-4 transition-transform group-hover:scale-150" />
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center mb-2 z-10 backdrop-blur-sm">
+              <Flame size={20} className="text-white fill-white" />
+            </div>
+            <span className="text-2xl font-black text-white tracking-tight z-10">{streak}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mt-1 z-10">Day Streak</span>
+          </div>
           <StatCard icon={<Trophy size={20} />} value={hasData ? workoutHistory[0]?.durationMinutes ? `${workoutHistory[0].durationMinutes}m` : '—' : '—'} label="Last Session" color="bg-yellow-50 text-yellow-500" />
         </div>
 

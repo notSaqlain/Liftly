@@ -200,7 +200,7 @@ const Dashboard = () => {
             { label: 'Volume', value: weekStats.volume > 999 ? `${(weekStats.volume/1000).toFixed(1)}k` : weekStats.volume, unit: 'kg', icon: TrendingUp, color: 'text-blue-400' },
             { label: 'Split', value: activeSplit ? `${activeSplit.length}d` : '—', unit: activeSplit ? 'active' : 'setup', icon: Dumbbell, color: 'text-purple-400' },
           ].map(({ label, value, unit, icon: Icon, color }) => (
-            <div key={label} className="bg-white/8 border border-white/10 rounded-2xl p-3 text-center">
+            <div key={label} className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
               <Icon size={14} className={`${color} mx-auto mb-1`} />
               <p className="text-white font-black text-lg leading-none">{value}</p>
               <p className="text-white/40 text-[9px] font-bold uppercase tracking-wider mt-0.5">{unit}</p>
@@ -358,6 +358,17 @@ const Dashboard = () => {
               <Users size={14} className="text-blue-500" />
             </div>
             <h3 className="font-black text-slate-800 text-sm">Gym Crowd Status</h3>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <span className="text-xs font-bold text-slate-600">Community Consensus:</span>
+            </div>
+            <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-lg">🟢 Quiet</span>
           </div>
 
           {reportedStatus ? (

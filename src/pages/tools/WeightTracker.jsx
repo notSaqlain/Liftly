@@ -100,13 +100,28 @@ const WeightTracker = () => {
 
         {/* History Chart */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-card p-5 pt-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="font-black text-slate-800 text-sm flex items-center gap-2">
               <History size={16} className="text-indigo-500" />
               Weight History
             </h3>    
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">kg</span>
           </div>
+
+          {chartData.length > 0 && (
+            <div className="flex justify-between items-center mb-6 bg-slate-50 border border-slate-100 rounded-2xl p-3">
+              {[
+                { label: 'Current', value: chartData[chartData.length - 1]?.weight, color: 'text-indigo-500' },
+                { label: 'Lowest', value: Math.min(...chartData.map(d => d.weight)), color: 'text-emerald-500' },
+                { label: 'Highest', value: Math.max(...chartData.map(d => d.weight)), color: 'text-rose-500' }
+              ].map(({ label, value, color }) => (
+                <div key={label} className="flex flex-col items-center flex-1">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">{label}</span>
+                  <span className={`font-black text-lg ${color}`}>{value}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {chartData.length > 0 ? (
             <div className="h-64 w-full">

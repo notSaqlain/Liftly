@@ -40,30 +40,37 @@ const MainLayout = () => {
                 >
                   {({ isActive }) => (
                     <>
+                      {/* Top glow on active */}
+                      {isActive && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-liftly-teal rounded-b-full shadow-[0_0_8px_0_rgba(0,173,181,0.8)]" />}
+
                       {/* Active background pill */}
                       {isActive && (
-                        <span className="absolute inset-0 rounded-2xl bg-liftly-teal/10 animate-scale-in" />
+                        <span className="absolute inset-x-2 inset-y-1.5 rounded-xl bg-liftly-teal/10 animate-scale-in" />
                       )}
-                      <Icon
-                        size={22}
-                        strokeWidth={isActive ? 2.5 : 1.8}
-                        className={clsx(
-                          'transition-all duration-200 relative z-10',
-                          isActive ? 'scale-110' : 'group-hover:scale-105'
+                      
+                      <div className="relative">
+                        <Icon
+                          size={22}
+                          strokeWidth={isActive ? 2.5 : 1.8}
+                          className={clsx(
+                            'transition-all duration-300 relative z-10',
+                            isActive ? 'scale-110 text-liftly-teal' : 'group-hover:scale-105'
+                          )}
+                        />
+                        {/* Example: Unread Chat badge (could be hooked to context) */}
+                        {label === 'Chat' && !isActive && (
+                          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
                         )}
-                      />
+                      </div>
+
                       <span
                         className={clsx(
-                          'text-[9px] font-bold uppercase tracking-wider mt-0.5 relative z-10 transition-all duration-200',
+                          'text-[9px] font-black uppercase tracking-wider mt-1 relative z-10 transition-all duration-300',
                           isActive ? 'text-liftly-teal' : 'text-slate-400'
                         )}
                       >
                         {label}
                       </span>
-                      {/* Active dot indicator */}
-                      {isActive && (
-                        <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-liftly-teal" />
-                      )}
                     </>
                   )}
                 </NavLink>
