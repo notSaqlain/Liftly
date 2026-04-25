@@ -280,6 +280,10 @@ const Profile = () => {
             label: 'Personal Information', sub: 'Body metrics, training & goals', to: '/personal-info'
           },
           {
+            icon: <Trophy size={18} />, iconBg: 'bg-yellow-50 text-yellow-500',
+            label: 'Leaderboard', sub: 'Global rankings & community stats', to: '/leaderboard'
+          },
+          {
             icon: <Settings size={18} />, iconBg: 'bg-slate-100 text-slate-500',
             label: 'Account Settings', sub: 'Email, password, security & more', to: '/settings'
           },

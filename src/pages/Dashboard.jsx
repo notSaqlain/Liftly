@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit } from 'firebase/firestore';
-import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale } from 'lucide-react';
+import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -449,7 +449,17 @@ const Dashboard = () => {
             </div>
             
             <div className="space-y-3">
-              <button onClick={() => navigate('/tools/bmi')} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+              <button onClick={() => { setShowQuickTools(false); navigate('/leaderboard'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-yellow-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center shrink-0">
+                  <Trophy size={20} className="text-yellow-500" />
+                </div>
+                <div>
+                  <span className="font-black text-slate-800 block">Leaderboard</span>
+                  <span className="text-xs text-slate-400 font-semibold">View global community rankings</span>
+                </div>
+              </button>
+              
+              <button onClick={() => { setShowQuickTools(false); navigate('/tools/bmi'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
                 <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
                   <Activity size={20} className="text-emerald-500" />
                 </div>
@@ -459,7 +469,7 @@ const Dashboard = () => {
                 </div>
               </button>
               
-              <button onClick={() => navigate('/tools/calories')} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+              <button onClick={() => { setShowQuickTools(false); navigate('/tools/calories'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
                 <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
                   <Flame size={20} className="text-orange-500" />
                 </div>
@@ -469,7 +479,7 @@ const Dashboard = () => {
                 </div>
               </button>
               
-              <button onClick={() => navigate('/tools/weight')} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+              <button onClick={() => { setShowQuickTools(false); navigate('/tools/weight'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
                 <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
                   <Scale size={20} className="text-blue-500" />
                 </div>
