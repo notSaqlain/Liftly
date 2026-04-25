@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [showQuickTools, setShowQuickTools] = useState(false);
   const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [weekStats, setWeekStats] = useState({ count: 0, volume: 0 });
+  const [crowdConsensus, setCrowdConsensus] = useState(null); // null = no data yet
 
   // Calendar state
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
@@ -87,6 +88,27 @@ const Dashboard = () => {
     fetchData();
   }, [currentUser]);
 
+  // Real-time crowd status consensus — last 4 hours
+  useEffect(() => {
+    const cutoff = new Date(Date.now() - 4 * 60 * 60 * 1000);
+    const q = query(
+      collection(db, 'gym_status'),
+      where('timestamp', '>=', Timestamp.fromDate(cutoff))
+    );
+    const unsub = onSnapshot(q, (snap) => {
+      if (snap.empty) { setCrowdConsensus(null); return; }
+      const counts = { LOW: 0, MEDIUM: 0, HIGH: 0 };
+      snap.forEach(d => {
+        const s = d.data().status;
+        if (counts[s] !== undefined) counts[s]++;
+      });
+      const majority = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+      const total = counts.LOW + counts.MEDIUM + counts.HIGH;
+      setCrowdConsensus({ status: majority, total });
+    });
+    return () => unsub();
+  }, []);
+
   const calendarDays = useMemo(() => {
     const firstDay = new Date(calendarYear, calendarMonth, 1);
     let startOffset = firstDay.getDay() - 1;
@@ -114,7 +136,9 @@ const Dashboard = () => {
     if (!currentUser || reportedStatus) return;
     try {
       await addDoc(collection(db, 'gym_status'), {
-        status, reportedBy: currentUser.uid, timestamp: serverTimestamp()
+        status,
+        reportedBy: currentUser.uid,
+        timestamp: serverTimestamp(),
       });
       setReportedStatus(true);
     } catch (error) {
@@ -350,16 +374,32 @@ const Dashboard = () => {
             <h3 className="font-black text-slate-800 text-sm">Gym Crowd Status</h3>
           </div>
 
-          <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-              </span>
-              <span className="text-xs font-bold text-slate-600">Community Consensus:</span>
-            </div>
-            <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-lg">🟢 Quiet</span>
-          </div>
+          {/* Live Consensus */}
+          {(() => {
+            const opt = crowdConsensus ? CROWD_OPTIONS.find(o => o.key === crowdConsensus.status) : null;
+            return (
+              <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-3 w-3">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-400' : opt.key === 'MEDIUM' ? 'bg-amber-400' : 'bg-red-400') : 'bg-slate-300'}`} />
+                    <span className={`relative inline-flex rounded-full h-3 w-3 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-500' : opt.key === 'MEDIUM' ? 'bg-amber-500' : 'bg-red-500') : 'bg-slate-300'}`} />
+                  </span>
+                  <span className="text-xs font-bold text-slate-600">
+                    {crowdConsensus ? `Community Consensus (${crowdConsensus.total} report${crowdConsensus.total !== 1 ? 's' : ''}):` : 'No reports in last 4h'}
+                  </span>
+                </div>
+                {opt ? (
+                  <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${
+                    opt.key === 'LOW' ? 'bg-emerald-100 text-emerald-700' :
+                    opt.key === 'MEDIUM' ? 'bg-amber-100 text-amber-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>{opt.emoji} {opt.label}</span>
+                ) : (
+                  <span className="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg">— No data</span>
+                )}
+              </div>
+            );
+          })()}
 
           {reportedStatus ? (
             <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3">

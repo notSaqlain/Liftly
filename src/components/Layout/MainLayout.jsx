@@ -57,10 +57,6 @@ const MainLayout = () => {
                             isActive ? 'scale-110 text-liftly-teal' : 'group-hover:scale-105'
                           )}
                         />
-                        {/* Example: Unread Chat badge (could be hooked to context) */}
-                        {label === 'Chat' && !isActive && (
-                          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
-                        )}
                       </div>
 
                       <span

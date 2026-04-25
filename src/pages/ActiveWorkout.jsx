@@ -192,7 +192,10 @@ const ActiveWorkout = () => {
         if (['bench_press', 'deadlift', 'squat'].includes(ex.exerciseId)) {
           const maxWeight = Math.max(...ex.sets.map(s => s.weight || 0), 0);
           if (maxWeight > (currentBest1RM[ex.exerciseId] || 0)) {
+            // Nested map (for profile display)
             userUpdates[`best1RM.${ex.exerciseId}`] = maxWeight;
+            // Flat field (for Leaderboard orderBy — Firestore can't index nested maps)
+            userUpdates[`best1RM_${ex.exerciseId}`] = maxWeight;
           }
         }
       });

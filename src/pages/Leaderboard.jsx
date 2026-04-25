@@ -6,11 +6,11 @@ import { useAuth } from '../context/AuthContext';
 import { Trophy, Flame, Dumbbell, TrendingUp, ChevronLeft, Medal, Crown } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'streak', label: '🔥 Streak', field: 'currentStreak', unit: 'days', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-50' },
+  { id: 'streak', label: '🔥 Streak', field: 'currentStreak', unit: 'wks', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-50' },
   { id: 'volume', label: '📈 Volume', field: 'totalVolumeLifted', unit: 'kg', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-50' },
-  { id: 'bench_press', label: '🏋️ Bench Press', field: 'best1RM.bench_press', unit: 'kg', icon: Dumbbell, color: 'text-purple-500', bg: 'bg-purple-50' },
-  { id: 'deadlift', label: '🏋️ Deadlift', field: 'best1RM.deadlift', unit: 'kg', icon: Dumbbell, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-  { id: 'squat', label: '🏋️ Squat', field: 'best1RM.squat', unit: 'kg', icon: Dumbbell, color: 'text-pink-500', bg: 'bg-pink-50' },
+  { id: 'bench_press', label: '🏋️ Bench Press', field: 'best1RM_bench_press', unit: 'kg', icon: Dumbbell, color: 'text-purple-500', bg: 'bg-purple-50' },
+  { id: 'deadlift', label: '🏋️ Deadlift', field: 'best1RM_deadlift', unit: 'kg', icon: Dumbbell, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+  { id: 'squat', label: '🏋️ Squat', field: 'best1RM_squat', unit: 'kg', icon: Dumbbell, color: 'text-pink-500', bg: 'bg-pink-50' },
 ];
 
 const Leaderboard = () => {
@@ -30,21 +30,18 @@ const Leaderboard = () => {
           limit(50)
         );
         const snap = await getDocs(q);
-        
+
         const fetchedLeaders = [];
         snap.forEach(doc => {
           const data = doc.data();
-          // Extract the value dynamically, supporting nested fields like 'best1RM.bench_press'
-          const value = activeCategory.field.includes('.') 
-            ? activeCategory.field.split('.').reduce((o, i) => o?.[i], data)
-            : data[activeCategory.field];
+          // All fields are now flat top-level fields — no nested access needed
+          const value = data[activeCategory.field];
 
-          // Ensure valid value
           if (value !== undefined && value !== null && value > 0) {
             fetchedLeaders.push({
               id: doc.id,
-              name: data.firstName 
-                ? `${data.firstName} ${data.lastName || ''}`.trim() 
+              name: data.firstName
+                ? `${data.firstName} ${data.lastName || ''}`.trim()
                 : (data.email?.split('@')[0] || 'Lifter'),
               photoURL: data.photoURL || data.googlePhotoURL || null,
               value: value,
@@ -62,6 +59,7 @@ const Leaderboard = () => {
 
     fetchLeaderboard();
   }, [activeCategory]);
+
 
   return (
     <div className="bg-slate-50 min-h-screen flex flex-col animate-fade-in pb-20">
