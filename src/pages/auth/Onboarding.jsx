@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, ArrowRight, ArrowLeft, User, Ruler, Target } from 'lucide-react';
+import { Loader2, ArrowRight, ArrowLeft, User, Ruler, Target, MapPin } from 'lucide-react';
 import liftlyLogo from '../../assets/liftly_white.png';
+import GymSearch from '../../components/GymSearch';
 
 const STEPS = [
   { id: 1, title: 'Tell us about you', subtitle: 'Basic personal info', icon: User },
   { id: 2, title: 'Your body metrics', subtitle: 'For accurate calculations', icon: Ruler },
   { id: 3, title: 'Your fitness goals', subtitle: 'Help us tailor your experience', icon: Target },
+  { id: 4, title: 'Your gym', subtitle: 'Find your training ground', icon: MapPin },
 ];
 
 const inputClass = "w-full h-13 bg-white/8 border border-white/12 rounded-2xl px-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all font-medium";
@@ -36,6 +38,9 @@ const Onboarding = () => {
   const [experienceLevel, setExperienceLevel] = useState('');
   const [goal, setGoal] = useState('');
 
+  // Step 4 — Gym
+  const [selectedGym, setSelectedGym] = useState(null); // { id, name }
+
   const validateStep = () => {
     if (step === 1) {
       if (!firstName || !lastName || !age || !sex) { setError('Please fill in all fields.'); return false; }
@@ -46,6 +51,7 @@ const Onboarding = () => {
     if (step === 3) {
       if (!trainingDays || !experienceLevel || !goal) { setError('Please fill in all fields.'); return false; }
     }
+    // Step 4 (gym) is optional — users can skip
     setError('');
     return true;
   };
@@ -71,6 +77,9 @@ const Onboarding = () => {
         trainingDays: parseInt(trainingDays, 10),
         experienceLevel,
         fitnessGoal: goal,
+        // Gym (optional)
+        gymId: selectedGym?.id || null,
+        gymName: selectedGym?.name || null,
         onboardingComplete: true
       });
       navigate('/');
@@ -150,8 +159,8 @@ const Onboarding = () => {
                       <option value="" disabled>Select…</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
-                      <option value="Gay">Gay</option>
                       <option value="Other">Other</option>
+                      <option value="Prefer not to say">Prefer not to say</option>
                     </select>
                   </div>
                 </div>
@@ -215,6 +224,31 @@ const Onboarding = () => {
                     <option value="Gain Muscle">Gain Muscle</option>
                   </select>
                 </div>
+              </div>
+            )}
+
+            {/* Step 4: Gym Selection */}
+            {step === 4 && (
+              <div className="space-y-4">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-2">
+                  <p className="text-white/60 text-xs font-medium leading-relaxed">
+                    Search for your gym below. If it doesn't exist yet, you can create it — others from the same gym will be able to find it and join you on <span className="text-liftly-teal font-bold">LiftChat</span>.
+                  </p>
+                </div>
+
+                <GymSearch
+                  selectedGym={selectedGym}
+                  onSelect={setSelectedGym}
+                  dark={true}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedGym(null)}
+                  className="text-xs text-white/30 hover:text-white/60 transition-colors font-semibold mt-1"
+                >
+                  {selectedGym ? 'Clear selection' : 'Skip — I\'ll set this later in Profile'}
+                </button>
               </div>
             )}
           </div>

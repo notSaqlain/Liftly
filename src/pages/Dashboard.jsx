@@ -191,7 +191,7 @@ const Dashboard = () => {
                 <Flame className="text-orange-400 fill-orange-400" size={18} />
                 <span className="text-xl font-black text-white">{userData?.currentStreak || 0}</span>
               </div>
-              <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Streak</span>
+              <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Wk Streak</span>
             </div>
             <button onClick={() => setShowQuickTools(true)} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all">
               <Menu size={22} />

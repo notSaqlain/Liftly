@@ -17,7 +17,7 @@ import {
 } from 'firebase/auth';
 import { Capacitor } from '@capacitor/core';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
-import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, onSnapshot, writeBatch, collection, getDocs } from 'firebase/firestore';
 import { auth, db, googleProvider } from '../firebase';
 
 const AuthContext = createContext();
@@ -48,6 +48,8 @@ export const AuthProvider = ({ children }) => {
       uid: user.uid,
       email: user.email,
       currentStreak: 0,
+      longestStreak: 0,
+      lastWorkoutWeek: '',
       totalVolumeLifted: 0,
       totalWorkoutsCompleted: 0,
       best1RM: {},
@@ -108,6 +110,8 @@ export const AuthProvider = ({ children }) => {
         photoURL: user.photoURL || '',
         googlePhotoURL: user.photoURL || '',
         currentStreak: 0,
+        longestStreak: 0,
+        lastWorkoutWeek: '',
         totalVolumeLifted: 0,
         totalWorkoutsCompleted: 0,
         best1RM: {},
@@ -167,10 +171,26 @@ export const AuthProvider = ({ children }) => {
     await firebaseUpdateProfile(auth.currentUser, { displayName });
   };
 
-  // Permanently delete account and Firestore data
+  // Permanently delete account and ALL associated Firestore data (GDPR)
   const deleteAccount = async () => {
     const uid = auth.currentUser.uid;
-    await deleteDoc(doc(db, 'users', uid));
+    const batch = writeBatch(db);
+
+    // Delete all user_workouts subcollection documents
+    try {
+      const workoutsSnap = await getDocs(collection(db, 'users', uid, 'user_workouts'));
+      workoutsSnap.forEach(d => batch.delete(d.ref));
+    } catch (e) {
+      console.warn('Could not delete user_workouts:', e);
+    }
+
+    // Delete gym presence doc
+    batch.delete(doc(db, 'gym_presence', uid));
+
+    // Delete user doc
+    batch.delete(doc(db, 'users', uid));
+
+    await batch.commit();
     await deleteUser(auth.currentUser);
   };
 
@@ -193,6 +213,8 @@ export const AuthProvider = ({ children }) => {
               photoURL: user.photoURL || '',
               googlePhotoURL: user.photoURL || '',
               currentStreak: 0,
+              longestStreak: 0,
+              lastWorkoutWeek: '',
               totalVolumeLifted: 0,
               totalWorkoutsCompleted: 0,
               best1RM: {},

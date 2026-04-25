@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, addDoc, doc, updateDoc, increment, serverTimestamp, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 import exercisesData from '../data/exercises.json';
 import { ChevronLeft, Plus, Minus, Check, Dumbbell, Trophy, Timer, Pause, Play, RotateCcw, Flame } from 'lucide-react';
 
@@ -12,6 +12,27 @@ const REST_PRESETS = [
   { sec: 120, label: '2m', sub: 'Long' },
   { sec: 180, label: '3m', sub: 'Max' },
 ];
+
+// Returns a string like "2026-W17" for the ISO week of a given date
+const getISOWeekKey = (date = new Date()) => {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+};
+
+// Returns the ISO week key of the week preceding the given key (e.g. "2026-W16" → "2026-W17")
+const getPrevWeekKey = (weekKey) => {
+  const [year, week] = weekKey.split('-W').map(Number);
+  if (week === 1) {
+    // Go back to last week of previous year (52 or 53)
+    const dec28 = new Date(Date.UTC(year - 1, 11, 28));
+    return getISOWeekKey(dec28);
+  }
+  return `${year}-W${String(week - 1).padStart(2, '0')}`;
+};
 
 const ActiveWorkout = () => {
   const { currentUser, userData } = useAuth();
@@ -103,6 +124,9 @@ const ActiveWorkout = () => {
     if (!currentUser) return;
     setSaving(true);
     const durationMinutes = Math.round((Date.now() - startTime) / 60000);
+    const now = new Date();
+    const currentWeekKey = getISOWeekKey(now);
+    const lastWeekKey = userData?.lastWorkoutWeek || '';
 
     const workoutData = {
       userId: currentUser.uid,
@@ -129,9 +153,40 @@ const ActiveWorkout = () => {
 
       const userUpdates = {
         totalVolumeLifted: increment(Math.round(totalVolume)),
-        totalWorkoutsCompleted: increment(1)
+        totalWorkoutsCompleted: increment(1),
+        lastWorkoutDate: serverTimestamp(),
+        lastWorkoutWeek: currentWeekKey,
       };
 
+      // ── Weekly Streak Logic ──
+      // Streak = number of consecutive calendar weeks with ≥1 workout.
+      // This is more realistic than daily streaks since rest days between sessions
+      // are normal and encouraged. The streak only breaks if an entire week passes
+      // without any workout.
+      if (currentWeekKey !== lastWeekKey) {
+        // First workout of this week
+        const prevWeekKey = getPrevWeekKey(currentWeekKey);
+        if (lastWeekKey === prevWeekKey) {
+          // Trained last week too → extend the streak
+          userUpdates.currentStreak = increment(1);
+        } else if (!lastWeekKey) {
+          // Very first workout ever
+          userUpdates.currentStreak = 1;
+        } else {
+          // Missed at least one full week → reset streak to 1
+          userUpdates.currentStreak = 1;
+        }
+
+        // Update longestStreak if we just set a new record
+        const projectedStreak = (userData?.currentStreak || 0) +
+          (lastWeekKey === prevWeekKey ? 1 : 0);
+        if (projectedStreak > (userData?.longestStreak || 0)) {
+          userUpdates.longestStreak = projectedStreak;
+        }
+      }
+      // If currentWeekKey === lastWeekKey: already counted this week, no streak change.
+
+      // ── Track best 1RM for big lifts ──
       const currentBest1RM = userData?.best1RM || {};
       workoutData.exercises.forEach(ex => {
         if (['bench_press', 'deadlift', 'squat'].includes(ex.exerciseId)) {
@@ -142,21 +197,7 @@ const ActiveWorkout = () => {
         }
       });
 
-      // ── Fix: Only increment streak if no workout today yet ──
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const todaySnap = await getDocs(query(
-        collection(db, 'users', currentUser.uid, 'user_workouts'),
-        where('completedAt', '>=', Timestamp.fromDate(todayStart))
-      ));
-      
-      if (todaySnap.size <= 1) {
-        userUpdates.currentStreak = increment(1);
-        userUpdates.lastWorkoutDate = serverTimestamp();
-      }
-
       await updateDoc(doc(db, 'users', currentUser.uid), userUpdates);
-
       setFinished(true);
     } catch (error) {
       console.error('Error saving workout:', error);
