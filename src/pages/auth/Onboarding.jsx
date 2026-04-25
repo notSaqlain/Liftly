@@ -210,11 +210,9 @@ const Onboarding = () => {
                   <label className={labelClass}>Primary Goal</label>
                   <select className={selectClass} value={goal} onChange={e => setGoal(e.target.value)}>
                     <option value="" disabled>What do you want to achieve?</option>
-                    <option value="Lose Weight (Caloric Deficit)">Lose Weight</option>
+                    <option value="Lose Weight">Lose Weight</option>
                     <option value="Maintain Weight">Maintain Weight</option>
-                    <option value="Gain Muscle (Caloric Surplus)">Gain Muscle</option>
-                    <option value="Strength">Build Strength</option>
-                    <option value="Athletic Performance">Athletic Performance</option>
+                    <option value="Gain Muscle">Gain Muscle</option>
                   </select>
                 </div>
               </div>

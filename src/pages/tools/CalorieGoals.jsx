@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Utensils, Target, Flame, ChevronLeft, TrendingUp, Activity, Save, Loader2 } from 'lucide-react';
+import { Utensils, Target, Flame, ChevronLeft, TrendingUp, Activity, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CalorieGoals = () => {
@@ -17,8 +17,33 @@ const CalorieGoals = () => {
   const [selectedPace, setSelectedPace] = useState(
     userData?.goalPace && userData.goalPace !== 'None' ? userData.goalPace : 'Moderate'
   );
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [isGoalDropdownOpen, setIsGoalDropdownOpen] = useState(false);
+
+  const goalOptions = [
+    { value: 'Lose Weight', label: 'Deficit', color: 'text-blue-600', hoverBg: 'hover:bg-blue-50' },
+    { value: 'Maintain Weight', label: 'Maintain', color: 'text-emerald-600', hoverBg: 'hover:bg-emerald-50' },
+    { value: 'Gain Muscle', label: 'Surplus', color: 'text-orange-600', hoverBg: 'hover:bg-orange-50' }
+  ];
+  const currentGoalOption = goalOptions.find(o => localGoal.includes(o.value)) || goalOptions[1];
+
+  useEffect(() => {
+    if (!userData || !currentUser) return;
+    const goalPaceToSave = localGoal.includes('Maintain') ? 'None' : selectedPace;
+    
+    if (userData.fitnessGoal !== localGoal || userData.goalPace !== goalPaceToSave) {
+      const autoSave = async () => {
+        try {
+          await updateUserProfile(currentUser.uid, {
+            fitnessGoal: localGoal,
+            goalPace: goalPaceToSave
+          });
+        } catch (error) {
+          console.error('Failed to auto-save goal:', error);
+        }
+      };
+      autoSave();
+    }
+  }, [localGoal, selectedPace, userData, currentUser, updateUserProfile]);
 
   let bmr = 10 * weight + 6.25 * height - 5 * age;
   if (gender === 'Female') bmr -= 161;
@@ -35,7 +60,7 @@ const CalorieGoals = () => {
   let goalMessage = "Consume these calories daily to maintain your current body weight.";
   let badgeText = "Maintenance";
 
-  if (localGoal.includes('Lose Weight') || localGoal.includes('Fat Loss')) {
+  if (localGoal.includes('Fat Loss') || localGoal.includes('Lose Weight')) {
     let deficit = 500;
     if (selectedPace === 'Slow') deficit = 250;
     else if (selectedPace === 'Moderate') deficit = 500;
@@ -44,7 +69,7 @@ const CalorieGoals = () => {
     const lossRate = deficit === 250 ? '0.25' : deficit === 500 ? '0.5' : '1.0';
     goalMessage = `A ${deficit}-calorie deficit for ${selectedPace.toLowerCase()} fat loss (approx. ${lossRate} kg per week).`;
     badgeText = "Deficit";
-  } else if (localGoal.includes('Gain Muscle') || localGoal.includes('Surplus')) {
+  } else if (localGoal.includes('Muscle Gain') || localGoal.includes('Surplus')) {
     let surplus = 300;
     if (selectedPace === 'Slow') surplus = 150;
     else if (selectedPace === 'Moderate') surplus = 300;
@@ -55,31 +80,8 @@ const CalorieGoals = () => {
     badgeText = "Surplus";
   }
 
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      await updateUserProfile(currentUser.uid, {
-        fitnessGoal: localGoal,
-        goalPace: localGoal.includes('Maintain') ? 'None' : selectedPace
-      });
-      setMessage('Goal saved successfully!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch (error) {
-      console.error(error);
-      setMessage('Error saving goal.');
-      setTimeout(() => setMessage(''), 3000);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
     <div className="bg-slate-50 min-h-full flex flex-col animate-fade-in relative">
-      {message && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100] bg-emerald-500 text-white px-4 py-2 rounded-2xl text-sm font-bold shadow-lg animate-slide-up">
-          {message}
-        </div>
-      )}
       {/* Header */}
       <div className="bg-liftly-navy px-5 pt-12 pb-6 relative overflow-hidden shrink-0 z-10 shadow-navy">
         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/15 rounded-full blur-3xl -mr-10 -mt-10" />
@@ -100,41 +102,59 @@ const CalorieGoals = () => {
 
       <div className="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
         <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100 flex flex-col">
-          {/* Maintenance Info */}
-          <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-5">
-            <div className="flex items-center gap-4">
-               <div className="w-12 h-12 rounded-2xl bg-blue-100/50 text-blue-500 flex items-center justify-center shrink-0">
-                 <Activity size={24} />
+          {/* Maintenance & Goal Info */}
+          <div className="flex items-center justify-between p-4 bg-white border border-slate-100 shadow-sm rounded-2xl mb-5">
+            <div className="flex items-center gap-3">
+               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100">
+                 <Activity size={22} className="drop-shadow-sm" />
                </div>
                <div>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Maintenance (TDEE)</p>
-                 <p className="font-black text-slate-800 text-xl tracking-tight">{tdee} <span className="text-sm font-bold text-slate-400">kcal</span></p>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Maintenance (TDEE)</p>
+                 <p className="font-black text-slate-800 text-xl tracking-tight leading-none">{tdee} <span className="text-xs font-bold text-slate-400">kcal</span></p>
                </div>
             </div>
-          </div>
-
-          {/* Goal Selector */}
-          <div className="mb-5">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Main Goal</p>
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl overflow-x-auto no-scrollbar gap-1">
-              {[
-                { id: 'Lose Weight', label: 'Lose', color: 'bg-blue-500 text-white shadow-md shadow-blue-500/20' },
-                { id: 'Maintain Weight', label: 'Maintain', color: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' },
-                { id: 'Gain Muscle', label: 'Gain', color: 'bg-orange-500 text-white shadow-md shadow-orange-500/20' }
-              ].map(g => (
-                <button 
-                  key={g.id}
-                  onClick={() => setLocalGoal(g.id)}
-                  className={`flex-1 py-2 px-3 whitespace-nowrap rounded-xl text-xs font-black transition-all ${localGoal === g.id ? g.color : 'bg-transparent text-slate-400 hover:bg-slate-200/50 hover:text-slate-600'}`}
-                >
-                  {g.label}
-                </button>
-              ))}
+            
+            <div className="relative shrink-0">
+              <button 
+                onClick={() => setIsGoalDropdownOpen(!isGoalDropdownOpen)}
+                className={`flex items-center gap-2 h-9 pl-3 pr-2.5 rounded-xl text-xs font-black outline-none transition-all cursor-pointer border shadow-sm ${
+                  localGoal.includes('Lose Weight') ? 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100' :
+                  localGoal.includes('Gain Muscle') ? 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100' :
+                  'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100'
+                }`}
+              >
+                {currentGoalOption.label}
+                <ChevronDown size={14} className={
+                  localGoal.includes('Lose Weight') ? 'text-blue-400' :
+                  localGoal.includes('Gain Muscle') ? 'text-orange-400' :
+                  'text-emerald-400'
+                } />
+              </button>
+              
+              {isGoalDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsGoalDropdownOpen(false)} />
+                  <div className="absolute right-0 top-full mt-2 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden animate-slide-up origin-top-right">
+                    {goalOptions.map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setLocalGoal(option.value);
+                          setIsGoalDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 text-xs font-black transition-colors border-b border-slate-50 last:border-0 ${option.color} ${option.hoverBg} ${localGoal.includes(option.value) ? 'bg-slate-50' : 'bg-white'}`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           {/* Pace Selector */}
-          {!localGoal.includes('Maintain') && (
+          {(localGoal.includes('Lose Weight') || localGoal.includes('Gain Muscle')) && (
             <div className="mb-5">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Goal Pace</p>
               <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
@@ -205,15 +225,6 @@ const CalorieGoals = () => {
             ))}
           </div>
         </div>
-
-        <button 
-          onClick={handleSave} 
-          disabled={saving}
-          className="w-full mt-6 h-14 bg-liftly-navy text-white font-black rounded-3xl shadow-navy active:scale-95 transition-all flex items-center justify-center gap-2"
-        >
-          {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-          {saving ? 'Saving...' : 'Save Goal to Profile'}
-        </button>
       </div>
     </div>
   );

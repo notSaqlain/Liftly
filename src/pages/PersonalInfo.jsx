@@ -225,14 +225,9 @@ const PersonalInfo = () => {
             <div className="relative">
               <Target size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <select className={`${selectClass} pl-12`} value={fitnessGoal} onChange={(e) => setFitnessGoal(e.target.value)}>
-                <option value="Muscle Gain">Muscle Gain</option>
-                <option value="Fat Loss">Fat Loss</option>
-                <option value="Strength">Strength</option>
-                <option value="Endurance">Endurance</option>
-                <option value="Flexibility">Flexibility</option>
-                <option value="General Fitness">General Fitness</option>
-                <option value="Athletic Performance">Athletic Performance</option>
-                <option value="Body Recomposition">Body Recomposition</option>
+                <option value="Lose Weight">Lose Weight</option>
+                <option value="Maintain Weight">Maintain Weight</option>
+                <option value="Gain Muscle">Gain Muscle</option>
               </select>
             </div>
           </div>
