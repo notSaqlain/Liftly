@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Utensils, Target, Flame, ChevronLeft, TrendingUp, Activity } from 'lucide-react';
+import { Utensils, Target, Flame, ChevronLeft, TrendingUp, Activity, Save, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CalorieGoals = () => {
-  const { userData } = useAuth();
+  const { userData, currentUser, updateUserProfile } = useAuth();
   const navigate = useNavigate();
 
   const weight = userData?.weight || 70;
@@ -12,7 +12,13 @@ const CalorieGoals = () => {
   const age = userData?.age || 25;
   const gender = userData?.gender || 'Male';
   const trainingDays = userData?.trainingDays || 3;
-  const goal = userData?.fitnessGoal || 'Maintain Weight';
+  
+  const [localGoal, setLocalGoal] = useState(userData?.fitnessGoal || 'Maintain Weight');
+  const [selectedPace, setSelectedPace] = useState(
+    userData?.goalPace && userData.goalPace !== 'None' ? userData.goalPace : 'Moderate'
+  );
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
 
   let bmr = 10 * weight + 6.25 * height - 5 * age;
   if (gender === 'Female') bmr -= 161;
@@ -23,17 +29,13 @@ const CalorieGoals = () => {
   else if (trainingDays >= 4 && trainingDays <= 5) multiplier = 1.55;
   else if (trainingDays >= 6) multiplier = 1.725;
 
-  const [selectedPace, setSelectedPace] = useState(
-    userData?.goalPace && userData.goalPace !== 'None' ? userData.goalPace : 'Moderate'
-  );
-
   const tdee = Math.round(bmr * multiplier);
 
   let calorieTarget = tdee;
   let goalMessage = "Consume these calories daily to maintain your current body weight.";
   let badgeText = "Maintenance";
 
-  if (goal.includes('Lose Weight') || goal.includes('Fat Loss')) {
+  if (localGoal.includes('Lose Weight') || localGoal.includes('Fat Loss')) {
     let deficit = 500;
     if (selectedPace === 'Slow') deficit = 250;
     else if (selectedPace === 'Moderate') deficit = 500;
@@ -42,7 +44,7 @@ const CalorieGoals = () => {
     const lossRate = deficit === 250 ? '0.25' : deficit === 500 ? '0.5' : '1.0';
     goalMessage = `A ${deficit}-calorie deficit for ${selectedPace.toLowerCase()} fat loss (approx. ${lossRate} kg per week).`;
     badgeText = "Deficit";
-  } else if (goal.includes('Gain Muscle') || goal.includes('Surplus')) {
+  } else if (localGoal.includes('Gain Muscle') || localGoal.includes('Surplus')) {
     let surplus = 300;
     if (selectedPace === 'Slow') surplus = 150;
     else if (selectedPace === 'Moderate') surplus = 300;
@@ -53,10 +55,33 @@ const CalorieGoals = () => {
     badgeText = "Surplus";
   }
 
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateUserProfile(currentUser.uid, {
+        fitnessGoal: localGoal,
+        goalPace: localGoal.includes('Maintain') ? 'None' : selectedPace
+      });
+      setMessage('Goal saved successfully!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error(error);
+      setMessage('Error saving goal.');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="bg-slate-50 min-h-full flex flex-col animate-fade-in">
+    <div className="bg-slate-50 min-h-full flex flex-col animate-fade-in relative">
+      {message && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100] bg-emerald-500 text-white px-4 py-2 rounded-2xl text-sm font-bold shadow-lg animate-slide-up">
+          {message}
+        </div>
+      )}
       {/* Header */}
-      <div className="bg-liftly-navy px-5 pt-12 pb-6 relative overflow-hidden shrink-0">
+      <div className="bg-liftly-navy px-5 pt-12 pb-6 relative overflow-hidden shrink-0 z-10 shadow-navy">
         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/15 rounded-full blur-3xl -mr-10 -mt-10" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-liftly-teal/10 rounded-full blur-3xl -ml-10 -mb-10" />
         <div className="relative z-10 flex items-center gap-3">
@@ -88,18 +113,42 @@ const CalorieGoals = () => {
             </div>
           </div>
 
+          {/* Goal Selector */}
+          <div className="mb-5">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Main Goal</p>
+            <div className="flex bg-slate-100 p-1.5 rounded-2xl overflow-x-auto no-scrollbar gap-1">
+              {[
+                { id: 'Lose Weight', label: 'Lose', color: 'bg-blue-500 text-white shadow-md shadow-blue-500/20' },
+                { id: 'Maintain Weight', label: 'Maintain', color: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' },
+                { id: 'Gain Muscle', label: 'Gain', color: 'bg-orange-500 text-white shadow-md shadow-orange-500/20' }
+              ].map(g => (
+                <button 
+                  key={g.id}
+                  onClick={() => setLocalGoal(g.id)}
+                  className={`flex-1 py-2 px-3 whitespace-nowrap rounded-xl text-xs font-black transition-all ${localGoal === g.id ? g.color : 'bg-transparent text-slate-400 hover:bg-slate-200/50 hover:text-slate-600'}`}
+                >
+                  {g.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Pace Selector */}
-          {!goal.includes('Maintain') && (
+          {!localGoal.includes('Maintain') && (
             <div className="mb-5">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Goal Pace</p>
-              <div className="flex bg-slate-100 p-1.5 rounded-2xl">
-                {['Slow', 'Moderate', 'Extreme'].map(pace => (
+              <div className="flex bg-slate-100 p-1.5 rounded-2xl gap-1">
+                {[
+                  { id: 'Slow', color: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' },
+                  { id: 'Moderate', color: 'bg-amber-500 text-white shadow-md shadow-amber-500/20' },
+                  { id: 'Extreme', color: 'bg-red-500 text-white shadow-md shadow-red-500/20' }
+                ].map(pace => (
                   <button 
-                    key={pace}
-                    onClick={() => setSelectedPace(pace)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${selectedPace === pace ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    key={pace.id}
+                    onClick={() => setSelectedPace(pace.id)}
+                    className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${selectedPace === pace.id ? pace.color : 'bg-transparent text-slate-400 hover:bg-slate-200/50 hover:text-slate-600'}`}
                   >
-                    {pace}
+                    {pace.id}
                   </button>
                 ))}
               </div>
@@ -156,6 +205,15 @@ const CalorieGoals = () => {
             ))}
           </div>
         </div>
+
+        <button 
+          onClick={handleSave} 
+          disabled={saving}
+          className="w-full mt-6 h-14 bg-liftly-navy text-white font-black rounded-3xl shadow-navy active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+          {saving ? 'Saving...' : 'Save Goal to Profile'}
+        </button>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Activity, Info, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
