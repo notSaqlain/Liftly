@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { doc, updateDoc, arrayUnion, arrayRemove, deleteField } from 'firebase/firestore';
 import exercisesData from '../data/exercises.json';
-import { Search, Heart, Plus, X, Activity, CalendarDays, Dumbbell, Trash2 } from 'lucide-react';
+import { Search, Heart, Plus, X, Activity, CalendarDays, Dumbbell, Trash2, Check } from 'lucide-react';
 import clsx from 'clsx';
 
 const MUSCLE_FILTERS = ['All', 'Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
@@ -26,6 +26,7 @@ const Workout = () => {
   const [addingExerciseId, setAddingExerciseId] = useState(null);
   const [newRoutineName, setNewRoutineName] = useState('');
   const [showNewRoutineModal, setShowNewRoutineModal] = useState(false);
+  const [targetRoutineForAdd, setTargetRoutineForAdd] = useState(null);
 
   useEffect(() => {
     if (userData) {
@@ -52,7 +53,11 @@ const Workout = () => {
       showToast('Please create a routine first!');
       return;
     }
-    setAddingExerciseId(exerciseId);
+    if (targetRoutineForAdd) {
+      saveToRoutine(targetRoutineForAdd, exerciseId);
+    } else {
+      setAddingExerciseId(exerciseId);
+    }
   };
 
   const handleCreateRoutine = async () => {
@@ -91,23 +96,30 @@ const Workout = () => {
     }
   };
 
-  const saveToRoutine = async (dayName) => {
-    if (!addingExerciseId || !currentUser) return;
+  const saveToRoutine = async (dayName, overrideExerciseId = null) => {
+    const exerciseToSave = overrideExerciseId || addingExerciseId;
+    if (!exerciseToSave || !currentUser) return;
+    
     const updatedRoutines = { ...customRoutines };
     if (!updatedRoutines[dayName]) updatedRoutines[dayName] = [];
-    if (!updatedRoutines[dayName].includes(addingExerciseId)) {
-      updatedRoutines[dayName] = [...updatedRoutines[dayName], addingExerciseId];
-    }
-    setCustomRoutines(updatedRoutines);
-    setAddingExerciseId(null);
-    try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userRef, { [`customRoutines.${dayName}`]: arrayUnion(addingExerciseId) });
-      showToast(`Added to ${dayName}!`);
-    } catch (error) {
-      console.error('Error adding to routine:', error);
-      showToast("Error adding exercise.");
-      setCustomRoutines(userData?.customRoutines || {});
+    
+    if (!updatedRoutines[dayName].includes(exerciseToSave)) {
+      updatedRoutines[dayName] = [...updatedRoutines[dayName], exerciseToSave];
+      setCustomRoutines(updatedRoutines);
+      if (!overrideExerciseId) setAddingExerciseId(null);
+      
+      try {
+        const userRef = doc(db, 'users', currentUser.uid);
+        await updateDoc(userRef, { [`customRoutines.${dayName}`]: arrayUnion(exerciseToSave) });
+        showToast(`Added to ${dayName}!`);
+      } catch (error) {
+        console.error('Error adding to routine:', error);
+        showToast("Error adding exercise.");
+        setCustomRoutines(userData?.customRoutines || {});
+      }
+    } else {
+      showToast(`Already in ${dayName}!`);
+      if (!overrideExerciseId) setAddingExerciseId(null);
     }
   };
 
@@ -190,6 +202,25 @@ const Workout = () => {
         {/* Search & Filter (exercises tab) */}
         {activeTab === 'exercises' && (
           <div className="px-5 pb-3 space-y-2">
+            {targetRoutineForAdd && (
+              <div className="bg-liftly-navy text-white rounded-2xl p-3 mb-2 flex items-center justify-between shadow-md">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                    <Plus size={16} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-white/70 font-bold uppercase tracking-wider">Adding to</p>
+                    <p className="text-sm font-black">{targetRoutineForAdd}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setTargetRoutineForAdd(null)}
+                  className="px-4 py-1.5 bg-white text-liftly-navy text-xs font-black rounded-xl active:scale-95 transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            )}
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <input
@@ -291,9 +322,18 @@ const Workout = () => {
                         ) : (
                           <div className="p-4 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 text-center">
                             <p className="text-sm text-slate-400 font-semibold">No exercises added yet</p>
-                            <p className="text-xs text-slate-300 mt-0.5">Browse the Exercises tab to add some</p>
+                            <p className="text-xs text-slate-300 mt-0.5">Tap below to add exercises to this routine</p>
                           </div>
                         )}
+                        <button
+                          onClick={() => {
+                            setTargetRoutineForAdd(dayName);
+                            setActiveTab('exercises');
+                          }}
+                          className="w-full mt-2 py-3 border-2 border-dashed border-liftly-teal/30 text-liftly-teal font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-liftly-teal/5 transition-colors active:scale-[0.98]"
+                        >
+                          <Plus size={16} /> Add Exercises
+                        </button>
                       </div>
                     </div>
                   );
@@ -308,6 +348,7 @@ const Workout = () => {
           <div className="animate-fade-in space-y-3">
             {filteredExercises.map(exercise => {
               const isFav = favorites.includes(exercise.id);
+              const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
               return (
                 <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
                   <div className="w-11 h-11 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
@@ -327,10 +368,21 @@ const Workout = () => {
                     <Heart size={17} className={isFav ? 'fill-red-500' : ''} />
                   </button>
                   <button
-                    onClick={() => handleAddClick(exercise.id)}
-                    className="w-9 h-9 bg-liftly-navy text-white rounded-xl flex items-center justify-center transition-all active:scale-90 shadow-navy shrink-0"
+                    onClick={() => {
+                      if (isInRoutine) {
+                        removeExercise(targetRoutineForAdd, exercise.id);
+                      } else {
+                        handleAddClick(exercise.id);
+                      }
+                    }}
+                    className={clsx(
+                      "w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0",
+                      isInRoutine 
+                        ? "bg-emerald-50 text-emerald-500 border border-emerald-100" 
+                        : "bg-liftly-navy text-white shadow-navy"
+                    )}
                   >
-                    <Plus size={17} />
+                    {isInRoutine ? <Check size={17} /> : <Plus size={17} />}
                   </button>
                 </div>
               );
@@ -357,23 +409,40 @@ const Workout = () => {
                 <p className="text-slate-400 text-sm">Tap the heart on any exercise to save it here.</p>
               </div>
             ) : (
-              favoriteExercises.map(exercise => (
-                <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
-                    <Heart size={18} className="text-red-400 fill-red-400" />
+              favoriteExercises.map(exercise => {
+                const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
+                return (
+                  <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
+                      <Heart size={18} className="text-red-400 fill-red-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-black text-slate-800 text-sm truncate">{exercise.name}</h3>
+                      <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${getMuscleColor(exercise.muscleGroup)}`}>{exercise.muscleGroup}</span>
+                    </div>
+                    <button onClick={() => toggleFavorite(exercise.id)} className="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center active:scale-90 transition-all">
+                      <Heart size={17} className="fill-red-500" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (isInRoutine) {
+                          removeExercise(targetRoutineForAdd, exercise.id);
+                        } else {
+                          handleAddClick(exercise.id);
+                        }
+                      }}
+                      className={clsx(
+                        "w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 shrink-0",
+                        isInRoutine 
+                          ? "bg-emerald-50 text-emerald-500 border border-emerald-100" 
+                          : "bg-liftly-navy text-white shadow-navy"
+                      )}
+                    >
+                      {isInRoutine ? <Check size={17} /> : <Plus size={17} />}
+                    </button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-black text-slate-800 text-sm truncate">{exercise.name}</h3>
-                    <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${getMuscleColor(exercise.muscleGroup)}`}>{exercise.muscleGroup}</span>
-                  </div>
-                  <button onClick={() => toggleFavorite(exercise.id)} className="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center active:scale-90 transition-all">
-                    <Heart size={17} className="fill-red-500" />
-                  </button>
-                  <button onClick={() => handleAddClick(exercise.id)} className="w-9 h-9 bg-liftly-navy text-white rounded-xl flex items-center justify-center active:scale-90 shadow-navy shrink-0">
-                    <Plus size={17} />
-                  </button>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}

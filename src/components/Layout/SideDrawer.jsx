@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { X, UserCircle, Settings, LogOut, Scale, Calculator, Utensils, Activity, ChevronRight, Zap } from 'lucide-react';
+import { X, UserCircle, Settings, LogOut, Scale, Calculator, Utensils, Activity, ChevronRight, Zap, Trophy } from 'lucide-react';
 import clsx from 'clsx';
 
 const SideDrawer = ({ isOpen, onClose }) => {
@@ -98,6 +98,14 @@ const SideDrawer = ({ isOpen, onClose }) => {
 
         {/* Links */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 relative z-10 no-scrollbar">
+
+          {/* Community Section */}
+          <div>
+            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3 px-1">Community</h3>
+            <div className="space-y-1.5 mb-6">
+              <DrawerLink to="/leaderboard" icon={<Trophy size={18} />} label="Leaderboard" color="bg-yellow-500/20 text-yellow-400" onClick={onClose} />
+            </div>
+          </div>
 
           {/* Tools Section */}
           <div>

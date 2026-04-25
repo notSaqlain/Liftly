@@ -48,6 +48,9 @@ export const AuthProvider = ({ children }) => {
       uid: user.uid,
       email: user.email,
       currentStreak: 0,
+      totalVolumeLifted: 0,
+      totalWorkoutsCompleted: 0,
+      best1RM: {},
       onboardingComplete: false,
       createdAt: serverTimestamp()
     });
@@ -105,6 +108,9 @@ export const AuthProvider = ({ children }) => {
         photoURL: user.photoURL || '',
         googlePhotoURL: user.photoURL || '',
         currentStreak: 0,
+        totalVolumeLifted: 0,
+        totalWorkoutsCompleted: 0,
+        best1RM: {},
         onboardingComplete: false,
         createdAt: serverTimestamp()
       });
@@ -187,6 +193,9 @@ export const AuthProvider = ({ children }) => {
               photoURL: user.photoURL || '',
               googlePhotoURL: user.photoURL || '',
               currentStreak: 0,
+              totalVolumeLifted: 0,
+              totalWorkoutsCompleted: 0,
+              best1RM: {},
               onboardingComplete: false,
               createdAt: serverTimestamp()
             });

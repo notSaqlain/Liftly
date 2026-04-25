@@ -18,6 +18,7 @@ import CalorieGoals from './pages/tools/CalorieGoals';
 import WeightTracker from './pages/tools/WeightTracker';
 import ActiveWorkout from './pages/ActiveWorkout';
 import LiftChat from './pages/LiftChat';
+import Leaderboard from './pages/Leaderboard';
 
 // 404
 const NotFound = () => (
@@ -51,6 +52,7 @@ function App() {
             <Route path="/workout" element={<Workout />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/chat" element={<LiftChat />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="/personal-info" element={<PersonalInfo />} />

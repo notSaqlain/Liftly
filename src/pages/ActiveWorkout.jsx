@@ -127,6 +127,21 @@ const ActiveWorkout = () => {
     try {
       await addDoc(collection(db, 'users', currentUser.uid, 'user_workouts'), workoutData);
 
+      const userUpdates = {
+        totalVolumeLifted: increment(Math.round(totalVolume)),
+        totalWorkoutsCompleted: increment(1)
+      };
+
+      const currentBest1RM = userData?.best1RM || {};
+      workoutData.exercises.forEach(ex => {
+        if (['bench_press', 'deadlift', 'squat'].includes(ex.exerciseId)) {
+          const maxWeight = Math.max(...ex.sets.map(s => s.weight || 0), 0);
+          if (maxWeight > (currentBest1RM[ex.exerciseId] || 0)) {
+            userUpdates[`best1RM.${ex.exerciseId}`] = maxWeight;
+          }
+        }
+      });
+
       // ── Fix: Only increment streak if no workout today yet ──
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
@@ -134,13 +149,13 @@ const ActiveWorkout = () => {
         collection(db, 'users', currentUser.uid, 'user_workouts'),
         where('completedAt', '>=', Timestamp.fromDate(todayStart))
       ));
-      // todaySnap.size will be 1 (just saved) if no prior workout today
+      
       if (todaySnap.size <= 1) {
-        await updateDoc(doc(db, 'users', currentUser.uid), {
-          currentStreak: increment(1),
-          lastWorkoutDate: serverTimestamp()
-        });
+        userUpdates.currentStreak = increment(1);
+        userUpdates.lastWorkoutDate = serverTimestamp();
       }
+
+      await updateDoc(doc(db, 'users', currentUser.uid), userUpdates);
 
       setFinished(true);
     } catch (error) {
