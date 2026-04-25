@@ -11,6 +11,7 @@ import {
   verifyBeforeUpdateEmail,
   updatePassword as firebaseUpdatePassword,
   updateProfile as firebaseUpdateProfile,
+  sendPasswordResetEmail,
   deleteUser,
   signInWithCredential,
   GoogleAuthProvider
@@ -166,6 +167,11 @@ export const AuthProvider = ({ children }) => {
     await firebaseUpdatePassword(auth.currentUser, newPassword);
   };
 
+  // Send password reset email (works with Firebase free tier)
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
+
   // Update Firebase Auth display name
   const updateDisplayName = async (displayName) => {
     await firebaseUpdateProfile(auth.currentUser, { displayName });
@@ -273,6 +279,7 @@ export const AuthProvider = ({ children }) => {
     updateUserProfile,
     updateUserEmail,
     updateUserPassword,
+    resetPassword,
     updateDisplayName,
     deleteAccount,
     isGoogleUser,

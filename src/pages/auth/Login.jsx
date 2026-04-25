@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import { auth } from '../../firebase';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import liftlyLogo from '../../assets/liftly_white.png';
 
 const Login = () => {
@@ -14,7 +14,14 @@ const Login = () => {
   const [isGoogleAccount, setIsGoogleAccount] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { login, loginWithGoogle } = useAuth();
+  // Forgot password state
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+
+  const { login, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -53,6 +60,25 @@ const Login = () => {
       setError('Google sign-in failed. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotLoading(true);
+    setForgotError('');
+    try {
+      await resetPassword(forgotEmail);
+      setForgotSent(true);
+    } catch (err) {
+      if (err.code === 'auth/user-not-found') {
+        setForgotError('No account found with this email.');
+      } else {
+        setForgotError('Failed to send reset email. Please try again.');
+      }
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -123,6 +149,17 @@ const Login = () => {
             >
               {loading ? <Loader2 className="animate-spin" size={22} /> : 'Sign In'}
             </button>
+
+            {/* Forgot Password link */}
+            <div className="text-center mt-1">
+              <button
+                type="button"
+                onClick={() => { setShowForgot(true); setForgotEmail(email); setForgotSent(false); setForgotError(''); }}
+                className="text-white/40 hover:text-liftly-teal text-xs font-semibold transition-colors"
+              >
+                Forgot your password?
+              </button>
+            </div>
           </form>
 
           <div className="flex items-center my-6 gap-3">
@@ -150,6 +187,77 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Forgot Password Bottom Sheet ── */}
+      {showForgot && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center"
+          onClick={(e) => { if (e.target === e.currentTarget) { setShowForgot(false); } }}
+          style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+        >
+          <div className="w-full max-w-[480px] bg-liftly-navy rounded-t-3xl p-6 pb-10 animate-slide-up border-t border-white/10">
+            {!forgotSent ? (
+              <>
+                <div className="flex items-center gap-3 mb-6">
+                  <button
+                    onClick={() => setShowForgot(false)}
+                    className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white active:scale-95 transition-all"
+                  >
+                    <ArrowLeft size={18} />
+                  </button>
+                  <div>
+                    <p className="text-white font-black text-lg leading-tight">Reset Password</p>
+                    <p className="text-white/40 text-xs font-semibold">We'll send a link to your email</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleForgotPassword} className="space-y-3">
+                  {forgotError && (
+                    <div className="bg-red-500/15 border border-red-500/30 text-red-300 p-3 rounded-2xl text-xs text-center font-semibold">
+                      {forgotError}
+                    </div>
+                  )}
+                  <div className="relative">
+                    <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+                    <input
+                      type="email"
+                      placeholder="Your email address"
+                      required
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      className="w-full h-14 bg-white/8 border border-white/12 rounded-2xl pl-10 pr-5 text-white placeholder:text-white/30 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all text-sm font-medium"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="w-full h-14 font-black text-liftly-navy text-sm rounded-2xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-60"
+                    style={{ background: 'linear-gradient(135deg, #00ADB5 0%, #33c4cb 100%)' }}
+                  >
+                    {forgotLoading ? <Loader2 className="animate-spin" size={20} /> : 'Send Reset Link'}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="flex flex-col items-center py-4 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-liftly-teal/10 border border-liftly-teal/20 flex items-center justify-center mb-4">
+                  <CheckCircle2 size={32} className="text-liftly-teal" />
+                </div>
+                <p className="text-white font-black text-lg mb-2">Email Sent!</p>
+                <p className="text-white/50 text-sm font-semibold leading-relaxed mb-6">
+                  Check your inbox at <span className="text-liftly-teal">{forgotEmail}</span> and click the reset link.
+                </p>
+                <button
+                  onClick={() => setShowForgot(false)}
+                  className="w-full h-12 bg-white/10 text-white font-black text-sm rounded-2xl transition-all active:scale-95"
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
