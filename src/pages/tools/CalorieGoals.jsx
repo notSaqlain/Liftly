@@ -69,7 +69,7 @@ const CalorieGoals = () => {
     const lossRate = deficit === 250 ? '0.25' : deficit === 500 ? '0.5' : '1.0';
     goalMessage = `A ${deficit}-calorie deficit for ${selectedPace.toLowerCase()} fat loss (approx. ${lossRate} kg per week).`;
     badgeText = "Deficit";
-  } else if (localGoal.includes('Muscle Gain') || localGoal.includes('Surplus')) {
+  } else if (localGoal.includes('Gain Muscle') || localGoal.includes('Surplus')) {
     let surplus = 300;
     if (selectedPace === 'Slow') surplus = 150;
     else if (selectedPace === 'Moderate') surplus = 300;
@@ -102,19 +102,19 @@ const CalorieGoals = () => {
 
       <div className="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
         <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100 flex flex-col">
-          {/* Maintenance & Goal Info */}
+          {/* Goal Selector Header */}
           <div className="flex items-center justify-between p-4 bg-white border border-slate-100 shadow-sm rounded-2xl mb-5">
             <div className="flex items-center gap-3">
-               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100">
-                 <Activity size={22} className="drop-shadow-sm" />
+               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-500 flex items-center justify-center shrink-0 border border-indigo-100">
+                 <Target size={22} className="drop-shadow-sm" />
                </div>
                <div>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Maintenance (TDEE)</p>
-                 <p className="font-black text-slate-800 text-xl tracking-tight leading-none">{tdee} <span className="text-xs font-bold text-slate-400">kcal</span></p>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Primary Goal</p>
+                 <p className="font-black text-slate-800 text-lg tracking-tight leading-none">Active Path</p>
                </div>
             </div>
             
-            <div className="relative shrink-0">
+            <div className="relative shrink-0 z-50">
               <button 
                 onClick={() => setIsGoalDropdownOpen(!isGoalDropdownOpen)}
                 className={`flex items-center gap-2 h-9 pl-3 pr-2.5 rounded-xl text-xs font-black outline-none transition-all cursor-pointer border shadow-sm ${
@@ -153,6 +153,45 @@ const CalorieGoals = () => {
             </div>
           </div>
 
+          <div className="flex justify-between items-center mb-4 px-1">
+             <h2 className="text-lg font-black text-slate-800 tracking-tight">Daily Target</h2>
+             <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${
+                localGoal.includes('Lose Weight') ? 'bg-blue-50 text-blue-600' :
+                localGoal.includes('Gain Muscle') ? 'bg-orange-50 text-orange-600' :
+                'bg-emerald-50 text-emerald-600'
+             }`}>
+               <Target size={14} /> {badgeText}
+             </span>
+          </div>
+          
+          <div className={`flex flex-col items-center justify-center p-6 rounded-3xl border mb-5 relative overflow-hidden ${
+             localGoal.includes('Lose Weight') ? 'bg-blue-50/50 border-blue-100/50' :
+             localGoal.includes('Gain Muscle') ? 'bg-orange-50/50 border-orange-100/50' :
+             'bg-emerald-50/50 border-emerald-100/50'
+          }`}>
+             <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Flame size={64} className={
+                   localGoal.includes('Lose Weight') ? 'text-blue-500' :
+                   localGoal.includes('Gain Muscle') ? 'text-orange-500' :
+                   'text-emerald-500'
+                } />
+             </div>
+             <span className={`text-5xl font-black tracking-tighter mb-1 relative z-10 ${
+                localGoal.includes('Lose Weight') ? 'text-blue-500' :
+                localGoal.includes('Gain Muscle') ? 'text-orange-500' :
+                'text-emerald-500'
+             }`}>
+               {calorieTarget}
+             </span>
+             <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 relative z-10 ${
+                localGoal.includes('Lose Weight') ? 'text-blue-400' :
+                localGoal.includes('Gain Muscle') ? 'text-orange-400' :
+                'text-emerald-400'
+             }`}>
+               <Flame size={14} /> Calories / Day
+             </span>
+          </div>
+
           {/* Pace Selector */}
           {(localGoal.includes('Lose Weight') || localGoal.includes('Gain Muscle')) && (
             <div className="mb-5">
@@ -175,26 +214,7 @@ const CalorieGoals = () => {
             </div>
           )}
 
-          <div className="flex justify-between items-center mb-4 px-1">
-             <h2 className="text-lg font-black text-slate-800 tracking-tight">Daily Target</h2>
-             <span className="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
-               <Target size={14} /> {badgeText}
-             </span>
-          </div>
-          
-          <div className="flex flex-col items-center justify-center p-6 bg-orange-50/50 rounded-3xl border border-orange-100/50 mb-5 relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Flame size={64} className="text-orange-500" />
-             </div>
-             <span className="text-5xl font-black text-orange-500 tracking-tighter mb-1 relative z-10">
-               {calorieTarget}
-             </span>
-             <span className="text-[10px] font-black uppercase tracking-widest text-orange-400 flex items-center gap-1.5 relative z-10">
-               <Flame size={14} /> Calories / Day
-             </span>
-          </div>
-
-          <p className="text-slate-500 text-xs font-medium leading-relaxed bg-blue-50/50 p-4 rounded-2xl border border-blue-50 text-blue-800">
+          <p className="text-slate-500 text-xs font-medium leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100 text-slate-600">
             <span className="font-bold block mb-1">Plan:</span>
             {goalMessage}
           </p>
