@@ -26,15 +26,6 @@ const AccountSettings = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [hideOnlineStatus, setHideOnlineStatus] = useState(false);
 
-  const availableSplits = {
-    3: ['Push', 'Pull', 'Legs'],
-    4: ['Upper', 'Lower', 'Upper 2', 'Lower 2'],
-    5: ['Chest', 'Back', 'Shoulders', 'Legs', 'Arms'],
-    6: ['Push 1', 'Pull 1', 'Legs 1', 'Push 2', 'Pull 2', 'Legs 2']
-  };
-  const [trainingDays, setTrainingDays] = useState(3);
-  const [currentSplit, setCurrentSplit] = useState(null);
-
   const googleLinked = isGoogleUser();
   const passwordLinked = hasPasswordProvider();
 
@@ -46,10 +37,6 @@ const AccountSettings = () => {
         const data = await getUserData(currentUser.uid);
         if (data) {
           setBackupEmail(data.backupEmail || '');
-          setCurrentSplit(data.activeSplit || null);
-          if (data.activeSplit) {
-            setTrainingDays(data.activeSplit.length > 6 ? 6 : (data.activeSplit.length < 3 ? 3 : data.activeSplit.length));
-          }
           if (data.hideOnlineStatus !== undefined) {
             setHideOnlineStatus(data.hideOnlineStatus);
           }
@@ -60,21 +47,6 @@ const AccountSettings = () => {
     };
     load();
   }, [currentUser, getUserData]);
-
-  const handleSaveSplit = async () => {
-    setSaving(true);
-    try {
-      const userRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userRef, { activeSplit: availableSplits[trainingDays] });
-      setCurrentSplit(availableSplits[trainingDays]);
-      showMessage('Workout split saved successfully!');
-      setActiveSection(null);
-    } catch (err) {
-      showMessage(err.message, 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleSavePrivacy = async () => {
     setSaving(true);
@@ -231,41 +203,7 @@ const AccountSettings = () => {
           </button>
         </AccordionItem>
 
-        {/* ─── Workout Split ─── */}
-        <AccordionItem 
-          title="Workout Split" 
-          subtitle={currentSplit ? `${currentSplit.length} Days/Week` : "Not configured"} 
-          icon={<Dumbbell size={18} />} 
-          iconBg="bg-orange-50 text-orange-500" 
-          isOpen={activeSection === 'split'} 
-          onToggle={() => setActiveSection(activeSection === 'split' ? null : 'split')}
-        >
-          <p className="text-slate-500 text-xs font-semibold mb-3">How many days a week do you want to train?</p>
-          <div className="flex bg-slate-100 p-1.5 rounded-2xl mb-4">
-            {[3, 4, 5, 6].map(days => (
-              <button 
-                key={days}
-                onClick={() => setTrainingDays(days)}
-                className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${trainingDays === days ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                {days}d
-              </button>
-            ))}
-          </div>
-          
-          <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl mb-4">
-            <p className="text-[10px] uppercase tracking-widest font-black text-slate-400 mb-2">Suggested Split:</p>
-            <div className="flex flex-wrap gap-2">
-              {availableSplits[trainingDays].map((day, idx) => (
-                <span key={idx} className="bg-white border border-slate-200 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-black">{day}</span>
-              ))}
-            </div>
-          </div>
 
-          <button onClick={handleSaveSplit} disabled={saving} className="w-full h-12 bg-liftly-teal hover:bg-teal-400 text-white font-black text-sm rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 disabled:opacity-60">
-            {saving ? <Loader2 size={18} className="animate-spin" /> : <><Save size={16} /><span>Save Split</span></>}
-          </button>
-        </AccordionItem>
 
         {/* ─── Email ─── */}
         {googleLinked && !passwordLinked ? (

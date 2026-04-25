@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit } from 'firebase/firestore';
-import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap } from 'lucide-react';
+import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -19,6 +19,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [reportedStatus, setReportedStatus] = useState(false);
   const [showSplitPicker, setShowSplitPicker] = useState(false);
+  const [showQuickTools, setShowQuickTools] = useState(false);
   const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [weekStats, setWeekStats] = useState({ count: 0, volume: 0 });
 
@@ -123,10 +124,10 @@ const Dashboard = () => {
 
   const displayName = userData?.firstName || currentUser?.displayName?.split(' ')[0] || currentUser?.email?.split('@')[0] || 'Lifter';
   const photoURL = userData?.photoURL || currentUser?.photoURL || null;
-  const activeSplit = userData?.activeSplit || null;
+  const activeSplit = Object.keys(userData?.customRoutines || {});
 
   const handleStartWorkout = () => {
-    if (!activeSplit || activeSplit.length === 0) { navigate('/workout'); return; }
+    if (activeSplit.length === 0) { navigate('/workout'); return; }
     setShowSplitPicker(true);
   };
   const handleSelectDay = (dayName) => {
@@ -184,12 +185,17 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white/10 border border-white/15 px-3 py-2 rounded-2xl flex flex-col items-center shrink-0">
-            <div className="flex items-center space-x-1">
-              <Flame className="text-orange-400 fill-orange-400" size={18} />
-              <span className="text-xl font-black text-white">{userData?.currentStreak || 0}</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="bg-white/10 border border-white/15 px-3 py-2 rounded-2xl flex flex-col items-center">
+              <div className="flex items-center space-x-1">
+                <Flame className="text-orange-400 fill-orange-400" size={18} />
+                <span className="text-xl font-black text-white">{userData?.currentStreak || 0}</span>
+              </div>
+              <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Streak</span>
             </div>
-            <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Streak</span>
+            <button onClick={() => setShowQuickTools(true)} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all">
+              <Menu size={22} />
+            </button>
           </div>
         </div>
 
@@ -234,23 +240,7 @@ const Dashboard = () => {
           </div>
         </button>
 
-        {/* ── Split Quick-Pick ── */}
-        {activeSplit && activeSplit.length > 0 && (
-          <div className="bg-white rounded-3xl p-4 shadow-card border border-slate-100/80">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">What are we hitting?</p>
-            <div className="grid grid-cols-3 gap-2">
-              {activeSplit.map((dayName, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSelectDay(dayName)}
-                  className="py-3 px-2 rounded-2xl bg-slate-50 hover:bg-liftly-teal/10 border border-slate-100 hover:border-liftly-teal/30 transition-all active:scale-95 text-center"
-                >
-                  <p className="text-xs font-black text-slate-700 truncate">{dayName}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+
 
         {/* ── Recent Workouts ── */}
         {recentWorkouts.length > 0 && (
@@ -440,6 +430,55 @@ const Dashboard = () => {
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Tools Modal */}
+      {showQuickTools && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-xl font-black text-slate-800">Quick Tools</h3>
+                <p className="text-slate-400 text-sm">Access your fitness calculators</p>
+              </div>
+              <button onClick={() => setShowQuickTools(false)} className="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 active:scale-90 transition-all">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <button onClick={() => navigate('/tools/bmi')} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                  <Activity size={20} className="text-emerald-500" />
+                </div>
+                <div>
+                  <span className="font-black text-slate-800 block">BMI Calculator</span>
+                  <span className="text-xs text-slate-400 font-semibold">Check your body mass index</span>
+                </div>
+              </button>
+              
+              <button onClick={() => navigate('/tools/calories')} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                  <Flame size={20} className="text-orange-500" />
+                </div>
+                <div>
+                  <span className="font-black text-slate-800 block">Calorie Goals</span>
+                  <span className="text-xs text-slate-400 font-semibold">Calculate your daily macros</span>
+                </div>
+              </button>
+              
+              <button onClick={() => navigate('/tools/weight')} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                  <Scale size={20} className="text-blue-500" />
+                </div>
+                <div>
+                  <span className="font-black text-slate-800 block">Weight Tracker</span>
+                  <span className="text-xs text-slate-400 font-semibold">Log and view weight history</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       )}

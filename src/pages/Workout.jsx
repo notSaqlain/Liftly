@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, arrayRemove, deleteField } from 'firebase/firestore';
 import exercisesData from '../data/exercises.json';
 import { Search, Heart, Plus, X, Activity, CalendarDays, Dumbbell, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
@@ -22,14 +22,15 @@ const Workout = () => {
 
   const [favorites, setFavorites] = useState([]);
   const [customRoutines, setCustomRoutines] = useState({});
-  const [activeSplit, setActiveSplit] = useState(null);
+  const activeSplit = Object.keys(customRoutines);
   const [addingExerciseId, setAddingExerciseId] = useState(null);
+  const [newRoutineName, setNewRoutineName] = useState('');
+  const [showNewRoutineModal, setShowNewRoutineModal] = useState(false);
 
   useEffect(() => {
     if (userData) {
       setFavorites(userData.favoriteExercises || []);
       setCustomRoutines(userData.customRoutines || {});
-      setActiveSplit(userData.activeSplit || null);
     }
   }, [userData]);
 
@@ -47,11 +48,47 @@ const Workout = () => {
   };
 
   const handleAddClick = (exerciseId) => {
-    if (!activeSplit || activeSplit.length === 0) {
-      showToast('Please configure a split in Account Settings first!');
+    if (activeSplit.length === 0) {
+      showToast('Please create a routine first!');
       return;
     }
     setAddingExerciseId(exerciseId);
+  };
+
+  const handleCreateRoutine = async () => {
+    if (!newRoutineName.trim() || !currentUser) return;
+    const name = newRoutineName.trim();
+    if (customRoutines[name]) {
+      showToast('Routine name already exists!');
+      return;
+    }
+    const updated = { ...customRoutines, [name]: [] };
+    setCustomRoutines(updated);
+    setShowNewRoutineModal(false);
+    setNewRoutineName('');
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, { [`customRoutines.${name}`]: [] });
+      showToast('Routine created!');
+    } catch (e) {
+      console.error(e);
+      showToast('Error creating routine');
+    }
+  };
+
+  const handleDeleteRoutine = async (dayName) => {
+    if (!currentUser) return;
+    const updated = { ...customRoutines };
+    delete updated[dayName];
+    setCustomRoutines(updated);
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, { [`customRoutines.${dayName}`]: deleteField() });
+      showToast('Routine deleted!');
+    } catch (e) {
+      console.error(e);
+      showToast('Error deleting routine');
+    }
   };
 
   const saveToRoutine = async (dayName) => {
@@ -188,22 +225,27 @@ const Workout = () => {
 
         {/* ── My Split ── */}
         {activeTab === 'split' && (
-          <div className="animate-fade-in">
-            {!activeSplit ? (
+          <div className="animate-fade-in space-y-4">
+            <div className="flex justify-between items-center mt-2">
+              <h2 className="font-black text-lg text-slate-800">Your Routines</h2>
+              <button onClick={() => setShowNewRoutineModal(true)} className="bg-liftly-navy text-white px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 active:scale-95 transition-all">
+                <Plus size={14} /> New
+              </button>
+            </div>
+
+            {activeSplit.length === 0 ? (
               <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-card mt-4">
                 <div className="w-16 h-16 bg-liftly-teal/10 text-liftly-teal rounded-3xl flex items-center justify-center mx-auto mb-4">
-                  <Activity size={28} />
+                  <Dumbbell size={28} />
                 </div>
-                <h3 className="font-black text-lg text-slate-800 mb-2">No Split Configured</h3>
-                <p className="text-slate-400 text-sm">Head to Account Settings to set up your weekly workout split.</p>
+                <h3 className="font-black text-lg text-slate-800 mb-2">No Routines Yet</h3>
+                <p className="text-slate-400 text-sm">Create a custom routine to start building your workout plan.</p>
+                <button onClick={() => setShowNewRoutineModal(true)} className="mt-6 px-6 py-3 bg-liftly-teal text-white font-black rounded-2xl active:scale-95 transition-all shadow-teal">
+                  Create Routine
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="font-black text-lg text-slate-800">Your Routine</h2>
-                  <span className="bg-liftly-teal/10 text-liftly-teal px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">{activeSplit.length} Days</span>
-                </div>
-
                 {activeSplit.map((dayName, idx) => {
                   const dayExercises = customRoutines[dayName] || [];
                   return (
@@ -213,9 +255,14 @@ const Workout = () => {
                           <h3 className="font-black text-slate-800">{dayName}</h3>
                           <p className="text-xs text-slate-400 font-semibold">{dayExercises.length} exercise{dayExercises.length !== 1 ? 's' : ''}</p>
                         </div>
-                        {dayExercises.length > 0 && (
-                          <span className="text-[10px] font-black text-liftly-teal bg-liftly-teal/10 px-2 py-0.5 rounded-lg">Active</span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {dayExercises.length > 0 && (
+                            <span className="text-[10px] font-black text-liftly-teal bg-liftly-teal/10 px-2 py-0.5 rounded-lg">Active</span>
+                          )}
+                          <button onClick={() => handleDeleteRoutine(dayName)} className="w-8 h-8 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="p-4 space-y-2">
@@ -356,6 +403,32 @@ const Workout = () => {
             <button onClick={() => setAddingExerciseId(null)} className="w-full mt-5 py-4 rounded-2xl font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Create New Routine Modal */}
+      {showNewRoutineModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
+            <h3 className="text-xl font-black text-slate-800 mb-1">New Routine</h3>
+            <p className="text-slate-400 text-sm mb-5">Give your custom routine a name.</p>
+            <input
+              type="text"
+              autoFocus
+              placeholder="e.g. Chest & Tris"
+              value={newRoutineName}
+              onChange={e => setNewRoutineName(e.target.value)}
+              className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm text-slate-800 font-semibold focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all mb-5"
+            />
+            <div className="flex gap-3">
+              <button onClick={() => setShowNewRoutineModal(false)} className="flex-1 py-4 rounded-2xl font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">
+                Cancel
+              </button>
+              <button onClick={handleCreateRoutine} className="flex-1 py-4 rounded-2xl font-bold text-white bg-liftly-teal hover:bg-teal-400 transition-colors shadow-teal text-sm">
+                Create
+              </button>
+            </div>
           </div>
         </div>
       )}
