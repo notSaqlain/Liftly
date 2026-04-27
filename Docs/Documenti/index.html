@@ -55,101 +55,128 @@
 
             <nav class="flex-1 p-4 space-y-1">
 
-                <!-- 1. PROJECT CHARTER (Dropdown) -->
-                <div>
-                    <button onclick="toggleMenu('menu-charter', 'icon-charter')"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-3"><i data-lucide="folder-open" class="w-5 h-5"></i> Project
-                            Charter</div>
-                        <i data-lucide="chevron-down" id="icon-charter"
-                            class="w-4 h-4 transition-transform duration-200"></i>
+                <!-- ══════════ V2 — B2B (ATTUALE) ══════════ -->
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-v2', 'icon-v2')"
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#001540] text-white font-black text-sm hover:bg-[#002070] transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="folder-open" class="w-4 h-4 text-yellow-400"></i>
+                            <span>📁 Liftly V2</span>
+                            <span class="text-[9px] bg-yellow-400 text-yellow-900 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">B2B</span>
+                        </div>
+                        <i data-lucide="chevron-down" id="icon-v2" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
                     </button>
-                    <div id="menu-charter" class="hidden pl-10 pr-4 py-1 border-l-2 border-slate-100 ml-6 relative">
-                        <button onclick="showSection('charter/charter-liftly', this, true)"
-                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">LIFTLY</button>
-                        <button onclick="showSection('charter/charter-fixflow', this, true)"
-                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">FIXFLOW</button>
+                    <div id="menu-v2" class="block pl-10 pr-4 py-1 border-l-2 border-yellow-300 ml-4 relative mt-1">
+                        <!-- Charter V2 -->
+                        <button onclick="showSection('v2/charter-liftly', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">
+                            Project Charter V2
+                        </button>
+                        <!-- SRS V2 with sub-nav -->
+                        <button onclick="handleSrsV2Click()"
+                            class="w-full flex items-center justify-between text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors">
+                            <span>SRS V2</span>
+                            <i data-lucide="chevron-down" id="icon-srs-v2" class="w-3 h-3 transition-transform duration-200"></i>
+                        </button>
+                        <div id="menu-srs-v2" class="hidden pl-4 py-1 border-l border-slate-100">
+                            <button onclick="scrollToSrsV2Section('srs-v2-introduzione', this)"
+                                class="submenu-link srs-v2-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors"
+                                data-target="srs-v2-introduzione">1. Introduzione</button>
+                            <button onclick="scrollToSrsV2Section('srs-v2-requisiti-funzionali', this)"
+                                class="submenu-link srs-v2-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors"
+                                data-target="srs-v2-requisiti-funzionali">2. Requisiti Funzionali</button>
+                            <button onclick="scrollToSrsV2Section('srs-v2-requisiti-non-funzionali', this)"
+                                class="submenu-link srs-v2-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors"
+                                data-target="srs-v2-requisiti-non-funzionali">3. Requisiti Non Funz.</button>
+                            <button onclick="scrollToSrsV2Section('srs-v2-architettura', this)"
+                                class="submenu-link srs-v2-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors"
+                                data-target="srs-v2-architettura">4. Architettura</button>
+                            <button onclick="scrollToSrsV2Section('srs-v2-ambito', this)"
+                                class="submenu-link srs-v2-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors"
+                                data-target="srs-v2-ambito">5. Ambito</button>
+                            <button onclick="scrollToSrsV2Section('srs-v2-definizioni', this)"
+                                class="submenu-link srs-v2-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors"
+                                data-target="srs-v2-definizioni">6. Definizioni</button>
+                        </div>
+                        <!-- WBS V2 -->
+                        <button onclick="showSection('v2/wbs', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">
+                            WBS V2
+                        </button>
+                        <!-- Gantt V2 -->
+                        <button onclick="showSection('v2/gantt', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative">
+                            Gantt &amp; Costi V2
+                        </button>
                     </div>
                 </div>
 
-                <!-- 2. SRS (Dropdown) -->
-                <div>
-                    <button onclick="handleSrsClick()"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-3"><i data-lucide="file-text" class="w-5 h-5"></i> SRS</div>
-                        <i data-lucide="chevron-down" id="icon-srs"
-                            class="w-4 h-4 transition-transform duration-200"></i>
+                <!-- ══════════ V1 — B2C (ARCHIVIO) ══════════ -->
+                <div class="mb-2">
+                    <button onclick="toggleMenu('menu-v1', 'icon-v1')"
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-black text-sm hover:bg-slate-200 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="archive" class="w-4 h-4 text-slate-400"></i>
+                            <span>📁 Liftly V1</span>
+                            <span class="text-[9px] bg-slate-300 text-slate-600 font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">Archivio</span>
+                        </div>
+                        <i data-lucide="chevron-down" id="icon-v1" class="w-4 h-4 transition-transform duration-200"></i>
                     </button>
-                    <div id="menu-srs" class="hidden pl-10 pr-4 py-1 border-l-2 border-slate-100 ml-6 relative">
-                        <button onclick="scrollToSrsSection('introduzione', this)"
-                            class="submenu-link srs-nav-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative"
-                            data-target="introduzione">1.
-                            Introduzione</button>
-                        <button onclick="scrollToSrsSection('requisiti-funzionali', this)"
-                            class="submenu-link srs-nav-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative"
-                            data-target="requisiti-funzionali">2.
-                            Requisiti Funzionali</button>
-                        <button onclick="scrollToSrsSection('requisiti-non-funzionali', this)"
-                            class="submenu-link srs-nav-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative"
-                            data-target="requisiti-non-funzionali">3.
-                            Requisiti Non Funz</button>
-                        <button onclick="scrollToSrsSection('architettura', this)"
-                            class="submenu-link srs-nav-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative"
-                            data-target="architettura">4.
-                            Architettura</button>
-                        <button onclick="scrollToSrsSection('ambito', this)"
-                            class="submenu-link srs-nav-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative"
-                            data-target="ambito">5.
-                            Ambito</button>
-                        <button onclick="scrollToSrsSection('definizioni', this)"
-                            class="submenu-link srs-nav-link w-full text-left text-sm text-slate-500 py-2 hover:text-[#001540] transition-colors relative"
-                            data-target="definizioni">6.
-                            Definizioni</button>
+                    <div id="menu-v1" class="hidden pl-10 pr-4 py-1 border-l-2 border-slate-200 ml-4 relative mt-1">
+                        <!-- Charter V1 Dropdown -->
+                        <button onclick="toggleMenu('menu-v1-charter', 'icon-v1-charter')"
+                            class="w-full flex items-center justify-between text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">
+                            <span>Project Charter</span>
+                            <i data-lucide="chevron-down" id="icon-v1-charter" class="w-3 h-3 transition-transform duration-200"></i>
+                        </button>
+                        <div id="menu-v1-charter" class="hidden pl-4 py-1 border-l border-slate-100">
+                            <button onclick="showSection('v1/charter/charter-liftly', this, true)"
+                                class="submenu-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors">LIFTLY V1</button>
+                            <button onclick="showSection('v1/charter/charter-fixflow', this, true)"
+                                class="submenu-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors">FIXFLOW</button>
+                        </div>
+                        <!-- SRS V1 -->
+                        <button onclick="handleSrsClick()"
+                            class="w-full flex items-center justify-between text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">
+                            <span>SRS</span>
+                            <i data-lucide="chevron-down" id="icon-srs" class="w-3 h-3 transition-transform duration-200"></i>
+                        </button>
+                        <div id="menu-srs" class="hidden pl-4 py-1 border-l border-slate-100">
+                            <button onclick="scrollToSrsSection('introduzione', this)"
+                                class="submenu-link srs-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors" data-target="introduzione">1. Introduzione</button>
+                            <button onclick="scrollToSrsSection('requisiti-funzionali', this)"
+                                class="submenu-link srs-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors" data-target="requisiti-funzionali">2. Requisiti Funzionali</button>
+                            <button onclick="scrollToSrsSection('requisiti-non-funzionali', this)"
+                                class="submenu-link srs-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors" data-target="requisiti-non-funzionali">3. Requisiti Non Funz.</button>
+                            <button onclick="scrollToSrsSection('architettura', this)"
+                                class="submenu-link srs-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors" data-target="architettura">4. Architettura</button>
+                            <button onclick="scrollToSrsSection('ambito', this)"
+                                class="submenu-link srs-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors" data-target="ambito">5. Ambito</button>
+                            <button onclick="scrollToSrsSection('definizioni', this)"
+                                class="submenu-link srs-nav-link w-full text-left text-xs text-slate-400 py-1.5 hover:text-[#001540] transition-colors" data-target="definizioni">6. Definizioni</button>
+                        </div>
+                        <!-- WBS V1 -->
+                        <button onclick="showSection('v1/wbs/wbs', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">WBS</button>
+                        <!-- OBS -->
+                        <button onclick="showSection('obs', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">OBS</button>
+                        <!-- Gantt V1 -->
+                        <button onclick="showSection('v1/gantt', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">Gantt &amp; Costi</button>
+                        <!-- Codice -->
+                        <button onclick="showSection('codice', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">Descrizione Codice</button>
+                        <!-- Manuale -->
+                        <button onclick="showSection('manuale', this, true)"
+                            class="submenu-link w-full text-left text-sm text-slate-400 py-2 hover:text-[#001540] transition-colors font-semibold">Manuale d'Uso</button>
                     </div>
                 </div>
-
-                <!-- 3. WBS (Direct Link) -->
-                <button onclick="showSection('wbs/wbs', this, false)"
-                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                    <i data-lucide="network" class="w-5 h-5"></i> WBS
-                </button>
-
-                <!-- 4. OBS (Direct Link) -->
-                <button onclick="showSection('obs', this, false)"
-                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                    <i data-lucide="users" class="w-5 h-5"></i> OBS
-                </button>
-
-                <!-- 5. RACI (Direct Link) -->
-
-                <!-- 
-                
-                <button onclick="showSection('raci', this, false)"
-                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                    <i data-lucide="table" class="w-5 h-5"></i> Matrice RACI
-                </button>
-
-                -->
-
-                <!-- 6. GANTT & COSTI (Direct Link) -->
-                <button onclick="showSection('gantt', this, false)"
-                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                    <i data-lucide="calendar-days" class="w-5 h-5"></i> Gantt & Costi
-                </button>
-
-                <!-- 7. CODICE (Direct Link) -->
-                <button onclick="showSection('codice', this, false)"
-                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                    <i data-lucide="code" class="w-5 h-5"></i> Descrizione Codice
-                </button>
-
-                <!-- 8. MANUALE (Direct Link) -->
-                <button onclick="showSection('manuale', this, false)"
-                    class="main-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 font-bold hover:bg-slate-50 transition-colors">
-                    <i data-lucide="book-open" class="w-5 h-5"></i> Manuale d'Uso
-                </button>
 
             </nav>
+
+
+
 
             <!-- TEAM CARD -->
             <div class="p-6 pt-0 mt-auto">

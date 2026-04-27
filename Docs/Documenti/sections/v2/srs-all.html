@@ -1,0 +1,217 @@
+<div class="section-content">
+  <!-- 1. INTRODUZIONE -->
+  <section id="srs-v2-introduzione" class="srs-section pt-4 mb-24">
+    <h1 class="text-5xl font-black text-[#001540] mb-4 uppercase italic tracking-tighter">1. Introduzione</h1>
+    <p class="text-xl text-slate-500 mb-12">Visione strategica B2B e obiettivi di Liftly V2.</p>
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+      <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-[#001540]"><i data-lucide="target" class="w-8 h-8"></i></div>
+        <h3 class="text-2xl font-bold mb-4">Scopo del Progetto V2</h3>
+        <p class="text-slate-600 leading-relaxed">Liftly V2 pivota da app B2C freemium a piattaforma <strong>B2B SaaS</strong>. Le palestre acquistano licenze e offrono Liftly PRO agli iscritti come benefit incluso nell'abbonamento fisico.</p>
+      </div>
+      <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+        <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 text-emerald-600"><i data-lucide="building-2" class="w-8 h-8"></i></div>
+        <h3 class="text-2xl font-bold mb-4">Valore del Prodotto</h3>
+        <p class="text-slate-600 leading-relaxed">Tramite il modello <strong>B2B Licensing</strong>, Liftly offre alle palestre uno strumento di fidelizzazione digitale. Gli iscritti accedono a funzioni premium senza costi aggiuntivi, incluse nell'abbonamento fisico.</p>
+      </div>
+    </div>
+    <div class="bg-[#001540] text-white p-10 rounded-[2.5rem] relative overflow-hidden">
+      <div class="relative z-10">
+        <h3 class="text-3xl font-bold mb-6 italic uppercase">Market Targeting B2B</h3>
+        <p class="text-lg opacity-80 max-w-2xl leading-relaxed">Il target primario di Liftly V2 è costituito dai <strong>proprietari di centri sportivi</strong> che cercano strumenti digitali per fidelizzare i propri iscritti e differenziarsi dalla concorrenza. Il target secondario rimane l'atleta, che beneficia di un ecosistema digitale integrato con la propria palestra: affluenza in tempo reale, stato macchinari, contatto diretto con PT e reception.</p>
+      </div>
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+    </div>
+  </section>
+
+  <!-- 2. REQUISITI FUNZIONALI -->
+  <section id="srs-v2-requisiti-funzionali" class="srs-section pt-4 mb-24">
+    <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">2. Requisiti Funzionali</h1>
+    <p class="text-slate-500 mb-6 text-sm font-medium">Tutti i requisiti sono isolati per <code class="bg-slate-100 px-2 py-0.5 rounded text-[#001540]">gymId</code> — i dati di una palestra non sono mai visibili agli utenti di un'altra.</p>
+    <div class="grid gap-4">
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF1</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Auth, Profilo &amp; Selezione Palestra</h4>
+            <span class="bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full">ALTA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Registrazione utente con dati biometrici. Dopo il login, l'utente seleziona la propria palestra o inserisce un <strong>Codice di Attivazione</strong> fornito dalla reception. Il <code>gymId</code> viene associato al profilo e determina tutti i contenuti visibili.</p>
+        </div>
+      </div>
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF2</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Crowdsourcing Affluenza (Badge)</h4>
+            <span class="bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full">ALTA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Il dato di affluenza è derivato dal sistema badge/tornelli della palestra (simulato tramite <code>currentOccupancy</code> nel DB, aggiornabile dall'admin). Il widget sulla dashboard mostra stati: <em>Tranquillo</em>, <em>Moderato</em>, <em>Affollato</em> calcolati su <code>currentOccupancy / maxCapacity</code>.</p>
+        </div>
+      </div>
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF3</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Macchinari &amp; Segnalazione Guasti</h4>
+            <span class="bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full">ALTA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Lista macchinari filtrata per <code>gymId</code> con stato <code>active</code> / <code>broken</code> / <code>maintenance</code>. L'utente può segnalare guasti con un click. Nel creatore di schede allenamento, filtro opzionale per nascondere esercizi che richiedono macchine non funzionanti.</p>
+        </div>
+      </div>
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF4</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Hub Personal Trainer</h4>
+            <span class="bg-gray-100 text-gray-500 text-[10px] font-black px-3 py-1 rounded-full">MEDIA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Pagina "I Nostri Trainer" con profili PT filtrati per <code>gymId</code> (bio, specialità). Pulsante "Scrivi" che apre una chat diretta con il PT, integrata con il sistema LiftChat esistente.</p>
+        </div>
+      </div>
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF5</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Supporto Diretto Reception</h4>
+            <span class="bg-gray-100 text-gray-500 text-[10px] font-black px-3 py-1 rounded-full">MEDIA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Interfaccia "Assistenza" in stile chat che scrive documenti nella collezione <code>support_tickets</code>. I ticket hanno stato <code>open</code> / <code>in-progress</code> / <code>closed</code>. Lo staff della reception risponde dal proprio pannello admin.</p>
+        </div>
+      </div>
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF6</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Gamification Locale</h4>
+            <span class="bg-gray-100 text-gray-500 text-[10px] font-black px-3 py-1 rounded-full">MEDIA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Leaderboard di default filtrata per <code>gymId</code> con tab "Globale" per vedere tutti gli utenti. Le palestre possono creare <strong>Sfide Locali</strong> (collezione <code>challenges</code>) con tipo, durata e partecipanti. L'utente si iscrive con un click.</p>
+        </div>
+      </div>
+      <div class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-6 hover:border-blue-500 transition-all">
+        <div class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl shrink-0">RF7</div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center mb-1 flex-wrap gap-2">
+            <h4 class="font-bold text-xl uppercase italic text-slate-800">Il Tuo Piano (Abbonamento)</h4>
+            <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full">BASSA PRIORITÀ</span>
+          </div>
+          <p class="text-slate-500">Sezione nel profilo dove l'utente visualizza i dettagli del proprio abbonamento fisico alla palestra: data inizio, scadenza, livello (PRO Liftly), certificato medico. Dati gestiti tramite flag nel DB.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. REQUISITI NON FUNZIONALI -->
+  <section id="srs-v2-requisiti-non-funzionali" class="srs-section pt-4 mb-24">
+    <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">3. Requisiti Non Funzionali</h1>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+        <div class="flex items-center gap-4 mb-4 text-[#001540]"><i data-lucide="zap" class="w-6 h-6"></i><h4 class="font-bold text-lg uppercase italic">Performance</h4></div>
+        <p class="text-slate-500 text-sm leading-relaxed">Dashboard con widget affluenza in tempo reale: aggiornamento entro 2 secondi. Il caricamento principale dell'app deve avvenire in meno di 1.5 secondi su reti mobile standard.</p>
+      </div>
+      <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+        <div class="flex items-center gap-4 mb-4 text-[#001540]"><i data-lucide="shield-check" class="w-6 h-6"></i><h4 class="font-bold text-lg uppercase italic">Sicurezza &amp; Multi-tenancy</h4></div>
+        <p class="text-slate-500 text-sm leading-relaxed">Le regole di sicurezza Firestore devono garantire la <strong>totale segregazione dei dati per <code>gymId</code></strong>. Un utente della Palestra A non deve in nessun caso accedere a dati della Palestra B. Conformità GDPR.</p>
+      </div>
+      <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+        <div class="flex items-center gap-4 mb-4 text-[#001540]"><i data-lucide="database" class="w-6 h-6"></i><h4 class="font-bold text-lg uppercase italic">Scalabilità</h4></div>
+        <p class="text-slate-500 text-sm leading-relaxed">Il sistema di tracking affluenza in tempo reale tramite Firestore deve gestire aggiornamenti frequenti al campo <code>currentOccupancy</code> senza degradazione delle performance, anche con più palestre attive in simultanea.</p>
+      </div>
+      <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+        <div class="flex items-center gap-4 mb-4 text-[#001540]"><i data-lucide="smartphone" class="w-6 h-6"></i><h4 class="font-bold text-lg uppercase italic">Usabilità</h4></div>
+        <p class="text-slate-500 text-sm leading-relaxed">Design Mobile-First con target touch di almeno 48x48 px. I nuovi moduli (Macchinari, PT Hub, Supporto) devono essere accessibili con max 2 tap dalla schermata principale.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. ARCHITETTURA -->
+  <section id="srs-v2-architettura" class="srs-section pt-4 mb-24">
+    <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">4. Architettura</h1>
+    <div class="bg-slate-900 rounded-[2.5rem] p-10 text-white mb-8">
+      <h3 class="text-2xl font-bold mb-8 flex items-center gap-3"><i data-lucide="code-2" class="text-blue-400"></i> Stack Tecnologico V2</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="space-y-2 text-center"><div class="text-3xl font-black text-blue-400">React</div><div class="text-xs uppercase opacity-50 font-bold">Frontend</div></div>
+        <div class="space-y-2 text-center"><div class="text-3xl font-black text-blue-400">Firebase</div><div class="text-xs uppercase opacity-50 font-bold">Backend + Auth</div></div>
+        <div class="space-y-2 text-center"><div class="text-3xl font-black text-blue-400">Firestore</div><div class="text-xs uppercase opacity-50 font-bold">DB Multi-tenant</div></div>
+        <div class="space-y-2 text-center"><div class="text-3xl font-black text-blue-400">Tailwind</div><div class="text-xs uppercase opacity-50 font-bold">Styling</div></div>
+      </div>
+    </div>
+    <h3 class="text-xl font-black text-[#001540] mb-6">Struttura Database Firestore V2</h3>
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="p-6 bg-white border rounded-3xl">
+        <h4 class="font-bold mb-3 flex items-center gap-2 text-sm"><i data-lucide="database" class="w-4 h-4"></i> Nuove Collezioni</h4>
+        <ul class="text-slate-500 text-xs space-y-2">
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">gyms</code> — id, name, address, branding, currentOccupancy, maxCapacity, adminIds</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">gym_machines</code> — id, gymId, name, category, status, reportedBy</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">trainers</code> — id, gymId, userId, bio, specialties, contactEmail</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">support_tickets</code> — id, gymId, userId, subject, messages[], status, createdAt</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">challenges</code> — id, gymId, title, type, startDate, endDate, participants[]</li>
+        </ul>
+      </div>
+      <div class="p-6 bg-white border rounded-3xl">
+        <h4 class="font-bold mb-3 flex items-center gap-2 text-sm"><i data-lucide="user" class="w-4 h-4"></i> Modifiche Collezione <code>users</code></h4>
+        <ul class="text-slate-500 text-xs space-y-2">
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">gymId</code> — ID della palestra di appartenenza</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">subscriptionType</code> — "Base" o "PRO Liftly"</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">subscriptionExpiry</code> — Data scadenza abbonamento</li>
+          <li><code class="bg-slate-100 px-1 rounded text-[#001540]">role</code> — "user", "trainer", "gym_admin"</li>
+        </ul>
+        <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+          <strong>⚠️ Nota Fuori Scope:</strong> Lo sviluppo del Portale Web Admin per i gestori della palestra è attualmente fuori scope per questa fase, ma è un requisito di sistema essenziale per la logica completa dell'app.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. AMBITO -->
+  <section id="srs-v2-ambito" class="srs-section pt-4 mb-24">
+    <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">5. Ambito del Progetto</h1>
+    <div class="grid md:grid-cols-2 gap-10">
+      <div>
+        <h3 class="text-emerald-600 font-black text-xl mb-6 flex items-center gap-2"><i data-lucide="check-circle-2"></i> IN AMBITO</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic"><span>- Struttura DB Multi-tenant (gymId) su Firestore</span></li>
+          <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic"><span>- Widget affluenza badge-based in Dashboard</span></li>
+          <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic"><span>- Pagina Macchinari con segnalazione guasti</span></li>
+          <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic"><span>- Hub Personal Trainer per palestra</span></li>
+          <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic"><span>- Supporto reception via ticket-chat</span></li>
+          <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic"><span>- Leaderboard locale per palestra + sfide locali</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-red-500 font-black text-xl mb-6 flex items-center gap-2"><i data-lucide="x-circle"></i> FUORI AMBITO</h3>
+        <ul class="space-y-4 text-slate-400">
+          <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic"><span>- Pannello Admin Web per gestori palestra</span></li>
+          <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic"><span>- Integrazione reale con tornelli/badge hardware</span></li>
+          <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic"><span>- Gateway di pagamento per licenze B2B</span></li>
+          <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic"><span>- Pubblicazione Play Store / App Store</span></li>
+          <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic"><span>- Integrazione Intelligenza Artificiale</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. DEFINIZIONI -->
+  <section id="srs-v2-definizioni" class="srs-section pt-4 mb-12">
+    <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">6. Definizioni</h1>
+    <div class="bg-white rounded-3xl border overflow-hidden shadow-sm">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-slate-50 border-b">
+            <th class="px-8 py-5 font-black text-[#001540] uppercase italic tracking-widest text-sm">Termine</th>
+            <th class="px-8 py-5 font-black text-[#001540] uppercase italic tracking-widest text-sm">Descrizione</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr class="hover:bg-blue-50 transition-colors"><td class="px-8 py-6 font-bold text-[#001540]">B2B SaaS</td><td class="px-8 py-6 text-slate-600 italic">Business-to-Business Software as a Service. Liftly vende licenze software alle palestre (clienti B2B) che le offrono ai propri iscritti.</td></tr>
+          <tr class="hover:bg-blue-50 transition-colors"><td class="px-8 py-6 font-bold text-[#001540]">gymId</td><td class="px-8 py-6 text-slate-600 italic">Identificatore univoco di una palestra nel database. Usato per isolare tutti i dati (macchinari, PT, chat, sfide) per ogni struttura.</td></tr>
+          <tr class="hover:bg-blue-50 transition-colors"><td class="px-8 py-6 font-bold text-[#001540]">Multi-tenancy</td><td class="px-8 py-6 text-slate-600 italic">Architettura dove un'unica istanza software serve più clienti (palestre) con dati completamente segregati.</td></tr>
+          <tr class="hover:bg-blue-50 transition-colors"><td class="px-8 py-6 font-bold text-[#001540]">Codice Attivazione</td><td class="px-8 py-6 text-slate-600 italic">Codice fornito dalla palestra ai propri iscritti per associare l'account Liftly alla struttura e sbloccare i benefici PRO.</td></tr>
+          <tr class="hover:bg-blue-50 transition-colors"><td class="px-8 py-6 font-bold text-[#001540]">Crowdsourcing Badge</td><td class="px-8 py-6 text-slate-600 italic">Sistema di rilevamento affluenza basato sui dati di accesso tramite badge/tornelli della palestra (simulato in V2 tramite campo DB).</td></tr>
+          <tr class="hover:bg-blue-50 transition-colors"><td class="px-8 py-6 font-bold text-[#001540]">Liftly PRO</td><td class="px-8 py-6 text-slate-600 italic">Livello premium dell'app, sbloccato automaticamente per tutti gli iscritti alla palestra che ha acquistato la licenza Liftly.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

@@ -3,13 +3,13 @@ lucide.createIcons();
 
 let isSrsLoaded = false;
 let srsObserver = null;
+let isSrsV2Loaded = false;
+let srsV2Observer = null;
 // Funzione specifica per il click sul pulsante principale SRS
 function handleSrsClick() {
     if (!isSrsLoaded) {
-        // Carica la pagina SRS e apri il menu se è chiuso
         const firstSrsLink = document.querySelector('.srs-nav-link[data-target="introduzione"]');
         scrollToSrsSection('introduzione', firstSrsLink);
-        
         const menu = document.getElementById('menu-srs');
         const icon = document.getElementById('icon-srs');
         if (menu && menu.classList.contains('hidden')) {
@@ -18,8 +18,24 @@ function handleSrsClick() {
             icon.classList.add('rotate-180');
         }
     } else {
-        // Se SRS è già in visualizzazione, comporta come un normale toggle
         toggleMenu('menu-srs', 'icon-srs');
+    }
+}
+
+// Funzione per il click sul pulsante principale SRS V2
+function handleSrsV2Click() {
+    if (!isSrsV2Loaded) {
+        const firstLink = document.querySelector('.srs-v2-nav-link[data-target="srs-v2-introduzione"]');
+        scrollToSrsV2Section('srs-v2-introduzione', firstLink);
+        const menu = document.getElementById('menu-srs-v2');
+        const icon = document.getElementById('icon-srs-v2');
+        if (menu && menu.classList.contains('hidden')) {
+            menu.classList.remove('hidden');
+            menu.classList.add('block');
+            icon.classList.add('rotate-180');
+        }
+    } else {
+        toggleMenu('menu-srs-v2', 'icon-srs-v2');
     }
 }
 
@@ -42,7 +58,9 @@ function toggleMenu(menuId, iconId) {
 // Funzione per mostrare i contenuti principali caricandoli da file esterni (AJAX)
 async function showSection(sectionId, clickedElement, isSubmenu) {
     isSrsLoaded = false;
+    isSrsV2Loaded = false;
     if (srsObserver) srsObserver.disconnect();
+    if (srsV2Observer) srsV2Observer.disconnect();
 
     // 1. Carica il contenuto dal file HTML esterno in sections/
     try {
@@ -232,3 +250,61 @@ if (document.getElementById('close-menu-btn')) {
 document.addEventListener("DOMContentLoaded", () => {
     showSection('landing-page', null, false);
 });
+
+async function scrollToSrsV2Section(targetId, clickedElement) {
+    if (!isSrsV2Loaded) {
+        try {
+            const response = await fetch(`sections/v2/srs-all.html`);
+            if (!response.ok) throw new Error("Errore Caricamento SRS V2");
+            const html = await response.text();
+            const mainContainer = document.getElementById("main-content-area");
+            if (mainContainer) {
+                mainContainer.innerHTML = html;
+                lucide.createIcons();
+                const newSection = mainContainer.querySelector('.section-content');
+                if (newSection) newSection.classList.add('active');
+            }
+            isSrsV2Loaded = true;
+            const sections = document.querySelectorAll('.srs-section');
+            if (srsV2Observer) srsV2Observer.disconnect();
+            srsV2Observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !window.isSrsV2ScrollingFromClick) {
+                        const id = entry.target.id;
+                        document.querySelectorAll('.srs-v2-nav-link').forEach(link => link.classList.remove('active-link'));
+                        const activeLink = document.querySelector(`.srs-v2-nav-link[data-target="${id}"]`);
+                        if (activeLink) activeLink.classList.add('active-link');
+                        const srsMenu = document.getElementById('menu-srs-v2');
+                        const srsIcon = document.getElementById('icon-srs-v2');
+                        if (srsMenu && srsMenu.classList.contains('hidden')) {
+                            srsMenu.classList.remove('hidden');
+                            srsMenu.classList.add('block');
+                            srsIcon.classList.add('rotate-180');
+                        }
+                    }
+                });
+            }, { root: null, rootMargin: '-20% 0px -60% 0px' });
+            sections.forEach(sec => srsV2Observer.observe(sec));
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    document.querySelectorAll('.submenu-link').forEach(link => link.classList.remove('active-link'));
+    document.querySelectorAll('.main-link').forEach(link => {
+        link.classList.remove('active-link', 'bg-[#001540]', 'text-white');
+        link.classList.add('text-slate-700', 'hover:bg-slate-50');
+    });
+    if (clickedElement) clickedElement.classList.add('active-link');
+    if (window.innerWidth < 1024) {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+        setTimeout(() => document.getElementById('sidebar').classList.add('hidden'), 300);
+    }
+    window.isSrsV2ScrollingFromClick = true;
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => { window.isSrsV2ScrollingFromClick = false; }, 800);
+    } else {
+        window.isSrsV2ScrollingFromClick = false;
+    }
+}
