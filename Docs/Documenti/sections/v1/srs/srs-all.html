@@ -1,0 +1,295 @@
+<div class="section-content">
+
+    <!-- 1. INTRODUZIONE -->
+    <section id="introduzione" class="srs-section pt-4 mb-24">
+        <h1 class="text-5xl font-black text-[#001540] mb-4 uppercase italic tracking-tighter">1. Introduzione
+        </h1>
+        <p class="text-xl text-slate-500 mb-12">Visione strategica e obiettivi del software Liftly.</p>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-[#001540]">
+                    <i data-lucide="target" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Scopo del Progetto</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Liftly trasforma il diario d'allenamento in un'esperienza digitale dinamica.
+                    L'obiettivo è fornire agli utenti una guida che si adatti all'attrezzatura reale della
+                    palestra selezionata.
+                </p>
+            </div>
+            <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 text-emerald-600">
+                    <i data-lucide="bar-chart-3" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Valore del Prodotto</h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Tramite il modello <strong>Freemium</strong>, Liftly offre strumenti base gratuiti e analisi
+                    avanzate a pagamento,
+                    creando un ecosistema sostenibile per lo sviluppo continuo.
+                </p>
+            </div>
+        </div>
+
+        <div class="bg-[#001540] text-white p-10 rounded-[2.5rem] relative overflow-hidden">
+            <div class="relative z-10">
+                <h3 class="text-3xl font-bold mb-6 italic uppercase">Market Targeting</h3>
+                <p class="text-lg opacity-80 max-w-2xl leading-relaxed">
+                    Il target di Liftly è costituito da sportivi moderni che cercano un'alternativa digitale ai classici
+                    diari d'allenamento cartacei.
+                    L'app si posiziona come uno strumento indispensabile per chi desidera personalizzare le proprie routine
+                    in base all'attrezzatura reale disponibile,
+                    trasformando i dati biometrici e le performance in grafici di progresso chiari e motivanti.
+                </p>
+            </div>
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
+        </div>
+    </section>
+
+    <!-- 2. REQUISITI FUNZIONALI -->
+    <section id="requisiti-funzionali" class="srs-section pt-4 mb-24">
+        <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">2. Requisiti
+            Funzionali</h1>
+        <div class="grid gap-4">
+            <div
+                class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-6 hover:border-blue-500 transition-all">
+                <div
+                    class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl">
+                    RF1</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <h4 class="font-bold text-xl uppercase italic text-slate-800">Auth & Profile</h4>
+                        <span class="bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full">ALTA
+                            PRIORITÀ</span>
+                    </div>
+                    <p class="text-slate-500">Registrazione utente con inserimento dati biometrici (peso, età,
+                        sesso).</p>
+                </div>
+            </div>
+            <div
+                class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-6 hover:border-blue-500 transition-all">
+                <div
+                    class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl">
+                    RF2</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <h4 class="font-bold text-xl uppercase italic text-slate-800">Workout Logger</h4>
+                        <span class="bg-red-100 text-red-600 text-[10px] font-black px-3 py-1 rounded-full">ALTA
+                            PRIORITÀ</span>
+                    </div>
+                    <p class="text-slate-500">Inserimento di carichi, serie e ripetizioni per ogni esercizio
+                        della sessione.</p>
+                </div>
+            </div>
+
+            <div
+                class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-6 hover:border-blue-500 transition-all">
+                <div
+                    class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl">
+                    RF3</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <h4 class="font-bold text-xl uppercase italic text-slate-800">Social: Affollamento & LiftChat</h4>
+                        <span class="bg-gray-100 text-gray-500 text-[10px] font-black px-3 py-1 rounded-full">MEDIA
+                            PRIORITÀ</span>
+                    </div>
+                    <p class="text-slate-500">Sistema crowdsourcing per segnalare l'occupazione e LiftChat per creare una community nella propria palestra.</p>
+                </div>
+            </div>
+
+            <div
+                class="group bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-6 hover:border-blue-500 transition-all">
+                <div
+                    class="bg-slate-100 text-[#001540] w-16 h-16 rounded-xl flex items-center justify-center font-black text-xl">
+                    RF4</div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-1">
+                        <h4 class="font-bold text-xl uppercase italic text-slate-800">Gym Mapping</h4>
+                        <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full">BASSA
+                            PRIORITÀ</span>
+                    </div>
+                    <p class="text-slate-500">Filtraggio automatico degli esercizi in base ai macchinari
+                        presenti nella palestra scelta.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. REQUISITI NON FUNZIONALI -->
+    <section id="requisiti-non-funzionali" class="srs-section pt-4 mb-24">
+        <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">3. Requisiti Non
+            Funzionali</h1>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+                <div class="flex items-center gap-4 mb-4 text-[#001540]">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                    <h4 class="font-bold text-lg uppercase italic">Performance</h4>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed">L'app deve caricare la dashboard principale in
+                    meno di 1.5 secondi su reti mobile standard.</p>
+            </div>
+            <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+                <div class="flex items-center gap-4 mb-4 text-[#001540]">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    <h4 class="font-bold text-lg uppercase italic">Affidabilità</h4>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed">Uptime garantito del 99.9%. I dati devono
+                    essere salvati in cloud ad ogni inserimento.</p>
+            </div>
+            <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+                <div class="flex items-center gap-4 mb-4 text-[#001540]">
+                    <i data-lucide="smartphone" class="w-6 h-6"></i>
+                    <h4 class="font-bold text-lg uppercase italic">Usabilità</h4>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed">Design Mobile-First con target touch di almeno
+                    48x48 pixel per facilitare l'uso durante l'allenamento.</p>
+            </div>
+            <div class="p-8 bg-white border rounded-[2rem] hover:border-blue-200 transition-all">
+                <div class="flex items-center gap-4 mb-4 text-[#001540]">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                    <h4 class="font-bold text-lg uppercase italic">Sicurezza</h4>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed">Crittografia dei dati sensibili utente e
+                    conformità alle normative GDPR.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. ARCHITETTURA -->
+    <section id="architettura" class="srs-section pt-4 mb-24">
+        <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">4. Architettura
+        </h1>
+        <div class="bg-slate-900 rounded-[2.5rem] p-10 text-white mb-8">
+            <h3 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                <i data-lucide="code-2" class="text-blue-400"></i>
+                Stack Tecnologico
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="space-y-2 text-center">
+                    <div class="text-3xl font-black text-blue-400">React</div>
+                    <div class="text-xs uppercase opacity-50 font-bold">Frontend</div>
+                </div>
+                <div class="space-y-2 text-center">
+                    <div class="text-3xl font-black text-blue-400">Firebase</div>
+                    <div class="text-xs uppercase opacity-50 font-bold">Backend</div>
+                </div>
+                <div class="space-y-2 text-center">
+                    <div class="text-3xl font-black text-blue-400">Tailwind</div>
+                    <div class="text-xs uppercase opacity-50 font-bold">Styling</div>
+                </div>
+                <div class="space-y-2 text-center">
+                    <div class="text-3xl font-black text-blue-400">Cloud</div>
+                    <div class="text-xs uppercase opacity-50 font-bold">Database</div>
+                </div>
+            </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="p-8 bg-white border rounded-3xl">
+                <h4 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5"></i> Database
+                    Firebase (Database & Auth)</h4>
+                <p class="text-slate-500 text-sm">Utilizzato per l'archiviazione PHP/MySQL dei dati relativi
+                    alle palestre partner e alla configurazione macchinari.</p>
+            </div>
+            <div class="p-8 bg-white border rounded-3xl">
+                <h4 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="git-branch" class="w-5 h-5"></i> Git &
+                    GitHub</h4>
+                <p class="text-slate-500 text-sm">Controllo di versione distribuito per la gestione
+                    collaborativa del codice tra Davide e Saqlain.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. AMBITO DEL PROGETTO -->
+    <section id="ambito" class="srs-section pt-4 mb-24">
+        <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">5. Ambito del
+            Progetto</h1>
+        <div class="grid md:grid-cols-2 gap-10">
+            <div>
+                <h3 class="text-emerald-600 font-black text-xl mb-6 flex items-center gap-2">
+                    <i data-lucide="check-circle-2"></i> IN AMBITO
+                </h3>
+                <ul class="space-y-4">
+                    <li
+                        class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic">
+                        <span>- Sviluppo App Mobile Ibrida (Capacitor)</span>
+                    </li>
+                    <li
+                        class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic">
+                        <span>- Integrazione Firebase Authentication</span>
+                    </li>
+                    <li
+                        class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic">
+                        <span>- Sistema di logging carichi ed esercizi</span>
+                    </li>
+                    <li
+                        class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic">
+                        <span>- Dashboard statistiche con grafici dinamici</span>
+                    </li>
+                    <li
+                        class="flex items-start gap-3 bg-emerald-50 p-4 rounded-2xl text-emerald-800 font-semibold text-sm italic">
+                        <span>- Componente Social (Crowdsourcing e LiftChat)</span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-red-500 font-black text-xl mb-6 flex items-center gap-2">
+                    <i data-lucide="x-circle"></i> FUORI AMBITO
+                </h3>
+                <ul class="space-y-4 text-slate-400">
+                    <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic">
+                        <span>- Pubblicazione su Play Store / App Store</span>
+                    </li>
+                    <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic">
+                        <span>- Integrazione gateway di pagamento reali</span>
+                    </li>
+                    <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic">
+                        <span>- Sensori hardware IoT per affollamento</span>
+                    </li>
+                    <li class="flex items-start gap-3 border border-slate-200 p-4 rounded-2xl text-sm font-semibold italic">
+                        <span>- Integrazione Intelligenza Artificiale (API) per consigli su dieta e allenamento</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. DEFINIZIONI -->
+    <section id="definizioni" class="srs-section pt-4 mb-12">
+        <h1 class="text-5xl font-black text-[#001540] mb-12 uppercase italic tracking-tighter">6. Definizioni
+        </h1>
+        <div class="bg-white rounded-3xl border overflow-hidden shadow-sm">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50 border-b">
+                        <th class="px-8 py-5 font-black text-[#001540] uppercase italic tracking-widest text-sm">
+                            Termine</th>
+                        <th class="px-8 py-5 font-black text-[#001540] uppercase italic tracking-widest text-sm">
+                            Descrizione</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    <tr class="hover:bg-blue-50 transition-colors">
+                        <td class="px-8 py-6 font-bold text-[#001540]">SRS</td>
+                        <td class="px-8 py-6 text-slate-600 italic">Software Requirements Specification.</td>
+                    </tr>
+                    <tr class="hover:bg-blue-50 transition-colors">
+                        <td class="px-8 py-6 font-bold text-[#001540]">Liftly</td>
+                        <td class="px-8 py-6 text-slate-600 italic">Nome commerciale dell'App Mobile.</td>
+                    </tr>
+                    <tr class="hover:bg-blue-50 transition-colors">
+                        <td class="px-8 py-6 font-bold text-[#001540]">Freemium</td>
+                        <td class="px-8 py-6 text-slate-600 italic">Modello di business con funzioni base gratis
+                            e extra a pagamento.</td>
+                    </tr>
+                    <tr class="hover:bg-blue-50 transition-colors">
+                        <td class="px-8 py-6 font-bold text-[#001540]">Split</td>
+                        <td class="px-8 py-6 text-slate-600 italic">Metodo di divisione dell'allenamento (es.
+                            Push, Pull, Legs).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>

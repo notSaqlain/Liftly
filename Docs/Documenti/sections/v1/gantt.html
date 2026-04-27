@@ -1,0 +1,905 @@
+<section id="gantt" class="section-content">
+
+    <!-- ═══════════════  HEADER  ═══════════════ -->
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+        <div class="col-span-2 bg-[#001540] p-8 rounded-3xl text-white flex flex-col justify-center relative overflow-hidden">
+            <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
+                <div class="shrink-0 flex items-center opacity-90">
+                    <img src="liftly_white.png" alt="LIFTLY" class="h-10 md:h-12 object-contain">
+                </div>
+                <div>
+                    <h3 class="text-2xl md:text-3xl font-black mb-2 uppercase tracking-tight">Diagramma di Gantt</h3>
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-1 bg-blue-500 rounded-full shadow-sm"></span>
+                        <p class="text-blue-200 text-base font-medium tracking-wide">Pianificazione temporale &amp; Costi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute -right-16 -bottom-16 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute right-10 top-0 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center">
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Data Inizio</span> <span class="font-bold text-[#001540]">13/02/2026</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Data Fine</span> <span class="font-bold text-[#001540]">08/05/2026</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Ore Uomo Tot.</span> <span class="font-bold text-[#001540]">66 ore</span></div>
+                <div class="flex justify-between pt-1"><span class="text-slate-500 font-semibold">Costo Stimato</span> <span class="font-bold text-emerald-600">€ 1.980</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════  GANTT CHART  ═══════════════ -->
+    <style>
+        /* ── Forza il contenitore a usare tutta la larghezza ── */
+        #gantt { max-width: none !important; }
+        #gantt ~ *, #main-content-area:has(#gantt) { max-width: none !important; }
+
+        /* ── Gantt Container ── */
+        .gantt-wrapper {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.03);
+            margin-bottom: 2rem;
+        }
+        .gantt-scroll {
+            overflow-x: auto;
+            position: relative;
+        }
+        .gantt-chart {
+            display: flex;
+            min-width: 1100px;
+            position: relative;
+        }
+
+        /* ── Task List (Left Panel) ── */
+        .gantt-task-list {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            background: #fff;
+            border-right: 2px solid #e2e8f0;
+            min-width: 280px;
+            width: 280px;
+        }
+        .gantt-task-header {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 12px 16px;
+            font-weight: 900;
+            font-size: .6875rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #001540;
+            border-bottom: 2px solid #e2e8f0;
+            height: 56px;
+            display: flex;
+            align-items: center;
+        }
+        .gantt-task-row {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            height: 38px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: .8125rem;
+            color: #334155;
+            transition: background .15s;
+            cursor: default;
+        }
+        .gantt-task-row:hover {
+            background: #f8fafc;
+        }
+        .gantt-task-row .task-code {
+            font-weight: 700;
+            color: #001540;
+            width: 40px;
+            flex-shrink: 0;
+            font-size: .75rem;
+        }
+        .gantt-task-row .task-name {
+            font-weight: 600;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Phase rows */
+        .gantt-task-row.phase-row-item {
+            font-weight: 900;
+            font-size: .75rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #fff;
+        }
+        .gantt-task-row.phase-avvio-item { background: linear-gradient(90deg, #0ea5e9, #38bdf8); color: #fff; }
+        .gantt-task-row.phase-pianif-item { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #78350f; }
+        .gantt-task-row.phase-realiz-item { background: linear-gradient(90deg, #22c55e, #4ade80); color: #14532d; }
+        .gantt-task-row.phase-chiusura-item { background: linear-gradient(90deg, #ef4444, #f87171); color: #fff; }
+
+        /* ── Timeline Panel (Right) ── */
+        .gantt-timeline {
+            flex: 1;
+            position: relative;
+            min-width: 0;
+        }
+        .gantt-timeline-header {
+            display: flex;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 2px solid #e2e8f0;
+            height: 56px;
+            position: relative;
+        }
+        .gantt-week-col {
+            flex: 1;
+            text-align: center;
+            font-size: .625rem;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-left: 1px solid #e2e8f0;
+            position: relative;
+            min-width: 60px;
+        }
+        .gantt-week-col .week-month {
+            font-size: .55rem;
+            color: #cbd5e1;
+            margin-bottom: 2px;
+        }
+        .gantt-week-col .week-range {
+            font-size: .6rem;
+            color: #64748b;
+        }
+
+        /* ── Bars Area ── */
+        .gantt-bars-area {
+            position: relative;
+        }
+        .gantt-bar-row {
+            height: 38px;
+            position: relative;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        /* Vertical grid lines */
+        .gantt-bars-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .gantt-grid-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #f1f5f9;
+            z-index: 0;
+        }
+        .gantt-grid-line.weekend {
+            background: #fef2f2;
+            width: 2px;
+        }
+
+        /* ── Bar Styles ── */
+        .gantt-bar {
+            position: absolute;
+            top: 8px;
+            height: 22px;
+            border-radius: 4px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .6rem;
+            font-weight: 700;
+            color: rgba(255,255,255,.9);
+            cursor: pointer;
+            transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s;
+            /* Animation: bars slide in from left */
+            opacity: 0;
+            transform: translateX(-20px) scaleX(0.3);
+            transform-origin: left center;
+        }
+        .gantt-bar.animate-in {
+            opacity: 1;
+            transform: translateX(0) scaleX(1);
+        }
+        .gantt-bar:hover {
+            transform: translateY(-2px) scaleY(1.15) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,.18);
+            z-index: 20;
+        }
+
+        /* Phase summary bars (black) */
+        .gantt-bar.bar-phase {
+            background: #0f172a;
+            height: 10px;
+            top: 14px;
+            border-radius: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.25);
+        }
+        .gantt-bar.bar-phase::before,
+        .gantt-bar.bar-phase::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #0f172a;
+        }
+        .gantt-bar.bar-phase::before { left: 0; }
+        .gantt-bar.bar-phase::after { right: 0; }
+
+        /* Activity bars by phase */
+        .gantt-bar.bar-avvio {
+            background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+            box-shadow: 0 2px 8px rgba(56,189,248,.35);
+        }
+        .gantt-bar.bar-pianif {
+            background: linear-gradient(90deg, #fb923c, #fdba74);
+            box-shadow: 0 2px 8px rgba(251,146,60,.35);
+        }
+        .gantt-bar.bar-realiz {
+            background: linear-gradient(90deg, #4ade80, #86efac);
+            box-shadow: 0 2px 8px rgba(74,222,128,.35);
+        }
+        .gantt-bar.bar-chiusura {
+            background: linear-gradient(90deg, #f87171, #fca5a5);
+            box-shadow: 0 2px 8px rgba(248,113,113,.35);
+        }
+
+        /* Hatched pattern for overlapping/critical tasks */
+        .gantt-bar.bar-critical {
+            background: repeating-linear-gradient(
+                45deg,
+                #818cf8,
+                #818cf8 4px,
+                #a5b4fc 4px,
+                #a5b4fc 8px
+            );
+            box-shadow: 0 2px 8px rgba(129,140,248,.35);
+        }
+
+        /* ── Dependency Arrows (SVG) ── */
+        .gantt-arrows-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .gantt-arrows-svg path {
+            fill: none;
+            stroke: #94a3b8;
+            stroke-width: 1.5;
+            opacity: 0;
+            transition: opacity .4s;
+        }
+        .gantt-arrows-svg path.arrow-visible {
+            opacity: 1;
+        }
+        .gantt-arrows-svg marker path {
+            fill: #94a3b8;
+            stroke: none;
+        }
+
+        /* ── Diamond milestones ── */
+        .gantt-milestone {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            transform: rotate(45deg);
+            top: 13px;
+            z-index: 4;
+            box-shadow: 0 1px 4px rgba(239,68,68,.4);
+            border: 1.5px solid #fff;
+            opacity: 0;
+        }
+        .gantt-milestone.animate-in {
+            opacity: 1;
+        }
+
+        /* ── Tooltip ── */
+        .gantt-tooltip {
+            position: fixed;
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: .75rem;
+            line-height: 1.5;
+            box-shadow: 0 8px 24px rgba(0,0,0,.25);
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity .2s, transform .2s;
+            max-width: 250px;
+        }
+        .gantt-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .gantt-tooltip .tt-code {
+            color: #38bdf8;
+            font-weight: 800;
+            margin-right: 6px;
+        }
+        .gantt-tooltip .tt-name {
+            font-weight: 700;
+        }
+        .gantt-tooltip .tt-dates {
+            color: #94a3b8;
+            font-size: .65rem;
+            margin-top: 4px;
+        }
+        .gantt-tooltip .tt-hours {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* ── Today line ── */
+        .gantt-today-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #ef4444 0%, rgba(239,68,68,.2) 100%);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .gantt-today-line::before {
+            content: 'OGGI';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: .55rem;
+            font-weight: 900;
+            color: #ef4444;
+            letter-spacing: .1em;
+            white-space: nowrap;
+        }
+        .gantt-today-dot {
+            position: absolute;
+            top: -5px;
+            left: -4px;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(239,68,68,.5);
+            animation: todayPulse 2s ease-in-out infinite;
+        }
+        @keyframes todayPulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(239,68,68,.5); }
+            50% { box-shadow: 0 0 20px rgba(239,68,68,.8); }
+        }
+
+        /* ── Progress indicator ── */
+        .gantt-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+            background: rgba(255,255,255,.25);
+            pointer-events: none;
+        }
+
+        /* ── Legend ── */
+        .gantt-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 16px 20px;
+            background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+            border-top: 1px solid #e2e8f0;
+        }
+        .gantt-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .75rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .gantt-legend-swatch {
+            width: 24px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        .gantt-legend-swatch.swatch-phase {
+            background: #0f172a;
+            height: 6px;
+        }
+        .gantt-legend-swatch.swatch-avvio { background: linear-gradient(90deg, #38bdf8, #7dd3fc); }
+        .gantt-legend-swatch.swatch-pianif { background: linear-gradient(90deg, #fb923c, #fdba74); }
+        .gantt-legend-swatch.swatch-realiz { background: linear-gradient(90deg, #4ade80, #86efac); }
+        .gantt-legend-swatch.swatch-chiusura { background: linear-gradient(90deg, #f87171, #fca5a5); }
+        .gantt-legend-swatch.swatch-today {
+            width: 2px;
+            height: 16px;
+            background: #ef4444;
+            border-radius: 0;
+        }
+        .gantt-legend-swatch.swatch-milestone {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            transform: rotate(45deg);
+            border-radius: 2px;
+        }
+    </style>
+
+    <div class="gantt-wrapper" id="ganttWrapper">
+        <div class="gantt-scroll" id="ganttScroll">
+            <div class="gantt-chart" id="ganttChart">
+                <!-- Built dynamically by JS -->
+            </div>
+        </div>
+        <div class="gantt-legend">
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-phase"></span> Fase (Riepilogo)</div>
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-avvio"></span> Avvio</div>
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-pianif"></span> Pianificazione</div>
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-realiz"></span> Realizzazione</div>
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-chiusura"></span> Chiusura</div>
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-today"></span> Oggi</div>
+            <div class="gantt-legend-item"><span class="gantt-legend-swatch swatch-milestone"></span> Milestone</div>
+        </div>
+    </div>
+
+    <!-- ═══════════════  COSTS TABLE  ═══════════════ -->
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <!-- Costi per fase -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+            <h3 class="font-bold text-[#001540] mb-4 text-sm uppercase tracking-widest">Costi per Fase</h3>
+            <div class="space-y-3" id="costsByPhase">
+                <!-- Built by JS -->
+            </div>
+        </div>
+        <!-- Riepilogo risorse -->
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+            <h3 class="font-bold text-[#001540] mb-4 text-sm uppercase tracking-widest">Riepilogo Risorse</h3>
+            <div class="space-y-4" id="resourceSummary">
+                <!-- Built by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="gantt-tooltip" id="ganttTooltip"></div>
+
+    <script>
+    (function() {
+        /* ═══════════════  DATA  ═══════════════ */
+        const COST_PER_HOUR = 30; // €/h
+
+        const phases = [
+            {
+                id: '1.0', name: 'Avvio Progetto', cls: 'avvio',
+                start: '2026-02-13', end: '2026-02-25',
+                tasks: [
+                    { id: '1.1', name: 'Raccolta requisiti', start: '2026-02-13', end: '2026-02-14', hours: 2, pm: 'A', tec: 'R' },
+                    { id: '1.2', name: 'Analisi funzionale', start: '2026-02-17', end: '2026-02-18', hours: 2, pm: 'A,R', tec: 'I' },
+                    { id: '1.3', name: 'Definizione architettura', start: '2026-02-19', end: '2026-02-20', hours: 2, pm: 'A', tec: 'R' },
+                    { id: '1.4', name: 'Struttura pagine e flusso', start: '2026-02-21', end: '2026-02-23', hours: 2, pm: 'A', tec: 'R' },
+                    { id: '1.5', name: 'Pianificazione attività', start: '2026-02-24', end: '2026-02-25', hours: 2, pm: 'A', tec: 'I' },
+                ]
+            },
+            {
+                id: '2.0', name: 'Pianificazione', cls: 'pianif',
+                start: '2026-02-27', end: '2026-03-27',
+                tasks: [
+                    { id: '2.1', name: 'Specifiche tecniche', start: '2026-02-27', end: '2026-03-06', hours: 4, pm: 'A', tec: 'C' },
+                    { id: '2.2', name: 'Progettazione UI/UX', start: '2026-03-09', end: '2026-03-16', hours: 3, pm: 'R/A', tec: 'C' },
+                    { id: '2.3', name: 'Scelta stack tecnico', start: '2026-03-17', end: '2026-03-20', hours: 1, pm: 'A', tec: 'R' },
+                    { id: '2.4', name: 'Prototipo grafico', start: '2026-03-23', end: '2026-03-27', hours: 2, pm: 'A', tec: 'I' },
+                ]
+            },
+            {
+                id: '3.0', name: 'Sviluppo Core', cls: 'realiz',
+                start: '2026-04-01', end: '2026-05-08',
+                tasks: [
+                    { id: '3.1', name: 'Gestione account', start: '2026-04-01', end: '2026-04-04', hours: 4, pm: 'A/R', tec: 'C' },
+                    { id: '3.2', name: 'Diario allenamento', start: '2026-04-07', end: '2026-04-11', hours: 6, pm: 'A', tec: 'R' },
+                    { id: '3.3', name: 'Modulo statistiche', start: '2026-04-14', end: '2026-04-18', hours: 5, pm: 'A', tec: 'R' },
+                    { id: '3.4', name: 'Social & LiftChat', start: '2026-04-21', end: '2026-04-25', hours: 6, pm: 'I', tec: 'A' },
+                    { id: '3.5', name: 'Routine Premium', start: '2026-04-28', end: '2026-04-29', hours: 2, pm: 'I', tec: 'A' },
+                    { id: '3.6', name: 'Integrazione componenti', start: '2026-04-30', end: '2026-05-05', hours: 4, pm: 'A', tec: 'R' },
+                    { id: '3.7', name: 'Versione beta', start: '2026-05-06', end: '2026-05-08', hours: 2, pm: 'A', tec: 'R' },
+                ]
+            },
+            {
+                id: '4.0', name: 'Chiusura', cls: 'chiusura',
+                start: '2026-04-29', end: '2026-05-08',
+                tasks: [
+                    { id: '4.1', name: 'Testing funzionalità', start: '2026-04-29', end: '2026-05-01', hours: 4, pm: 'A', tec: 'R' },
+                    { id: '4.2', name: 'Debug', start: '2026-05-06', end: '2026-05-08', hours: 4, pm: 'A', tec: 'R' },
+                    { id: '4.3', name: 'Ottimizzazione', start: '2026-05-04', end: '2026-05-08', hours: 4, pm: 'A', tec: 'R' },
+                    { id: '4.4', name: 'Documentazione finale', start: '2026-05-08', end: '2026-05-08', hours: 4, pm: 'A/R', tec: 'C', milestone: true },
+                    { id: '4.5', name: 'Consegna progetto', start: '2026-05-08', end: '2026-05-08', hours: 1, pm: 'A/R', tec: 'I', milestone: true },
+                ]
+            }
+        ];
+
+        /* ═══════════════  HELPERS  ═══════════════ */
+        const parseDate = s => new Date(s + 'T00:00:00');
+        const daysBetween = (a, b) => Math.round((b - a) / 86400000);
+        const formatDate = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+
+        // Global timeline
+        const globalStart = parseDate('2026-02-09'); // start on a Monday before project
+        const globalEnd   = parseDate('2026-05-11'); // end after project
+        const totalDays   = daysBetween(globalStart, globalEnd);
+
+        // Generate weeks
+        function getWeeks() {
+            const weeks = [];
+            let d = new Date(globalStart);
+            while (d < globalEnd) {
+                const weekEnd = new Date(d);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                const months = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+                weeks.push({
+                    start: new Date(d),
+                    end: weekEnd > globalEnd ? new Date(globalEnd) : weekEnd,
+                    label: `${formatDate(d)}`,
+                    month: months[d.getMonth()]
+                });
+                d.setDate(d.getDate() + 7);
+            }
+            return weeks;
+        }
+
+        // Build flat row list
+        function buildRows() {
+            const rows = [];
+            phases.forEach(phase => {
+                rows.push({ type: 'phase', ...phase });
+                phase.tasks.forEach(task => {
+                    rows.push({ type: 'task', phaseCls: phase.cls, ...task });
+                });
+            });
+            return rows;
+        }
+
+        /* ═══════════════  RENDER  ═══════════════ */
+        function render() {
+            const chart = document.getElementById('ganttChart');
+            const weeks = getWeeks();
+            const rows  = buildRows();
+            const ROW_H = 38;
+            const HEADER_H = 56;
+
+            chart.innerHTML = '';
+
+            // ── Task List ──
+            const taskList = document.createElement('div');
+            taskList.className = 'gantt-task-list';
+
+            const taskHeader = document.createElement('div');
+            taskHeader.className = 'gantt-task-header';
+            taskHeader.textContent = 'Attività';
+            taskList.appendChild(taskHeader);
+
+            rows.forEach(row => {
+                const el = document.createElement('div');
+                el.className = 'gantt-task-row';
+                if (row.type === 'phase') {
+                    el.classList.add('phase-row-item', `phase-${row.cls}-item`);
+                    el.innerHTML = `<span class="task-code">${row.id}</span><span class="task-name">${row.name}</span>`;
+                } else {
+                    el.innerHTML = `<span class="task-code">${row.id}</span><span class="task-name">${row.name}</span>`;
+                }
+                taskList.appendChild(el);
+            });
+            chart.appendChild(taskList);
+
+            // ── Timeline ──
+            const timeline = document.createElement('div');
+            timeline.className = 'gantt-timeline';
+
+            // Header
+            const tlHeader = document.createElement('div');
+            tlHeader.className = 'gantt-timeline-header';
+            weeks.forEach(w => {
+                const col = document.createElement('div');
+                col.className = 'gantt-week-col';
+                col.innerHTML = `<span class="week-month">${w.month}</span><span class="week-range">${w.label}</span>`;
+                tlHeader.appendChild(col);
+            });
+            timeline.appendChild(tlHeader);
+
+            // Bars area
+            const barsArea = document.createElement('div');
+            barsArea.className = 'gantt-bars-area';
+            barsArea.style.position = 'relative';
+            barsArea.style.height = `${rows.length * ROW_H}px`;
+
+            // Grid lines (weekly)
+            const weekWidth = 100 / weeks.length;
+            weeks.forEach((w, i) => {
+                const line = document.createElement('div');
+                line.className = 'gantt-grid-line';
+                line.style.left = `${i * weekWidth}%`;
+                barsArea.appendChild(line);
+            });
+
+            // Today line
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const todayOffset = daysBetween(globalStart, today);
+            if (todayOffset >= 0 && todayOffset <= totalDays) {
+                const todayLine = document.createElement('div');
+                todayLine.className = 'gantt-today-line';
+                todayLine.style.left = `${(todayOffset / totalDays) * 100}%`;
+                todayLine.innerHTML = '<div class="gantt-today-dot"></div>';
+                barsArea.appendChild(todayLine);
+            }
+
+            // Bars
+            const barElements = [];
+            rows.forEach((row, i) => {
+                const barRow = document.createElement('div');
+                barRow.className = 'gantt-bar-row';
+                barRow.style.height = `${ROW_H}px`;
+
+                const start = parseDate(row.start);
+                const end   = parseDate(row.end);
+                const offsetDays = daysBetween(globalStart, start);
+                const durationDays = daysBetween(start, end) + 1;
+                const leftPct  = (offsetDays / totalDays) * 100;
+                const widthPct = (durationDays / totalDays) * 100;
+
+                if (row.type === 'phase') {
+                    const bar = document.createElement('div');
+                    bar.className = `gantt-bar bar-phase`;
+                    bar.style.left = `${leftPct}%`;
+                    bar.style.width = `${widthPct}%`;
+                    bar.dataset.row = i;
+                    bar.dataset.info = JSON.stringify(row);
+                    barRow.appendChild(bar);
+                    barElements.push({ el: bar, row: i, data: row });
+                } else if (row.milestone) {
+                    const ms = document.createElement('div');
+                    ms.className = 'gantt-milestone';
+                    ms.style.left = `calc(${leftPct}% - 6px)`;
+                    ms.dataset.row = i;
+                    ms.dataset.info = JSON.stringify(row);
+                    barRow.appendChild(ms);
+                    barElements.push({ el: ms, row: i, data: row, isMilestone: true });
+                } else {
+                    const bar = document.createElement('div');
+                    bar.className = `gantt-bar bar-${row.phaseCls}`;
+                    bar.style.left = `${leftPct}%`;
+                    bar.style.width = `${widthPct}%`;
+                    if (durationDays >= 3) {
+                        bar.textContent = row.id;
+                    }
+                    bar.dataset.row = i;
+                    bar.dataset.info = JSON.stringify(row);
+                    barRow.appendChild(bar);
+                    barElements.push({ el: bar, row: i, data: row });
+                }
+
+                barsArea.appendChild(barRow);
+            });
+
+            // SVG for dependency arrows
+            const svgNS = 'http://www.w3.org/2000/svg';
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('class', 'gantt-arrows-svg');
+            svg.style.width = '100%';
+            svg.style.height = `${rows.length * ROW_H}px`;
+
+            // Arrowhead marker
+            const defs = document.createElementNS(svgNS, 'defs');
+            const marker = document.createElementNS(svgNS, 'marker');
+            marker.setAttribute('id', 'arrowhead');
+            marker.setAttribute('markerWidth', '8');
+            marker.setAttribute('markerHeight', '6');
+            marker.setAttribute('refX', '8');
+            marker.setAttribute('refY', '3');
+            marker.setAttribute('orient', 'auto');
+            const arrowPath = document.createElementNS(svgNS, 'path');
+            arrowPath.setAttribute('d', 'M0,0 L8,3 L0,6 Z');
+            marker.appendChild(arrowPath);
+            defs.appendChild(marker);
+            svg.appendChild(defs);
+
+            barsArea.appendChild(svg);
+            timeline.appendChild(barsArea);
+            chart.appendChild(timeline);
+
+            // ── Draw dependency arrows ──
+            requestAnimationFrame(() => {
+                const barsRect = barsArea.getBoundingClientRect();
+                const arrowPaths = [];
+
+                // Sequential dependencies within each phase
+                for (let idx = 0; idx < rows.length; idx++) {
+                    const row = rows[idx];
+                    if (row.type !== 'task') continue;
+
+                    // Find next task in same phase
+                    let nextIdx = -1;
+                    for (let j = idx + 1; j < rows.length; j++) {
+                        if (rows[j].type === 'phase') break;
+                        if (rows[j].type === 'task') { nextIdx = j; break; }
+                    }
+                    if (nextIdx === -1) continue;
+
+                    const fromBar = barElements.find(b => b.row === idx);
+                    const toBar   = barElements.find(b => b.row === nextIdx);
+                    if (!fromBar || !toBar) continue;
+
+                    const fromRect = fromBar.el.getBoundingClientRect();
+                    const toRect   = toBar.el.getBoundingClientRect();
+
+                    const x1 = fromRect.right - barsRect.left;
+                    const y1 = fromRect.top + fromRect.height / 2 - barsRect.top;
+                    const x2 = toRect.left - barsRect.left;
+                    const y2 = toRect.top + toRect.height / 2 - barsRect.top;
+
+                    const path = document.createElementNS(svgNS, 'path');
+                    const midX = x1 + (x2 - x1) * 0.5;
+                    path.setAttribute('d', `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`);
+                    path.setAttribute('marker-end', 'url(#arrowhead)');
+                    svg.appendChild(path);
+                    arrowPaths.push(path);
+                }
+
+                // Also connect last task of one phase to first task of next phase
+                for (let p = 0; p < phases.length - 1; p++) {
+                    const phase = phases[p];
+                    const nextPhase = phases[p + 1];
+                    const lastTask = phase.tasks[phase.tasks.length - 1];
+                    const firstTask = nextPhase.tasks[0];
+
+                    const fromIdx = rows.findIndex(r => r.id === lastTask.id && r.type === 'task');
+                    const toIdx   = rows.findIndex(r => r.id === firstTask.id && r.type === 'task');
+
+                    if (fromIdx === -1 || toIdx === -1) continue;
+
+                    const fromBar = barElements.find(b => b.row === fromIdx);
+                    const toBar   = barElements.find(b => b.row === toIdx);
+                    if (!fromBar || !toBar) continue;
+
+                    const fromRect = fromBar.el.getBoundingClientRect();
+                    const toRect   = toBar.el.getBoundingClientRect();
+
+                    const x1 = fromRect.right - barsRect.left;
+                    const y1 = fromRect.top + fromRect.height / 2 - barsRect.top;
+                    const x2 = toRect.left - barsRect.left;
+                    const y2 = toRect.top + toRect.height / 2 - barsRect.top;
+
+                    const path = document.createElementNS(svgNS, 'path');
+                    const midX = x1 + 15;
+                    path.setAttribute('d', `M${x1},${y1} L${midX},${y1} L${midX},${y2} L${x2},${y2}`);
+                    path.setAttribute('marker-end', 'url(#arrowhead)');
+                    path.style.strokeDasharray = '4,4';
+                    svg.appendChild(path);
+                    arrowPaths.push(path);
+                }
+
+                // Animate arrows after bars
+                setTimeout(() => {
+                    arrowPaths.forEach((p, i) => {
+                        setTimeout(() => p.classList.add('arrow-visible'), i * 80);
+                    });
+                }, barElements.length * 60 + 200);
+            });
+
+            // ── Animate bars sequentially ──
+            barElements.forEach((b, i) => {
+                setTimeout(() => {
+                    b.el.classList.add('animate-in');
+                }, i * 60 + 100);
+            });
+
+            // ── Tooltip ──
+            const tooltip = document.getElementById('ganttTooltip');
+            barElements.forEach(b => {
+                b.el.addEventListener('mouseenter', (e) => {
+                    const d = b.data;
+                    const startFmt = formatDate(parseDate(d.start));
+                    const endFmt   = formatDate(parseDate(d.end));
+                    tooltip.innerHTML = `
+                        <span class="tt-code">${d.id}</span><span class="tt-name">${d.name}</span>
+                        <div class="tt-dates">${startFmt} → ${endFmt}${d.hours ? ` · <span class="tt-hours">${d.hours}h</span> · €${d.hours * COST_PER_HOUR}` : ''}</div>
+                    `;
+                    tooltip.classList.add('visible');
+                });
+                b.el.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = `${e.clientX + 14}px`;
+                    tooltip.style.top  = `${e.clientY - 10}px`;
+                });
+                b.el.addEventListener('mouseleave', () => {
+                    tooltip.classList.remove('visible');
+                });
+            });
+        }
+
+        /* ═══════════════  COSTS PANEL  ═══════════════ */
+        function renderCosts() {
+            const container = document.getElementById('costsByPhase');
+            const colors = { avvio: '#38bdf8', pianif: '#fb923c', realiz: '#4ade80', chiusura: '#f87171' };
+            let totalHours = 0;
+
+            phases.forEach(phase => {
+                const phaseHours = phase.tasks.reduce((s, t) => s + t.hours, 0);
+                totalHours += phaseHours;
+                const cost = phaseHours * COST_PER_HOUR;
+                const el = document.createElement('div');
+                el.className = 'flex items-center gap-3';
+                el.innerHTML = `
+                    <span style="width:14px;height:14px;border-radius:4px;background:${colors[phase.cls]};flex-shrink:0"></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-700">${phase.name}</span>
+                    <span class="text-xs text-slate-400 font-medium">${phaseHours}h</span>
+                    <span class="text-sm font-bold text-[#001540]">€ ${cost.toLocaleString('it-IT')}</span>
+                `;
+                container.appendChild(el);
+            });
+
+            // Total
+            const totalEl = document.createElement('div');
+            totalEl.className = 'flex items-center gap-3 pt-3 mt-3 border-t border-slate-200';
+            totalEl.innerHTML = `
+                <span style="width:14px;height:14px;flex-shrink:0"></span>
+                <span class="flex-1 text-sm font-bold text-[#001540]">TOTALE</span>
+                <span class="text-xs text-slate-500 font-bold">${totalHours}h</span>
+                <span class="text-sm font-black text-emerald-600">€ ${(totalHours * COST_PER_HOUR).toLocaleString('it-IT')}</span>
+            `;
+            container.appendChild(totalEl);
+
+            // Resource summary
+            const resSummary = document.getElementById('resourceSummary');
+            const resources = [
+                { name: 'Davide Dolce', role: 'Project Manager', color: '#3b82f6', letter: 'D', rate: '€30/h' },
+                { name: 'Saqlain', role: 'Technical Lead', color: '#10b981', letter: 'S', rate: '€30/h' }
+            ];
+            resources.forEach(r => {
+                const el = document.createElement('div');
+                el.className = 'flex items-center gap-3';
+                el.innerHTML = `
+                    <div style="width:32px;height:32px;border-radius:8px;background:${r.color}15;border:1.5px solid ${r.color}40;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;color:${r.color}">${r.letter}</div>
+                    <div class="flex-1">
+                        <div class="text-sm font-bold text-slate-800">${r.name}</div>
+                        <div class="text-xs text-slate-400">${r.role}</div>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">${r.rate}</span>
+                `;
+                resSummary.appendChild(el);
+            });
+        }
+
+        // Init
+        render();
+        renderCosts();
+
+        // Re-render on resize (debounced)
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(render, 250);
+        });
+    })();
+    </script>
+
+</section>
