@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="Docs/Documenti/liftly_white.png" alt="Liftly Logo" width="150" height="auto" />
+  <img src="Docs/Documenti/v1/liftly_white.png" alt="Liftly Logo" width="150" height="auto" />
   <p><strong>The future of workout tracking. Smart, social, and mobile-first.</strong></p>
   
-  [![Documentation](https://img.shields.io/badge/docs-read_now-blue)](https://saqlain.altervista.org/Liftly/Docs/Documenti/)
-  [![Pitch Deck](https://img.shields.io/badge/presentation-view_now-purple)](https://saqlain.altervista.org/Liftly/Docs/Presentazione/)
+  [![Documentation](https://img.shields.io/badge/docs-read_now-blue)](https://saqlain.altervista.org/Liftly/Docs/Documenti/v2/)
+  [![Pitch Deck](https://img.shields.io/badge/presentation-view_now-purple)](https://saqlain.altervista.org/Liftly/Docs/Presentazione/v2/)
 </div>
 
 ---
@@ -39,9 +39,10 @@ Liftly is transitioning into a robust cross-platform mobile application.
 Built under rigorous organizational methodology to achieve an ambitious 3-month release window with a zero-euro budget. 
 
 All comprehensive project documentation (SRS, Gantt, WBS, Project Charter) is available online:
-* **[Consult the Official Technical Documentation](https://saqlain.altervista.org/Liftly/Docs/Documenti/)**
-* **[View the Pitch Presentation](https://saqlain.altervista.org/Liftly/Docs/Presentazione/)**
-
+* **[Consult the V1 Technical Documentation](https://saqlain.altervista.org/Liftly/Docs/Documenti/v1/)**
+* **[View the V1 Pitch Presentation](https://saqlain.altervista.org/Liftly/Docs/Presentazione/v1/)**
+* **[Consult the V2 Technical Documentation](https://saqlain.altervista.org/Liftly/Docs/Documenti/v2/)**
+* **[View the V2 Pitch Presentation](https://saqlain.altervista.org/Liftly/Docs/Presentazione/v2/)**
 ---
 
 <div align="center">
