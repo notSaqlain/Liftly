@@ -1,47 +1,68 @@
-# Istruzioni per l'Aggiornamento della Documentazione (V2 B2B)
+# Istruzioni Dettagliate per l'Aggiornamento della Documentazione (V2 B2B)
 
-Questo documento contiene le direttive per aggiornare tutta la documentazione di progetto presente nella cartella `Docs/Documenti/` per riflettere il nuovo modello di business (B2B Pivot).
+Questo documento contiene le direttive approfondite per aggiornare l'intera documentazione di progetto in `Docs/Documenti/` per riflettere il nuovo modello di business (B2B Pivot). Ogni dettaglio dell'idea deve essere tracciato nei documenti ufficiali.
 
-## ⚠️ REGOLA FONDAMENTALE
-**NON MODIFICARE I DOCUMENTI ESISTENTI.** I file attuali rappresentano la versione originale (V1) e vanno conservati come storico del progetto. 
-Tutti i nuovi documenti dovranno essere creati nella sottocartella `v2/` all'interno di `Docs/Documenti/`.
-
----
-
-## 📄 Elenco Documenti da Aggiornare e Modifiche Richieste
-
-### 1. Project Charter (`charter-liftly_v2.html`)
-*   **Obiettivo del Progetto:** Cambiare il focus da un'app fitness freemium B2C a una piattaforma SaaS B2B per palestre.
-*   **Stakeholder:** Aggiungere Proprietari di Palestre, Personal Trainer della struttura e Staff di Reception.
-*   **Metriche di Successo:** Inserire numero di palestre partner, numero di licenze vendute, tasso di utilizzo delle app da parte degli iscritti della singola palestra.
-
-### 2. Documento SRS (Software Requirements Specification)
-Dovrai ricreare le varie sezioni della SRS per includere i nuovi requisiti:
-*   **Introduzione / Ambito:** Descrivere il modello multi-tenant in cui gli utenti sono legati a un `gymId`.
-*   **Requisiti Funzionali:**
-    *   *Utente App:* Associazione alla palestra tramite codice, visualizzazione affluenza, mappa stato macchinari, PT Hub, chat di supporto con la palestra, gestione abbonamento (Il Tuo Piano), Leaderboard/Sfide locali.
-    *   *(Nota: Il Pannello Admin web è momentaneamente fuori scope per lo sviluppo, ma nei requisiti futuri va citato come sistema di gestione della palestra).*
-*   **Requisiti Non Funzionali:** Sicurezza e isolamento dei dati tra palestre diverse (un utente non deve vedere dati di altre palestre), scalabilità del DB per gestire i picchi di affluenza in tempo reale.
-*   **Definizioni/Attori:** Aggiungere i ruoli `gym_admin` e `trainer`.
-
-### 3. WBS (Work Breakdown Structure) (`wbs_v2.html`)
-Aggiungere nuovi "Work Package" per gestire il pivot:
-*   Rifattorizzazione Database (Integrazione `gymId` e multi-tenancy).
-*   Sviluppo Moduli App Utente V2 (Crowdsourcing Affluenza, Macchinari, PT Hub, Supporto, Profilo V2).
-*   *Fase futura:* Sviluppo Pannello Admin.
-
-### 4. OBS e RACI (`obs_v2.html` e `raci_v2.html`)
-*   Se l'organizzazione del team cambia (es. inserimento di figure commerciali per vendere l'app alle palestre o supporto tecnico B2B), aggiornare l'Organigramma.
-*   Aggiornare la matrice RACI includendo i nuovi task della WBS e chi ne è responsabile.
-
-### 5. Diagramma di Gantt e Costi (`gantt_v2.html`)
-*   Aggiungere una nuova fase temporale dedicata al "Pivot B2B".
-*   Rimodulare le scadenze e includere le stime per lo sviluppo delle nuove feature utente e dell'aggiornamento architetturale.
-*   Modificare il piano dei costi/ricavi: non più entrate da abbonamenti in-app o pubblicità B2C, ma stima di licenze mensili/annuali vendute alle palestre.
+## ⚠️ STRUTTURA DELLE CARTELLE E REGOLA FONDAMENTALE
+**NON ELIMINARE O SOVRASCRIVERE I FILE DELLA V1.**
+Per mantenere uno storico accurato dell'evoluzione del progetto, l'architettura dei file dovrà essere riorganizzata così:
+1. Crea una sottocartella `Docs/Documenti/sections/v1/` e sposta al suo interno tutti gli attuali file HTML delle sezioni (SRS, WBS, Gantt, ecc.).
+2. Crea una sottocartella `Docs/Documenti/sections/v2/` dove creerai da zero (o copiando e modificando) i nuovi documenti aggiornati.
+3. **Aggiorna i percorsi:** Assicurati che nel file principale `Docs/Documenti/index.html` (o `app.js`) i vecchi link puntino alla cartella `v1/` e crea nuovi link per i file nella cartella `v2/`.
 
 ---
 
-## 🔗 Aggiornamento della Navigazione (`index.html`)
-L'interfaccia principale della documentazione (`Docs/Documenti/index.html`) dovrà essere aggiornata per permettere la consultazione di entrambe le versioni.
-*   Aggiungere una voce di menu "Liftly V2 (B2B Pivot)" nella sidebar.
-*   Questa nuova voce conterrà un menu a tendina per navigare verso tutti i file `_v2` creati, permettendo al team e ai professori/partner di confrontare facilmente la V1 con la V2.
+## 💡 I Dettagli della Nuova Idea (Da inserire nei documenti)
+Chiunque aggiorni la documentazione deve comprendere profondamente le nuove feature da documentare:
+
+1. **Il Modello B2B SaaS (Software as a Service):** L'utente non scarica l'app per usare funzionalità premium a pagamento (Freemium). Invece, Liftly vende licenze (es. pacchetti da $550) alle palestre. La palestra offre Liftly PRO "gratis" ai suoi iscritti come benefit aggiuntivo dell'abbonamento fisico.
+2. **Crowdsourcing Reale (Badge):** Prima si ipotizzava che gli utenti dichiarassero quando erano in palestra. Ora Liftly si interfaccia (o simula di farlo) con i tornelli/badge della palestra per avere un dato di affluenza reale e accurato al 100%.
+3. **Mappatura e Stato Macchinari:** Ogni palestra ha il suo parco macchine nel database. L'utente può vedere cosa c'è, se una macchina è guasta, e filtrare la creazione di schede d'allenamento in base alle macchine effettivamente disponibili o funzionanti.
+4. **Hub Personal Trainer:** Ogni palestra ha i propri PT. L'app mostra i profili dei PT della *tua* palestra, permettendoti di contattarli direttamente via chat per prenotare lezioni o fare domande.
+5. **Supporto Diretto / Customer Care:** Una chat dedicata per comunicare con la reception della palestra (es. "Ho perso una felpa", "Voglio info sul rinnovo") sostituendo le vecchie email.
+6. **"Il Tuo Piano" (Gestione Abbonamento):** Una sezione dove l'utente vede il suo abbonamento fisico alla palestra (inizio, scadenza, certificato medico).
+7. **Gamification Locale (Sfide e Classifiche):** La leaderboard adesso è sia globale (contro tutto il mondo), che "Locale" alla palestra. Vengono introdotte le "Sfide della Palestra" per creare una community affiatata.
+
+---
+
+## 📄 Come Aggiornare Ogni Singolo Documento
+
+### 1. Project Charter (`v2/charter-liftly.html`)
+*   **Business Case & Vision:** Modificare la visione. Liftly non è più solo uno strumento per l'atleta, ma uno strumento di fidelizzazione (retention) per i proprietari delle palestre.
+*   **Stakeholder Principali:** Oltre agli utenti finali, inserire i "Clienti B2B" (Proprietari di palestre) e gli "Operatori" (Personal Trainer, Staff di reception).
+*   **Deliverables:** Inserire lo sviluppo del modulo "Gym Environment" (App) e la predisposizione al futuro Pannello Admin per la palestra.
+*   **Costi/Ricavi:** Il modello di entrate cambia radicalmente (da ads/abbonamenti in-app a licenze software annuali vendute ai centri sportivi).
+
+### 2. SRS - Requisiti Funzionali (`v2/srs-requisiti-funzionali.html`)
+Ogni sezione deve specificare che i dati sono isolati per Palestra (`gymId`):
+*   **Requisito Autenticazione:** Aggiungere la fase di "Selezione Palestra" o inserimento del "Codice di Attivazione" dopo la registrazione.
+*   **Requisito Social/Crowdsourcing:** Specificare che il calcolo dell'affluenza ora è derivato dal numero totale di utenti attivi nella palestra fratto la capienza massima (dati gestiti dalla palestra).
+*   **Requisito Workout:** Aggiungere la funzione "Filtra esercizi per macchinari disponibili e non guasti". Segnalazione guasti da parte dell'utente.
+*   **Requisito Chat/Supporto:** Separare la chat tra utenti (LiftChat globale/locale), chat con i PT, e Ticket di Supporto verso l'Admin/Reception.
+*   **Nota per chi scrive:** Inserire una nota esplicita che *lo sviluppo del portale Web Admin per i gestori della palestra è attualmente fuori scope per questa fase di programmazione*, ma è considerato un requisito di sistema essenziale per la logica dell'app.
+
+### 3. SRS - Requisiti Non Funzionali e Architettura (`v2/srs-architettura.html`)
+*   **Multi-tenancy e Data Isolation:** È fondamentale documentare che il database Firebase dovrà garantire la totale segregazione dei dati. Un utente iscritto alla Palestra A non deve assolutamente poter vedere i membri, le chat o le sfide della Palestra B.
+*   **Scalabilità:** Il sistema di tracking dell'affluenza in tempo reale richiederà un database capace di gestire aggiornamenti frequenti.
+
+### 4. WBS - Work Breakdown Structure (`v2/wbs.html`)
+La WBS deve essere riorganizzata per includere i pacchetti di lavoro del pivot:
+*   **Fase di Analisi:** Analisi dei requisiti B2B e progettazione database Multi-tenant.
+*   **Fase di Sviluppo Database:** Aggiunta collezioni `gyms`, `gym_machines`, `trainers`, `tickets`.
+*   **Fase Moduli Frontend (Nuovi):** Sviluppo schermata "Il Tuo Piano", "Lista Macchinari & Segnalazione Guasti", "Trainer Hub", "Assistenza Reception".
+*   **Modifica Moduli Esistenti:** Adattamento Leaderboard per mostrare sia i punteggi locali che globali e adattamento della UI per mostrare l'affluenza.
+
+### 5. RACI
+*   **RACI:** I nuovi moduli della WBS (es. Sviluppo DB Multi-tenant, Sviluppo PT Hub) devono essere assegnati correttamente ai membri del team esistenti.
+
+### 6. Diagramma di Gantt e Costi (`v2/gantt.html`)
+*   **Tempistiche:** Aggiungere una milestone "Liftly V2 - B2B Pivot". Le attività di sviluppo devono riflettere la nuova WBS, inserendo i tempi necessari per riadattare l'app.
+*   **Costi:** Rimuovere stime su "Marketing digitale per acquisizione utenti B2C (Facebook Ads)" e inserire stime su "Acquisizione Clienti B2B (fiere del fitness, commerciali diretti)".
+
+---
+
+## 🔗 Aggiornamento della Navigazione (Index)
+Il file `Docs/Documenti/index.html` dovrà subire un refactoring della sidebar (menu laterale).
+Invece di un solo elenco, crea due macro-categorie chiudibili a tendina (Accordion):
+1. **📁 Liftly V1 (Archivio B2C)**: I cui link punteranno alla cartella `/sections/v1/...`
+2. **📁 Liftly V2 (Attuale B2B)**: I cui link punteranno ai nuovi file creati nella cartella `/sections/v2/...`
+Questo permetterà ai revisori di apprezzare il lavoro storico e il ragionamento dietro al cambio di rotta.
