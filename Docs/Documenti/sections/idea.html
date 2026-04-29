@@ -1,0 +1,234 @@
+<style>
+    /* Full width override */
+    #idea-wrapper { max-width: none !important; }
+    #idea-wrapper ~ *, #main-content-area:has(#idea-wrapper) { max-width: none !important; padding: 0 !important; }
+    
+    #idea-wrapper {
+        background-color: #0f172a;
+        color: #f8fafc;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    #idea-wrapper .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    #idea-wrapper .text-gradient {
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    #idea-wrapper .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(96, 165, 250, 0.5);
+        box-shadow: 0 10px 30px -10px rgba(96, 165, 250, 0.3);
+    }
+    
+    @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .animate-blob { animation: blob 7s infinite; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animation-delay-2000 { animation-delay: 2s; }
+    .animation-delay-4000 { animation-delay: 4s; }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .text-accent { color: #3b82f6; }
+    .bg-accent { background-color: #3b82f6; }
+    .border-accent { border-color: #3b82f6; }
+</style>
+
+<div id="idea-wrapper" class="antialiased selection:bg-accent selection:text-white">
+    <!-- Decorative background -->
+    <div class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob"></div>
+        <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-1/4 left-1/3 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 py-12 lg:py-24 space-y-32">
+        <!-- Header / Hero Section -->
+        <header class="text-center space-y-8">
+            <div class="inline-flex items-center justify-center p-3 glass-panel rounded-2xl mb-4 animate-float">
+                <i data-lucide="dumbbell" class="w-8 h-8 text-blue-400"></i>
+                <span class="ml-3 font-heading font-bold text-2xl tracking-wider">LIFTLY</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-heading font-extrabold tracking-tight leading-tight">
+                L'evoluzione del Fitness.<br>
+                <span class="text-gradient">Da B2C a B2B.</span>
+            </h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+                Abbandoniamo il modello freemium per gli utenti e creiamo una partnership diretta con le palestre. Liftly diventa l'ecosistema definitivo integrato nel tuo abbonamento.
+            </p>
+        </header>
+
+        <!-- The Vision -->
+        <section class="glass-panel rounded-3xl p-8 md:p-12">
+            <div class="flex items-center gap-4 mb-8 border-b border-white/10 pb-6">
+                <div class="p-3 bg-blue-500/20 text-blue-400 rounded-xl">
+                    <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-3xl font-heading font-bold">Il Nuovo Modello di Business</h2>
+            </div>
+            <div class="prose prose-invert prose-lg max-w-none text-slate-300 font-light leading-loose space-y-6">
+                <p>
+                    L'idea è semplice ma rivoluzionaria: invece di creare un'app standalone per gli utenti, offriamo <strong>licenze aziendali e un pannello admin per le palestre</strong>. Quando un utente si iscrive o rinnova il proprio abbonamento in palestra, avrà la possibilità di acquistare un pacchetto premium che include l'accesso completo a Liftly.
+                </p>
+                <p>
+                    Questo non solo garantisce un flusso di cassa più stabile tramite partnership commerciali, ma trasforma l'app in uno strumento vitale per la palestra stessa, creando un ecosistema integrato tra la struttura, lo staff e il cliente.
+                </p>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section>
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-heading font-bold mb-4">Le Nuove Funzionalità B2B</h2>
+                <p class="text-slate-400">Tutto ciò che serve per fidelizzare il cliente e ottimizzare la gestione.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-panel rounded-2xl p-6 transition-all duration-300 feature-card group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-3">Crowdsourcing Reale</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Integrazione con il sistema di ingressi della palestra (badge). Possiamo mostrare esattamente quante persone ci sono in palestra in tempo reale.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6 transition-all duration-300 feature-card group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="settings-2" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-3">Stato Macchinari</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Mappatura delle macchine della palestra. L'utente può filtrare gli esercizi in base alle macchine disponibili o segnalare/vedere le macchine guaste.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6 transition-all duration-300 feature-card group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="user-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-3">Hub Personal Trainer</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Una vetrina per i PT della struttura. Gli utenti possono vedere i profili, le specializzazioni e inviare messaggi diretti per prenotare lezioni.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6 transition-all duration-300 feature-card group">
+                    <div class="w-12 h-12 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="message-square" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-3">Supporto Diretto</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Un canale di customer care via chat direttamente in app. Basta email lente: assistenza rapida dalla reception della palestra.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6 transition-all duration-300 feature-card group">
+                    <div class="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="credit-card" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-3">Il Tuo Piano</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Sezione dedicata alla gestione dell'abbonamento. Visualizza la tipologia del piano, la data di scadenza, rinnovi e documenti medici/certificati.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6 transition-all duration-300 feature-card group border-accent/30 bg-accent/10">
+                    <div class="absolute -top-3 -right-3 bg-accent text-xs font-bold px-3 py-1 rounded-full shadow-lg">Nuova Idea</div>
+                    <div class="w-12 h-12 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="trophy" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-heading mb-3">Sfide Locali & Community</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Classifiche esclusive per la singola palestra e sfide organizzate dallo staff. Crea senso di appartenenza e competizione sana.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flyer Section -->
+        <section>
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-heading font-bold mb-4">L'Offerta al Banco</h2>
+                <p class="text-slate-400">Ecco come la palestra presenterà Liftly ai nuovi iscritti.</p>
+            </div>
+            <div class="relative max-w-md mx-auto group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-[2rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                <div class="relative bg-slate-900 border border-slate-700 rounded-[2rem] overflow-hidden shadow-2xl">
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-8 text-center border-b border-slate-800">
+                        <div class="flex justify-center mb-4">
+                            <i data-lucide="dumbbell" class="w-10 h-10 text-white"></i>
+                        </div>
+                        <h3 class="text-3xl font-heading font-bold text-white mb-2">FITNESS PLUS</h3>
+                        <p class="text-blue-400 font-medium">Potenziato da Liftly Ecosystem</p>
+                    </div>
+                    <div class="p-8 space-y-6">
+                        <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+                            <div>
+                                <p class="text-sm text-slate-400 mb-1">Abbonamento Base</p>
+                                <p class="text-2xl font-bold font-heading">$500 <span class="text-sm font-normal text-slate-500">/anno</span></p>
+                            </div>
+                            <i data-lucide="arrow-right" class="text-slate-600"></i>
+                            <div class="text-right">
+                                <p class="text-sm text-accent font-medium mb-1">Pacchetto PRO</p>
+                                <p class="text-2xl font-bold font-heading text-white">$550 <span class="text-sm font-normal text-slate-500">/anno</span></p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="text-sm uppercase tracking-wider text-slate-400 font-bold">Cosa ottieni in più:</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5 text-accent shrink-0 mt-0.5"></i>
+                                    <span class="text-slate-300 text-sm">App Liftly PRO inclusa senza pubblicità</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5 text-accent shrink-0 mt-0.5"></i>
+                                    <span class="text-slate-300 text-sm">Stato affluenza palestra in tempo reale</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5 text-accent shrink-0 mt-0.5"></i>
+                                    <span class="text-slate-300 text-sm">Contatto diretto e prioritario con i PT</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5 text-accent shrink-0 mt-0.5"></i>
+                                    <span class="text-slate-300 text-sm">Gestione abbonamento digitale integrata</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-blue-600 p-6 text-center">
+                        <p class="text-white font-medium mb-1">Aggiungilo al tuo piano oggi.</p>
+                        <p class="text-blue-200 text-xs opacity-80">Richiedi in reception il codice di attivazione.</p>
+                    </div>
+                </div>
+                <div class="absolute -right-12 -bottom-6 bg-white text-slate-900 p-4 rounded-2xl shadow-xl transform rotate-3 hidden md:block">
+                    <p class="text-xs font-bold text-slate-500 uppercase mb-1">Modello Revenue</p>
+                    <p class="font-bold text-lg leading-tight">Win-Win<br>Split</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t border-white/10 pt-8 pb-12 text-center text-slate-500 text-sm">
+            <p>Documento concettuale confidenziale - Liftly B2B &copy; 2026</p>
+        </footer>
+    </div>
+</div>
