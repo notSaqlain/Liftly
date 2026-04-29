@@ -1,99 +1,139 @@
 // Inizializza Icone
 lucide.createIcons();
 
-let isSrsLoaded = false;
-let srsObserver = null;
-let isSrsV2Loaded = false;
-let srsV2Observer = null;
-// Funzione specifica per il click sul pulsante principale SRS
-function handleSrsClick() {
-    if (!isSrsLoaded) {
-        const firstSrsLink = document.querySelector('.srs-nav-link[data-target="introduzione"]');
-        scrollToSrsSection('introduzione', firstSrsLink);
-        const menu = document.getElementById('menu-srs');
-        const icon = document.getElementById('icon-srs');
-        if (menu && menu.classList.contains('hidden')) {
-            menu.classList.remove('hidden');
-            menu.classList.add('block');
-            icon.classList.add('rotate-180');
+// --- STATO TAB ---
+let openTabs = [];
+let activeTabPath = null;
+
+// --- GESTIONE ALBERO FILE (EXPLORER) ---
+function toggleFolder(folderId, chevronId, folderIconId) {
+    const folder = document.getElementById(folderId);
+    const chevron = document.getElementById(chevronId);
+    const folderIcon = document.getElementById(folderIconId);
+
+    if (folder.classList.contains('hidden')) {
+        folder.classList.remove('hidden');
+        folder.classList.add('block');
+        if (chevron) chevron.setAttribute('data-lucide', 'chevron-down');
+        if (folderIcon) folderIcon.setAttribute('data-lucide', 'folder-open');
+    } else {
+        folder.classList.add('hidden');
+        folder.classList.remove('block');
+        if (chevron) chevron.setAttribute('data-lucide', 'chevron-right');
+        if (folderIcon) folderIcon.setAttribute('data-lucide', 'folder');
+    }
+    lucide.createIcons();
+}
+
+// --- GESTIONE TAB ---
+function openFile(path, title) {
+    // 1. Aggiungi alle tab aperte se non esiste
+    if (!openTabs.find(t => t.path === path)) {
+        openTabs.push({ path, title });
+    }
+    activeTabPath = path;
+    
+    // 2. Aggiorna UI Tabs
+    renderTabs();
+
+    // 3. Evidenzia il file selezionato nell'albero
+    document.querySelectorAll('.file-link').forEach(link => {
+        if (link.dataset.path === path) {
+            link.classList.add('bg-slate-200', 'text-[#001540]', 'font-semibold');
+        } else {
+            link.classList.remove('bg-slate-200', 'text-[#001540]', 'font-semibold');
         }
-    } else {
-        toggleMenu('menu-srs', 'icon-srs');
+    });
+
+    // 4. Carica il contenuto
+    loadContent(path);
+
+    // 5. Chiudi il menu mobile se siamo su smartphone
+    if (window.innerWidth < 1024) {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+        setTimeout(() => { document.getElementById('sidebar').classList.add('hidden'); }, 300);
     }
 }
 
-// Funzione per il click sul pulsante principale SRS V2
-function handleSrsV2Click() {
-    if (!isSrsV2Loaded) {
-        const firstLink = document.querySelector('.srs-v2-nav-link[data-target="srs-v2-introduzione"]');
-        scrollToSrsV2Section('srs-v2-introduzione', firstLink);
-        const menu = document.getElementById('menu-srs-v2');
-        const icon = document.getElementById('icon-srs-v2');
-        if (menu && menu.classList.contains('hidden')) {
-            menu.classList.remove('hidden');
-            menu.classList.add('block');
-            icon.classList.add('rotate-180');
-        }
+function closeTab(event, path) {
+    event.stopPropagation(); // Evita che il click chiuda anche la tab ma scateni openFile
+
+    openTabs = openTabs.filter(t => t.path !== path);
+    
+    if (openTabs.length === 0) {
+        activeTabPath = null;
+        document.getElementById('main-content-area').innerHTML = `
+            <div class="h-full flex flex-col items-center justify-center text-slate-400 mt-32">
+                <i data-lucide="layout" class="w-16 h-16 mb-4 text-slate-200"></i>
+                <p>Nessun file aperto. Seleziona un file dall'Explorer.</p>
+            </div>
+        `;
+        document.querySelectorAll('.file-link').forEach(link => {
+            link.classList.remove('bg-slate-200', 'text-[#001540]', 'font-semibold');
+        });
+        renderTabs();
+    } else if (activeTabPath === path) {
+        // Se chiudo la tab attiva, attivo l'ultima tab rimasta
+        const lastTab = openTabs[openTabs.length - 1];
+        openFile(lastTab.path, lastTab.title);
     } else {
-        toggleMenu('menu-srs-v2', 'icon-srs-v2');
+        // Se chiudo una tab non attiva, aggiorno solo la UI
+        renderTabs();
     }
 }
 
-// Funzione per Aprire/Chiudere i sottomenu (Accordion)
-function toggleMenu(menuId, iconId) {
-    const menu = document.getElementById(menuId);
-    const icon = document.getElementById(iconId);
-
-    if (menu.classList.contains('hidden')) {
-        menu.classList.remove('hidden');
-        menu.classList.add('block');
-        icon.classList.add('rotate-180');
-    } else {
-        menu.classList.add('hidden');
-        menu.classList.remove('block');
-        icon.classList.remove('rotate-180');
-    }
+function renderTabs() {
+    const container = document.getElementById('tab-bar-container');
+    if (!container) return;
+    
+    container.innerHTML = openTabs.map(tab => {
+        const isActive = tab.path === activeTabPath;
+        return `
+            <div onclick="openFile('${tab.path}', '${tab.title}')" 
+                 class="group flex items-center gap-2 px-3 py-1.5 cursor-pointer text-sm border-t-2 min-w-[120px] max-w-[200px] rounded-t-md transition-colors
+                 ${isActive ? 'bg-white border-blue-500 text-[#001540] font-medium' : 'bg-transparent border-transparent text-slate-500 hover:bg-slate-200'}">
+                <span class="truncate flex-1 select-none">${tab.title}</span>
+                <button onclick="closeTab(event, '${tab.path}')" 
+                        class="p-0.5 rounded opacity-0 group-hover:opacity-100 hover:bg-slate-300 text-slate-400 hover:text-slate-700 transition-opacity
+                        ${isActive ? 'opacity-100' : ''}">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        `;
+    }).join('');
+    lucide.createIcons();
 }
 
-// Funzione per mostrare i contenuti principali caricandoli da file esterni (AJAX)
-async function showSection(sectionId, clickedElement, isSubmenu) {
-    isSrsLoaded = false;
-    isSrsV2Loaded = false;
-    if (srsObserver) srsObserver.disconnect();
-    if (srsV2Observer) srsV2Observer.disconnect();
-
-    // 1. Carica il contenuto dal file HTML esterno in sections/
+// --- CARICAMENTO CONTENUTO (AJAX) ---
+async function loadContent(sectionId) {
     try {
         const response = await fetch(`sections/${sectionId}.html`);
         if (!response.ok) {
-            throw new Error(`Errore nel caricamento della sezione: ${response.status} ${response.statusText}`);
+            throw new Error(`Errore nel caricamento: ${response.status} ${response.statusText}`);
         }
         const html = await response.text();
 
-        // Inserisci il contenuto nel main container
         const mainContainer = document.getElementById("main-content-area");
         if (mainContainer) {
             mainContainer.innerHTML = html;
-            // Reinizializza le icone lucide nel nuovo HTML appena caricato
             lucide.createIcons();
 
-            // Applica l'animazione PRIMA di eseguire gli script
-            // (gli script potrebbero aver bisogno che la sezione sia visibile)
             const newSection = mainContainer.querySelector('.section-content');
             if (newSection) newSection.classList.add('active');
 
-            // Esegui gli script contenuti nel nuovo HTML (innerHTML non li esegue)
+            // Esegui gli script
             mainContainer.querySelectorAll('script').forEach(oldScript => {
                 const newScript = document.createElement('script');
-                if (oldScript.src) {
-                    newScript.src = oldScript.src;
-                } else {
-                    newScript.textContent = oldScript.textContent;
-                }
+                if (oldScript.src) newScript.src = oldScript.src;
+                else newScript.textContent = oldScript.textContent;
                 oldScript.parentNode.replaceChild(newScript, oldScript);
             });
+            
+            // Torna in cima
+            const scrollArea = document.querySelector('main > .overflow-y-auto');
+            if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
     } catch (error) {
         console.error("Si è verificato un errore: ", error);
         const mainContainer = document.getElementById("main-content-area");
@@ -105,133 +145,16 @@ async function showSection(sectionId, clickedElement, isSubmenu) {
                         <i data-lucide="alert-triangle" class="w-12 h-12"></i>
                     </div>
                     <h1 class="text-3xl font-black text-[#001540] mb-2">Errore di Caricamento</h1>
-                    <p class="text-slate-500">Non è stato possibile caricare la sezione richiesta (<code>${sectionId}.html</code>).</p>
-                    <p class="text-xs text-slate-400 mt-4">Nota: il caricamento dinamico AJAX richiede un server web locale (come Live Server). Non funzionerà aprendo il file direttamente dal filesystem (file://).</p>
+                    <p class="text-slate-500">Non è stato possibile caricare <code>${sectionId}.html</code>.</p>
                 </div>
             </section>
             `;
             lucide.createIcons();
         }
     }
-
-
-    // 2. Reset stili link
-    document.querySelectorAll('.submenu-link').forEach(link => {
-        link.classList.remove('active-link');
-    });
-    document.querySelectorAll('.main-link').forEach(link => {
-        link.classList.remove('active-link', 'bg-[#001540]', 'text-white');
-        link.classList.add('text-slate-700', 'hover:bg-slate-50');
-    });
-
-    // 3. Applica stile al link cliccato
-    if (clickedElement) {
-        if (isSubmenu) {
-            clickedElement.classList.add('active-link');
-        } else {
-            clickedElement.classList.remove('text-slate-700', 'hover:bg-slate-50');
-            clickedElement.classList.add('active-link');
-        }
-    }
-
-    // 4. Chiudi il menu mobile se siamo su smartphone
-    if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.add('-translate-x-full');
-        setTimeout(() => { document.getElementById('sidebar').classList.add('hidden'); }, 300);
-    }
-
-    // 5. Torna in cima alla pagina
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-async function scrollToSrsSection(targetId, clickedElement) {
-    if (!isSrsLoaded) {
-        try {
-            const response = await fetch(`sections/srs/srs-all.html`);
-            if (!response.ok) throw new Error("Errore Caricamento SRS");
-            const html = await response.text();
-            
-            const mainContainer = document.getElementById("main-content-area");
-            if (mainContainer) {
-                mainContainer.innerHTML = html;
-                lucide.createIcons();
-                const newSection = mainContainer.querySelector('.section-content');
-                if (newSection) newSection.classList.add('active');
-            }
-            isSrsLoaded = true;
-            
-            // Setup scrollspy
-            const sections = document.querySelectorAll('.srs-section');
-            if (srsObserver) srsObserver.disconnect();
-            
-            srsObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    // Only update active link if we are scrolling naturally, not right after a click
-                    if (entry.isIntersecting && !window.isSrsScrollingFromClick) {
-                        const id = entry.target.id;
-                        document.querySelectorAll('.srs-nav-link').forEach(link => {
-                            link.classList.remove('active-link');
-                        });
-                        const activeLink = document.querySelector(`.srs-nav-link[data-target="${id}"]`);
-                        if (activeLink) activeLink.classList.add('active-link');
-                        
-                        // Also expand the SRS menu if it happens to be closed
-                        const srsMenu = document.getElementById('menu-srs');
-                        const srsIcon = document.getElementById('icon-srs');
-                        if (srsMenu && srsMenu.classList.contains('hidden')) {
-                            srsMenu.classList.remove('hidden');
-                            srsMenu.classList.add('block');
-                            srsIcon.classList.add('rotate-180');
-                        }
-                    }
-                });
-            }, { 
-                root: null, // Use browser viewport
-                rootMargin: '-20% 0px -60% 0px' 
-            });
-            
-            sections.forEach(sec => srsObserver.observe(sec));
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    
-    // Aggiorna gli stili dei link
-    document.querySelectorAll('.submenu-link').forEach(link => {
-        link.classList.remove('active-link');
-    });
-    document.querySelectorAll('.main-link').forEach(link => {
-        link.classList.remove('active-link', 'bg-[#001540]', 'text-white');
-        link.classList.add('text-slate-700', 'hover:bg-slate-50');
-    });
-    
-    if (clickedElement) {
-        clickedElement.classList.add('active-link');
-    }
-
-    if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.add('-translate-x-full');
-        setTimeout(() => { document.getElementById('sidebar').classList.add('hidden'); }, 300);
-    }
-    
-    window.isSrsScrollingFromClick = true;
-    
-    // Scroll al target
-    const targetEl = document.getElementById(targetId);
-    if (targetEl) {
-        // Because main container might not be standard document scroll, let's use scrollIntoView 
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        
-        // Reset flag after animation completes (approx)
-        setTimeout(() => {
-            window.isSrsScrollingFromClick = false;
-        }, 800);
-    } else {
-        window.isSrsScrollingFromClick = false;
-    }
-}
-
-// Gestione Menu Mobile
+// --- GESTIONE MENU MOBILE ---
 const sidebar = document.getElementById('sidebar');
 if (document.getElementById('mobile-menu-btn')) {
     document.getElementById('mobile-menu-btn').onclick = () => {
@@ -246,65 +169,7 @@ if (document.getElementById('close-menu-btn')) {
     };
 }
 
-// Carica la landing page iniziale all'avvio
+// --- INIZIALIZZAZIONE ---
 document.addEventListener("DOMContentLoaded", () => {
-    showSection('landing-page', null, false);
+    openFile('landing-page', 'Home');
 });
-
-async function scrollToSrsV2Section(targetId, clickedElement) {
-    if (!isSrsV2Loaded) {
-        try {
-            const response = await fetch(`sections/v2/srs-all.html`);
-            if (!response.ok) throw new Error("Errore Caricamento SRS V2");
-            const html = await response.text();
-            const mainContainer = document.getElementById("main-content-area");
-            if (mainContainer) {
-                mainContainer.innerHTML = html;
-                lucide.createIcons();
-                const newSection = mainContainer.querySelector('.section-content');
-                if (newSection) newSection.classList.add('active');
-            }
-            isSrsV2Loaded = true;
-            const sections = document.querySelectorAll('.srs-section');
-            if (srsV2Observer) srsV2Observer.disconnect();
-            srsV2Observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && !window.isSrsV2ScrollingFromClick) {
-                        const id = entry.target.id;
-                        document.querySelectorAll('.srs-v2-nav-link').forEach(link => link.classList.remove('active-link'));
-                        const activeLink = document.querySelector(`.srs-v2-nav-link[data-target="${id}"]`);
-                        if (activeLink) activeLink.classList.add('active-link');
-                        const srsMenu = document.getElementById('menu-srs-v2');
-                        const srsIcon = document.getElementById('icon-srs-v2');
-                        if (srsMenu && srsMenu.classList.contains('hidden')) {
-                            srsMenu.classList.remove('hidden');
-                            srsMenu.classList.add('block');
-                            srsIcon.classList.add('rotate-180');
-                        }
-                    }
-                });
-            }, { root: null, rootMargin: '-20% 0px -60% 0px' });
-            sections.forEach(sec => srsV2Observer.observe(sec));
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    document.querySelectorAll('.submenu-link').forEach(link => link.classList.remove('active-link'));
-    document.querySelectorAll('.main-link').forEach(link => {
-        link.classList.remove('active-link', 'bg-[#001540]', 'text-white');
-        link.classList.add('text-slate-700', 'hover:bg-slate-50');
-    });
-    if (clickedElement) clickedElement.classList.add('active-link');
-    if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.add('-translate-x-full');
-        setTimeout(() => document.getElementById('sidebar').classList.add('hidden'), 300);
-    }
-    window.isSrsV2ScrollingFromClick = true;
-    const targetEl = document.getElementById(targetId);
-    if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(() => { window.isSrsV2ScrollingFromClick = false; }, 800);
-    } else {
-        window.isSrsV2ScrollingFromClick = false;
-    }
-}
