@@ -54,32 +54,36 @@ const ActiveWorkout = () => {
   const [startTime] = useState(Date.now());
 
   // Rest Timer
-  const [restSeconds, setRestSeconds] = useState(0);
+  const [restElapsed, setRestElapsed] = useState(0);
   const [restTarget, setRestTarget] = useState(90);
   const [restRunning, setRestRunning] = useState(false);
   const [showRestTimer, setShowRestTimer] = useState(false);
 
   useEffect(() => {
-    if (!restRunning || restSeconds <= 0) return;
+    if (!restRunning) return;
     const id = setInterval(() => {
-      setRestSeconds(prev => {
-        if (prev <= 1) {
-          setRestRunning(false);
+      setRestElapsed(prev => {
+        if (prev + 1 === restTarget) {
           if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-          return 0;
         }
-        return prev - 1;
+        return prev + 1;
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [restRunning, restSeconds]);
+  }, [restRunning, restTarget]);
 
-  const startRest = useCallback((seconds) => {
+  const startRest = useCallback((seconds, forceRestart = false) => {
     setRestTarget(seconds);
-    setRestSeconds(seconds);
+    if (forceRestart) {
+      setRestElapsed(0);
+    } else if (restElapsed >= seconds) {
+      // If user sets a target lower than what's already elapsed, complete it
+      setRestElapsed(seconds);
+      setRestRunning(false);
+    }
     setRestRunning(true);
     setShowRestTimer(true);
-  }, []);
+  }, [restElapsed]);
 
   const addSet = (exerciseId) => {
     setWorkoutLog(prev => ({ ...prev, [exerciseId]: [...(prev[exerciseId] || []), { weight: '', reps: '', done: false }] }));
@@ -112,7 +116,7 @@ const ActiveWorkout = () => {
       return { ...prev, [exerciseId]: sets };
     });
     const sets = workoutLog[exerciseId] || [];
-    if (!sets[setIdx]?.done) startRest(restTarget);
+    if (!sets[setIdx]?.done) startRest(restTarget, true);
   };
 
   const totalSets = Object.values(workoutLog).reduce((sum, sets) => sum + sets.filter(s => s.done).length, 0);
@@ -259,9 +263,17 @@ const ActiveWorkout = () => {
     );
   }
 
-  const restProgress = restTarget > 0 ? ((restTarget - restSeconds) / restTarget) * 100 : 0;
-  const restMins = Math.floor(restSeconds / 60);
-  const restSecs = restSeconds % 60;
+  const overage = Math.max(0, restElapsed - restTarget);
+  const displayTarget = restElapsed > restTarget ? restTarget : restElapsed;
+  const restProgress = restTarget > 0 ? (displayTarget / restTarget) * 100 : 0;
+  
+  const restMins = Math.floor(displayTarget / 60);
+  const restSecs = displayTarget % 60;
+  
+  const overageMins = Math.floor(overage / 60);
+  const overageSecs = overage % 60;
+
+  const isRestComplete = restElapsed >= restTarget;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -293,24 +305,25 @@ const ActiveWorkout = () => {
 
       {/* Rest Timer Banner */}
       {showRestTimer && (
-        <div className={`mx-4 mt-3 rounded-2xl overflow-hidden border transition-all ${restSeconds === 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200 shadow-card'}`}>
+        <div className={`mx-4 mt-3 rounded-2xl overflow-hidden border transition-all ${isRestComplete ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200 shadow-card'}`}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Timer size={15} className={restSeconds === 0 ? 'text-emerald-500' : 'text-orange-500'} />
+                <Timer size={15} className={isRestComplete ? 'text-emerald-500' : 'text-orange-500'} />
                 <span className="text-xs font-black uppercase tracking-wider text-slate-500">
-                  {restSeconds === 0 ? 'Rest Complete!' : 'Rest Timer'}
+                  {isRestComplete ? 'Rest Complete!' : `Target: ${Math.floor(restTarget/60)}m ${restTarget%60}s`}
                 </span>
               </div>
               <button onClick={() => setShowRestTimer(false)} className="text-slate-300 text-xs font-bold hover:text-slate-500">Dismiss</button>
             </div>
 
             <div className="flex items-center justify-between mb-3">
-              <span className={`text-3xl font-black tabular-nums ${restSeconds === 0 ? 'text-emerald-500' : 'text-liftly-navy'}`}>
+              <span className={`text-3xl font-black tabular-nums flex items-baseline ${isRestComplete ? 'text-emerald-500 animate-pulse' : 'text-liftly-navy'}`}>
                 {restMins}:{restSecs.toString().padStart(2, '0')}
+                {overage > 0 && <span className="text-xl ml-1 text-emerald-400">+{overageMins > 0 ? `${overageMins}:` : ''}{overageSecs.toString().padStart(2, '0')}</span>}
               </span>
               <div className="flex gap-2">
-                <button onClick={() => { setRestSeconds(restTarget); setRestRunning(true); }} className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 active:scale-90 transition-all">
+                <button onClick={() => { setRestElapsed(0); setRestRunning(true); }} className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 active:scale-90 transition-all">
                   <RotateCcw size={15} />
                 </button>
                 <button onClick={() => setRestRunning(!restRunning)} className={`w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-all ${restRunning ? 'bg-orange-100 text-orange-500' : 'bg-liftly-teal/10 text-liftly-teal'}`}>
@@ -320,20 +333,31 @@ const ActiveWorkout = () => {
             </div>
 
             <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
-              <div className={`h-full rounded-full transition-all duration-1000 ease-linear ${restSeconds === 0 ? 'bg-emerald-400' : 'bg-orange-400'}`} style={{ width: `${restProgress}%` }} />
+              <div className={`h-full rounded-full transition-all duration-1000 ease-linear ${isRestComplete ? 'bg-emerald-400' : 'bg-orange-400'}`} style={{ width: `${restProgress}%` }} />
             </div>
 
             <div className="flex gap-2">
               {REST_PRESETS.map(({ sec, label, sub }) => (
                 <button
                   key={sec}
-                  onClick={() => startRest(sec)}
-                  className={`flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 ${restTarget === sec && restRunning ? 'bg-liftly-navy text-white border-liftly-navy' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
+                  onClick={() => startRest(sec, false)}
+                  className={`flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 ${restTarget === sec && !isRestComplete ? 'bg-liftly-navy text-white border-liftly-navy' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
                 >
                   {label}
                   <span className="block text-[8px] opacity-60 font-semibold">{sub}</span>
                 </button>
               ))}
+              <button
+                onClick={() => {
+                  const val = window.prompt("Enter custom rest time in seconds:", "60");
+                  const parsed = parseInt(val, 10);
+                  if (parsed > 0) startRest(parsed, false);
+                }}
+                className="flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 flex flex-col items-center justify-center"
+              >
+                Custom
+                <span className="block text-[8px] opacity-60 font-semibold">Set Secs</span>
+              </button>
             </div>
           </div>
         </div>
@@ -401,8 +425,8 @@ const ActiveWorkout = () => {
                       </div>
                       <div className="flex-1">
                         <input
-                          type="number" inputMode="numeric" placeholder="—" value={set.reps}
-                          onChange={(e) => updateSet(exercise.id, idx, 'reps', e.target.value)}
+                          type="number" step="1" inputMode="numeric" placeholder="—" value={set.reps}
+                          onChange={(e) => updateSet(exercise.id, idx, 'reps', e.target.value.replace(/[^0-9]/g, ''))}
                           className="w-full h-11 bg-slate-50 text-center font-black text-sm text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-slate-300 transition-all"
                         />
                       </div>
