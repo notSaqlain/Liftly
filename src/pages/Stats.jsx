@@ -24,6 +24,8 @@ const Stats = () => {
   const [selectedExercise, setSelectedExercise] = useState('Bench Press');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [progressData, setProgressData] = useState([]);
+  const [visibleHistory, setVisibleHistory] = useState(5);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -42,9 +44,6 @@ const Stats = () => {
 
         // All workouts for stats
         setAllWorkouts(workouts);
-
-        // History (last 10)
-        setWorkoutHistory(workouts.slice(0, 10));
 
         // Weekly volume (last 7 days)
         const last7 = [];
@@ -296,11 +295,15 @@ const Stats = () => {
                 <h3 className="font-black text-white">Workout History</h3>
               </div>
               <div className="space-y-2.5">
-                {workoutHistory.map(w => {
+                {allWorkouts.slice(0, visibleHistory).map(w => {
                   const date = w.completedAt?.toDate?.();
                   const dateStr = date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
                   return (
-                    <div key={w.id} className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                    <div 
+                      key={w.id} 
+                      onClick={() => setSelectedWorkout(w)}
+                      className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer active:scale-[0.98]"
+                    >
                       <div className="w-10 h-10 rounded-xl bg-liftly-teal/10 flex items-center justify-center shrink-0 border border-liftly-teal/20">
                         <Dumbbell size={16} className="text-liftly-teal" />
                       </div>
@@ -313,12 +316,68 @@ const Stats = () => {
                   );
                 })}
               </div>
+              
+              {visibleHistory < allWorkouts.length && (
+                <button 
+                  onClick={() => setVisibleHistory(prev => prev + 5)}
+                  className="w-full mt-3 py-3 bg-white/5 hover:bg-white/10 text-white/50 text-xs font-bold rounded-2xl transition-all active:scale-95 border border-white/5"
+                >
+                  See more history
+                </button>
+              )}
             </div>
           </>
         )}
 
         <div className="h-4" />
       </div>
+
+      {/* Workout Details Modal */}
+      {selectedWorkout && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 pb-8 sm:pb-4 animate-fade-in" onClick={() => setSelectedWorkout(null)}>
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+            <div className="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6 shrink-0" />
+            <div className="flex justify-between items-start mb-6 shrink-0">
+              <div>
+                <h3 className="text-xl font-black text-white mb-1">{selectedWorkout.day}</h3>
+                <p className="text-white/40 text-xs font-bold">
+                  {selectedWorkout.completedAt?.toDate?.().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-white font-black text-sm">{selectedWorkout.durationMinutes || '?'} min</p>
+                <p className="text-liftly-teal font-black text-sm">{(selectedWorkout.totalVolume || 0).toLocaleString()} kg</p>
+              </div>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-1">
+              {selectedWorkout.exercises?.map((ex, i) => (
+                <div key={i} className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                  <h4 className="font-black text-white text-sm mb-3">{ex.name}</h4>
+                  <div className="space-y-2">
+                    {ex.sets?.map((set, j) => (
+                      <div key={j} className="flex justify-between items-center text-sm">
+                        <span className="text-white/40 font-bold">Set {j + 1}</span>
+                        <div className="text-white font-bold">
+                          {set.weight} <span className="text-white/40 text-xs">kg</span> × {set.reps} <span className="text-white/40 text-xs">reps</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <button
+              onClick={() => setSelectedWorkout(null)}
+              className="w-full mt-6 py-4 rounded-2xl font-black text-white bg-white/10 hover:bg-white/20 transition-colors text-sm shrink-0"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
