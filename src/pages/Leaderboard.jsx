@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, query, orderBy, limit, getDocs, where } from 'firebase/firestore';
+import { collection, query, orderBy, limit, getDocs, where, doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import { Trophy, Flame, Dumbbell, TrendingUp, ChevronLeft, Medal, Crown, Globe, Building2 } from 'lucide-react';
+import { Trophy, Flame, Dumbbell, TrendingUp, ChevronLeft, Medal, Crown, Globe, Building2, Users } from 'lucide-react';
 
 const CATEGORIES = [
   { id: 'streak', label: '🔥 Streak', field: 'currentStreak', unit: 'wks', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-500/10' },
@@ -28,6 +28,33 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       setLoading(true);
       try {
+        if (boardMode === 'friends' && currentUser) {
+          const friendsSnap = await getDocs(collection(db, 'users', currentUser.uid, 'friends'));
+          const friendIds = friendsSnap.docs.map(d => d.id);
+          friendIds.push(currentUser.uid);
+
+          const fetchedLeaders = [];
+          for (const fid of friendIds) {
+            const fdoc = await getDoc(doc(db, 'users', fid));
+            if (fdoc.exists()) {
+              const data = fdoc.data();
+              const value = data[activeCategory.field];
+              if (value !== undefined && value !== null && value > 0) {
+                fetchedLeaders.push({
+                  id: fdoc.id,
+                  name: data.firstName ? `${data.firstName} ${data.lastName || ''}`.trim() : (data.email?.split('@')[0] || 'Lifter'),
+                  photoURL: data.photoURL || data.googlePhotoURL || null,
+                  value: value,
+                });
+              }
+            }
+          }
+          fetchedLeaders.sort((a, b) => b.value - a.value);
+          setLeaders(fetchedLeaders.slice(0, 50));
+          setLoading(false);
+          return;
+        }
+
         let q;
         if (isGymMode && gymId) {
           q = query(
@@ -71,7 +98,7 @@ const Leaderboard = () => {
     };
 
     fetchLeaderboard();
-  }, [activeCategory, boardMode, gymId]);
+  }, [activeCategory, boardMode, gymId, currentUser]);
 
   return (
     <div className="bg-[#040810] min-h-screen flex flex-col animate-fade-in pb-20">
@@ -89,7 +116,7 @@ const Leaderboard = () => {
             <div className="flex items-center gap-2 mb-1">
               <Trophy size={14} className="text-yellow-400" />
               <span className="text-yellow-400/80 text-[10px] font-black uppercase tracking-widest">
-                {isGymMode && gymId ? userData?.gymName : 'Global Rankings'}
+                {boardMode === 'gym' && gymId ? userData?.gymName : boardMode === 'friends' ? 'Friends Rankings' : 'Global Rankings'}
               </span>
             </div>
             <h1 className="text-2xl font-black text-white tracking-tight leading-none">Leaderboard</h1>
@@ -113,6 +140,14 @@ const Leaderboard = () => {
             }`}
           >
             <Building2 size={13} /> My Gym
+          </button>
+          <button
+            onClick={() => setBoardMode('friends')}
+            className={`flex-1 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all ${
+              boardMode === 'friends' ? 'bg-liftly-teal text-liftly-navy shadow-md' : 'text-white/50 hover:text-white/80'
+            }`}
+          >
+            <Users size={13} /> Friends
           </button>
         </div>
       </div>
@@ -200,12 +235,13 @@ const Leaderboard = () => {
                   }
 
                   return (
-                    <div
+                    <button
                       key={leader.id}
-                      className={`flex items-center gap-3 p-3 rounded-3xl transition-all ${
+                      onClick={() => navigate(`/profile/${leader.id}`)}
+                      className={`w-full flex items-center text-left gap-3 p-3 rounded-3xl transition-all cursor-pointer ${
                         isCurrentUser 
                           ? 'bg-liftly-teal/10 border border-liftly-teal/30 shadow-sm' 
-                          : 'hover:bg-white/5 border border-transparent'
+                          : 'bg-[#0D1526] hover:bg-white/5 border border-white/5'
                       }`}
                     >
                       {/* Rank Number/Icon */}
@@ -240,7 +276,7 @@ const Leaderboard = () => {
                           {leader.value.toLocaleString()}
                         </p>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>

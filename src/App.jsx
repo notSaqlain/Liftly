@@ -30,6 +30,8 @@ import ChatHub from './pages/ChatHub';
 import UserSearch from './pages/UserSearch';
 import DMConversation from './pages/DMConversation';
 import SeedFirestore from './pages/tools/SeedFirestore';
+import PublicProfile from './pages/PublicProfile';
+import FriendsList from './pages/FriendsList';
 
 // 404
 const NotFound = () => (
@@ -66,6 +68,8 @@ function App() {
             <Route path="/chat/group/:mode" element={<GroupChat />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:uid" element={<PublicProfile />} />
+            <Route path="/friends" element={<FriendsList />} />
             <Route path="/settings" element={<AccountSettings />} />
             <Route path="/personal-info" element={<PersonalInfo />} />
 

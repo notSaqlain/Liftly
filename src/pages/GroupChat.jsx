@@ -190,7 +190,7 @@ const GroupChat = () => {
                 </div>
               ) : (
                 onlineUsers.map(user => (
-                  <div key={user.uid} className="flex items-center gap-3 p-2 rounded-2xl hover:bg-white/5 transition-colors">
+                  <button key={user.uid} onClick={() => navigate(`/profile/${user.uid}`)} className="w-full text-left flex items-center gap-3 p-2 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer active:scale-95">
                     <div className="w-9 h-9 rounded-xl bg-liftly-teal/10 flex items-center justify-center shrink-0 overflow-hidden relative border border-white/10">
                       {user.photoURL ? (
                         <img src={user.photoURL} alt={user.displayName} className="w-full h-full object-cover" />
@@ -203,7 +203,7 @@ const GroupChat = () => {
                       <p className="text-sm font-bold text-white truncate">{user.displayName}</p>
                       <p className="text-[9px] font-semibold text-green-400">Online</p>
                     </div>
-                  </div>
+                  </button>
                 ))
               )}
             </div>
@@ -252,7 +252,7 @@ const GroupChat = () => {
               )}
               <div className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : 'flex-row'} ${msg.isFirst && !showDate ? 'mt-4' : 'mt-0.5'}`}>
                 {!mine && (
-                  <div className={`w-8 h-8 rounded-xl shrink-0 overflow-hidden border border-white/10 ${!msg.isLast ? 'invisible' : ''}`}>
+                  <button onClick={() => navigate(`/profile/${msg.uid}`)} className={`w-8 h-8 rounded-xl shrink-0 overflow-hidden border border-white/10 active:scale-95 transition-all cursor-pointer ${!msg.isLast ? 'invisible' : ''}`}>
                     {msg.photoURL ? (
                       <img src={msg.photoURL} alt={msg.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
@@ -260,11 +260,13 @@ const GroupChat = () => {
                         {(msg.displayName || '?').charAt(0).toUpperCase()}
                       </div>
                     )}
-                  </div>
+                  </button>
                 )}
                 <div className={`max-w-[75%] flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
                   {!mine && msg.isFirst && (
-                    <span className="text-[10px] font-black text-white/40 mb-1 ml-1">{msg.displayName}</span>
+                    <button onClick={() => navigate(`/profile/${msg.uid}`)} className="text-[10px] font-black text-white/40 mb-1 ml-1 hover:text-white/60 active:scale-95 transition-all cursor-pointer">
+                      {msg.displayName}
+                    </button>
                   )}
                   <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
                     mine

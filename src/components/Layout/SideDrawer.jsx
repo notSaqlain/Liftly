@@ -127,6 +127,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
           <div>
             <SectionLabel label="Community" />
             <div className="space-y-1">
+              <DrawerLink to="/friends"      icon={<Users size={16} />}          label="Friends List"     color="bg-pink-500/15 text-pink-400" onClick={onClose} />
               <DrawerLink to="/leaderboard"  icon={<Trophy size={16} />}         label="Leaderboard"      color="bg-yellow-500/15 text-yellow-400" onClick={onClose} />
               <DrawerLink to="/chat"         icon={<MessageSquareDot size={16} />} label="Chat Hub" color="bg-brand/15 text-brand"          onClick={onClose} />
             </div>
