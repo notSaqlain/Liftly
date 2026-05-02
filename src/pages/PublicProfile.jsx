@@ -2,8 +2,17 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, getDocs, addDoc } from 'firebase/firestore';
 import { ChevronLeft, MessageCircle, UserPlus, Clock, Check, X, Flame, TrendingUp, Dumbbell, Trophy } from 'lucide-react';
+
+const ACHIEVEMENTS = [
+  { id: 'first', label: 'First Workout', icon: '🏋️', threshold: 1, stat: 'workouts' },
+  { id: 'ten', label: '10 Workouts', icon: '💪', threshold: 10, stat: 'workouts' },
+  { id: 'fifty', label: '50 Workouts', icon: '🔥', threshold: 50, stat: 'workouts' },
+  { id: 'streak7', label: '7-Day Streak', icon: '⚡', threshold: 7, stat: 'streak' },
+  { id: 'streak30', label: '30-Day Streak', icon: '🌟', threshold: 30, stat: 'streak' },
+  { id: 'volume100k', label: '100k kg Lifted', icon: '🏆', threshold: 100000, stat: 'volume' },
+];
 
 const PublicProfile = () => {
   const { uid } = useParams();
@@ -12,6 +21,7 @@ const PublicProfile = () => {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [totalWorkouts, setTotalWorkouts] = useState(0);
   
   // Friend State: 'none' | 'pending_sent' | 'pending_received' | 'friends'
   const [friendState, setFriendState] = useState('none');
@@ -31,6 +41,9 @@ const PublicProfile = () => {
         const userDoc = await getDoc(doc(db, 'users', uid));
         if (userDoc.exists()) {
           setUser({ id: userDoc.id, ...userDoc.data() });
+          // Fetch workouts for achievements
+          const snap = await getDocs(collection(db, 'users', uid, 'user_workouts'));
+          setTotalWorkouts(snap.size);
         } else {
           setUser(null);
         }
@@ -176,6 +189,13 @@ const PublicProfile = () => {
 
   const fmtVolume = (v) => v >= 1000000 ? `${(v/1000000).toFixed(1)}M` : v >= 1000 ? `${(v/1000).toFixed(1)}k` : v.toString();
 
+  const unlockedAchievements = ACHIEVEMENTS.filter(a => {
+    if (a.stat === 'workouts') return totalWorkouts >= a.threshold;
+    if (a.stat === 'streak') return (user.currentStreak || 0) >= a.threshold;
+    if (a.stat === 'volume') return (user.totalVolumeLifted || 0) >= a.threshold;
+    return false;
+  });
+
   return (
     <div className="bg-[#040810] min-h-screen flex flex-col pb-20 relative animate-fade-in">
       {/* Header */}
@@ -246,6 +266,40 @@ const PublicProfile = () => {
 
       {/* Stats Grid */}
       <div className="p-6 space-y-6">
+
+        {/* Achievements */}
+        {unlockedAchievements.length > 0 && (
+          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                <Trophy size={15} className="text-yellow-500" />
+              </div>
+              <h2 className="font-black text-white text-sm">Achievements</h2>
+              <span className="ml-auto text-[10px] font-bold bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-lg">
+                {unlockedAchievements.length}/{ACHIEVEMENTS.length}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {ACHIEVEMENTS.map(a => {
+                const unlocked = unlockedAchievements.some(u => u.id === a.id);
+                return (
+                  <div
+                    key={a.id}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                      unlocked
+                        ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
+                        : 'bg-white/5 border-white/5 text-white/30'
+                    }`}
+                  >
+                    <span className={unlocked ? '' : 'grayscale opacity-40'}>{a.icon}</span>
+                    {a.label}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div>
           <h3 className="text-xs font-black text-white/40 uppercase tracking-widest mb-3">Core Stats</h3>
           <div className="grid grid-cols-2 gap-3">

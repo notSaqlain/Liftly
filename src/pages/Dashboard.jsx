@@ -154,22 +154,28 @@ const Dashboard = () => {
         {/* ── Start Workout CTA ── */}
         <button
           onClick={handleStartWorkout}
-          className="w-full relative overflow-hidden group rounded-3xl p-5 shadow-teal active:scale-[0.98] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-liftly-teal/40"
-          style={{ background: 'linear-gradient(135deg, #00ADB5 0%, #0066cc 100%)' }}
+          className="w-full relative overflow-hidden group rounded-3xl p-6 bg-[#0D1526] border border-white/5 hover:border-liftly-teal/30 active:scale-[0.98] transition-all duration-300 shadow-xl"
         >
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:scale-110 transition-transform duration-500" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-xl" />
-
-          <div className="relative z-10 flex justify-between items-center">
-            <div>
-              <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Ready?</p>
-              <h2 className="text-white text-2xl font-black tracking-tight">Start Workout</h2>
-              <p className="text-white/70 text-xs font-medium mt-1">
-                {activeSplit ? `${activeSplit.length}-day split active` : 'Log a new session'}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-liftly-teal/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-liftly-teal/20 transition-colors duration-500" />
+          
+          <div className="relative z-10 flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-liftly-teal flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(0,229,209,0.4)] group-hover:shadow-[0_0_30px_rgba(0,229,209,0.6)] transition-all duration-300 group-hover:scale-105">
+              <Play size={28} className="ml-1 fill-[#040810] text-[#040810]" />
+            </div>
+            
+            <div className="text-left flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 rounded-full bg-liftly-teal animate-pulse" />
+                <span className="text-liftly-teal text-[10px] font-black uppercase tracking-widest">Ready to lift</span>
+              </div>
+              <h2 className="text-white text-2xl font-black tracking-tight mb-0.5 group-hover:text-liftly-teal transition-colors">Start Workout</h2>
+              <p className="text-white/40 text-xs font-bold">
+                {activeSplit && activeSplit.length > 0 ? `${activeSplit.length}-day split active` : 'Log a new session'}
               </p>
             </div>
-            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center group-hover:scale-110 group-active:scale-95 transition-all duration-200 shrink-0">
-              <Play size={26} className="ml-0.5 fill-white text-white" />
+            
+            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors">
+               <ChevronRight size={18} className="text-white/40 group-hover:text-white transition-colors" />
             </div>
           </div>
         </button>

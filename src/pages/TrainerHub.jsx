@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { ChevronLeft, Users, MapPin, MessageCircle, X } from 'lucide-react';
+import { collection, getDocs, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { ChevronLeft, Users, MapPin, MessageCircle, X, Loader2 } from 'lucide-react';
 
 const TrainerHub = () => {
-  const { userData } = useAuth();
+  const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
   const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrainer, setSelectedTrainer] = useState(null);
+  const [startingChat, setStartingChat] = useState(false);
 
   const gymId = userData?.gymId;
 
@@ -33,6 +34,49 @@ const TrainerHub = () => {
 
     fetchTrainers();
   }, [gymId]);
+
+  const handleStartChat = async (trainer) => {
+    if (startingChat) return;
+    setStartingChat(true);
+
+    try {
+      const ids = [currentUser.uid, trainer.id].sort();
+      const conversationId = ids.join('_');
+
+      const myDmRef = doc(db, 'users', currentUser.uid, 'dms', conversationId);
+      const docSnap = await getDoc(myDmRef);
+
+      if (!docSnap.exists()) {
+        const myName = userData?.firstName || currentUser.displayName || 'Lifter';
+        const myPhoto = userData?.photoURL || currentUser.photoURL || null;
+
+        const baseDmData = {
+          participantUids: [currentUser.uid, trainer.id],
+          participantNames: {
+            [currentUser.uid]: myName,
+            [trainer.id]: trainer.name || 'Trainer'
+          },
+          participantPhotos: {
+            [currentUser.uid]: myPhoto,
+            [trainer.id]: trainer.photoURL || null
+          },
+          lastMessage: '',
+          lastMessageAt: serverTimestamp(),
+          unreadCount: 0
+        };
+
+        await setDoc(myDmRef, baseDmData);
+
+        const theirDmRef = doc(db, 'users', trainer.id, 'dms', conversationId);
+        await setDoc(theirDmRef, { ...baseDmData, unreadCount: 1 });
+      }
+
+      navigate(`/messages/${conversationId}`, { replace: true });
+    } catch (error) {
+      console.error('Error starting chat:', error);
+      setStartingChat(false);
+    }
+  };
 
   if (!gymId) {
     return (
@@ -123,13 +167,14 @@ const TrainerHub = () => {
                   </div>
                   
                   <button
+                    disabled={startingChat}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/messages/search?uid=${trainer.id}&name=${encodeURIComponent(trainer.name)}`);
+                      handleStartChat(trainer);
                     }}
                     className="w-full mt-2 py-2 bg-liftly-teal/10 hover:bg-liftly-teal/20 text-liftly-teal text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-1.5 transition-all active:scale-95 shrink-0"
                   >
-                    <MessageCircle size={12} /> Message
+                    {startingChat ? <Loader2 size={12} className="animate-spin" /> : <><MessageCircle size={12} /> Message</>}
                   </button>
                 </div>
               </div>
@@ -171,10 +216,11 @@ const TrainerHub = () => {
 
           <div className="p-4 bg-[#0D1526] border-t border-white/5 shrink-0">
             <button
-              onClick={() => navigate(`/messages/search?uid=${selectedTrainer.id}&name=${encodeURIComponent(selectedTrainer.name)}`)}
-              className="w-full bg-liftly-teal text-liftly-navy py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-teal active:scale-[0.98] transition-all"
+              disabled={startingChat}
+              onClick={() => handleStartChat(selectedTrainer)}
+              className="w-full bg-liftly-teal text-liftly-navy py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-teal active:scale-[0.98] transition-all disabled:opacity-60"
             >
-              <MessageCircle size={18} /> Send Message
+              {startingChat ? <Loader2 size={18} className="animate-spin" /> : <><MessageCircle size={18} /> Send Message</>}
             </button>
           </div>
         </div>
