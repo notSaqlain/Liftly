@@ -29,3 +29,7 @@ dist-ssr
 .env.*.local
 liftly.jks
 android/app/debug/output-metadata.json
+android/app/release/baselineProfiles/0/app-release.dm
+.gitignore
+android/app/release/output-metadata.json
+android/app/release/baselineProfiles/1/app-release.dm

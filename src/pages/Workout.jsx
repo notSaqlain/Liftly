@@ -16,6 +16,7 @@ const Workout = () => {
   const [activeTab, setActiveTab] = useState('split');
   const [searchQuery, setSearchQuery] = useState('');
   const [muscleFilter, setMuscleFilter] = useState('All');
+  const [displayLimit, setDisplayLimit] = useState(50);
   const [toastMessage, setToastMessage] = useState('');
 
   const showToast = (msg) => {
@@ -37,6 +38,11 @@ const Workout = () => {
       setCustomRoutines(userData.customRoutines || {});
     }
   }, [userData]);
+
+  // Reset display limit when filters change
+  useEffect(() => {
+    setDisplayLimit(50);
+  }, [searchQuery, muscleFilter, activeTab]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -173,6 +179,8 @@ const Workout = () => {
       
     return matchSearch && matchMuscle;
   });
+
+  const displayedExercises = filteredExercises.slice(0, displayLimit);
 
   const favoriteExercises = exercisesData.filter(ex => favorites.includes(ex.id));
 
@@ -383,7 +391,7 @@ const Workout = () => {
               </div>
             ) : (
               <>
-                {filteredExercises.map(exercise => {
+                {displayedExercises.map(exercise => {
                   const isFav = favorites.includes(exercise.id);
                   const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
                   return (
@@ -430,6 +438,14 @@ const Workout = () => {
                     <p className="text-white/40 font-bold">No exercises found</p>
                     <p className="text-white/20 text-sm">Try a different search or filter</p>
                   </div>
+                )}
+                {filteredExercises.length > displayLimit && (
+                  <button
+                    onClick={() => setDisplayLimit(prev => prev + 50)}
+                    className="w-full py-4 text-sm font-bold text-[#00d4aa] bg-[#00d4aa]/5 rounded-2xl border border-[#00d4aa]/10 hover:bg-[#00d4aa]/10 transition-colors active:scale-[0.98]"
+                  >
+                    Load More Exercises ({filteredExercises.length - displayLimit} remaining)
+                  </button>
                 )}
               </>
             )}

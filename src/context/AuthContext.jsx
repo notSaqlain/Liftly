@@ -69,14 +69,6 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // Helper: detect mobile web browser (not native Capacitor)
-  const isMobileWeb = () => {
-    if (Capacitor.isNativePlatform()) return false;
-    // Don't use redirect flow on localhost as it causes issues, even in mobile view
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return false;
-    return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-  };
-
   // Sign in with Google — popup shows native account picker on Android
   const loginWithGoogle = async () => {
     let result, user;
@@ -91,12 +83,8 @@ export const AuthProvider = ({ children }) => {
       const credential = GoogleAuthProvider.credential(idToken);
       result = await signInWithCredential(auth, credential);
       user = result.user;
-    } else if (isMobileWeb()) {
-      // Mobile web: use redirect (popups are blocked on mobile browsers)
-      await signInWithRedirect(auth, googleProvider);
-      return; // Page will reload; redirect result handled in useEffect
     } else {
-      // Desktop web: use popup
+      // Web: always use popup (redirect is flaky on mobile web and resets state)
       result = await signInWithPopup(auth, googleProvider);
       user = result.user;
     }

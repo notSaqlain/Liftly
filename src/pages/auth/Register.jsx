@@ -38,7 +38,11 @@ const Register = () => {
       await loginWithGoogle();
       navigate('/');
     } catch (err) {
-      setError('Google sign-in failed. Please try again.');
+      if (err.code === 'auth/popup-closed-by-user') {
+        setError('Sign-in cancelled.');
+      } else {
+        setError(`Google sign-in failed: ${err.message || err.code || 'Please try again.'}`);
+      }
     } finally {
       setLoading(false);
     }
