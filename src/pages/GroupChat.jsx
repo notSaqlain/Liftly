@@ -3,9 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import {
   collection, addDoc, query, orderBy, limit, onSnapshot,
-  serverTimestamp, doc, setDoc, where
+  serverTimestamp, doc, setDoc, updateDoc, where
 } from 'firebase/firestore';
-import { Send, Users, X, Ghost, ChevronLeft, Globe, Building2 } from 'lucide-react';
+import { Send, Users, X, Ghost, ChevronLeft, Globe, Building2, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const GroupChat = () => {
@@ -18,6 +18,8 @@ const GroupChat = () => {
   const [sending, setSending] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [showOnlineList, setShowOnlineList] = useState(false);
+  const [activeMsgId, setActiveMsgId] = useState(null);
+  const [editingMsgId, setEditingMsgId] = useState(null);
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -94,19 +96,40 @@ const GroupChat = () => {
     setSending(true);
     setNewMessage('');
     try {
-      await addDoc(msgCollection, {
-        text,
-        uid: currentUser.uid,
-        displayName,
-        photoURL: photoURL || null,
-        createdAt: serverTimestamp(),
-      });
+      if (editingMsgId) {
+        await updateDoc(doc(msgCollection, editingMsgId), {
+          text,
+          editedAt: serverTimestamp()
+        });
+        setEditingMsgId(null);
+      } else {
+        await addDoc(msgCollection, {
+          text,
+          uid: currentUser.uid,
+          displayName,
+          photoURL: photoURL || null,
+          createdAt: serverTimestamp(),
+          isDeleted: false
+        });
+      }
     } catch (err) {
       console.error('Error sending message:', err);
       setNewMessage(text);
     } finally {
       setSending(false);
       inputRef.current?.focus();
+    }
+  };
+
+  const handleDelete = async (msgId) => {
+    try {
+      await updateDoc(doc(msgCollection, msgId), {
+        text: '[This message was deleted]',
+        isDeleted: true
+      });
+      setActiveMsgId(null);
+    } catch (err) {
+      console.error('Error deleting message:', err);
     }
   };
 
@@ -262,18 +285,33 @@ const GroupChat = () => {
                     )}
                   </button>
                 )}
-                <div className={`max-w-[75%] flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
+                <div className={`max-w-[75%] flex flex-col relative ${mine ? 'items-end' : 'items-start'}`}>
+                  {activeMsgId === msg.id && mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) && (
+                    <div className="absolute top-0 right-0 -mt-10 bg-[#0D1526] shadow-card rounded-xl border border-white/10 flex overflow-hidden z-20">
+                      <button onClick={() => { setEditingMsgId(msg.id); setNewMessage(msg.text); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-white/5 text-white/60 flex items-center gap-1.5 text-xs font-bold border-r border-white/5 transition-colors">
+                        <Edit2 size={12} /> Edit
+                      </button>
+                      <button onClick={() => handleDelete(msg.id)} className="px-3 py-2 hover:bg-red-500/10 text-red-500 flex items-center gap-1.5 text-xs font-bold transition-colors">
+                        <Trash2 size={12} /> Delete
+                      </button>
+                    </div>
+                  )}
                   {!mine && msg.isFirst && (
                     <button onClick={() => navigate(`/profile/${msg.uid}`)} className="text-[10px] font-black text-white/40 mb-1 ml-1 hover:text-white/60 active:scale-95 transition-all cursor-pointer">
                       {msg.displayName}
                     </button>
                   )}
-                  <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
-                    mine
-                      ? 'bg-liftly-teal text-liftly-navy rounded-2xl rounded-br-md shadow-teal font-bold'
-                      : 'bg-[#0D1526] text-white rounded-2xl rounded-bl-md border border-white/5'
+                  <div 
+                    onClick={() => mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) ? setActiveMsgId(activeMsgId === msg.id ? null : msg.id) : null}
+                    className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
+                    msg.isDeleted
+                      ? 'bg-[#0D1526] text-white/40 italic rounded-2xl border border-white/5'
+                      : mine
+                        ? 'bg-liftly-teal text-liftly-navy rounded-2xl rounded-br-md shadow-teal font-bold cursor-pointer'
+                        : 'bg-[#0D1526] text-white rounded-2xl rounded-bl-md border border-white/5'
                   } ${msg.isFirst && !mine ? 'rounded-tl-2xl' : ''} ${msg.isFirst && mine ? 'rounded-tr-2xl' : ''}`}>
                     {msg.text}
+                    {msg.editedAt && !msg.isDeleted && <span className="text-[10px] opacity-70 ml-2">(edited)</span>}
                   </div>
                   {msg.isLast && (
                     <span className="text-[9px] font-semibold text-white/30 mt-1 mx-1">{formatTime(msg.createdAt)}</span>
@@ -288,12 +326,20 @@ const GroupChat = () => {
 
       {/* Input */}
       <div className="px-4 pb-4 pt-3 bg-[#040810] shrink-0 sticky bottom-0 z-10">
+        {editingMsgId && (
+          <div className="flex items-center justify-between px-4 py-2 bg-[#0D1526] border border-white/5 border-b-0 text-xs font-bold text-white/50 rounded-t-2xl">
+            <span>Editing message...</span>
+            <button onClick={() => { setEditingMsgId(null); setNewMessage(''); }} className="w-6 h-6 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+              <X size={12} />
+            </button>
+          </div>
+        )}
         <form onSubmit={sendMessage} className="flex items-center gap-3">
-          <div className="flex-1 flex items-center bg-[#0D1526] border border-white/10 rounded-3xl px-4 focus-within:border-liftly-teal/50 transition-all">
+          <div className={`flex-1 flex items-center bg-[#0D1526] border border-white/10 px-4 focus-within:border-liftly-teal/50 transition-all ${editingMsgId ? 'rounded-b-3xl rounded-t-none' : 'rounded-3xl'}`}>
             <input
               ref={inputRef}
               type="text"
-              placeholder="Message..."
+              placeholder={editingMsgId ? "Edit your message..." : "Message..."}
               className="flex-1 h-12 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare } from 'lucide-react';
+import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare, Bell } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [reportedStatus, setReportedStatus] = useState(false);
   const [showSplitPicker, setShowSplitPicker] = useState(false);
   const [weekStats, setWeekStats] = useState({ count: 0, volume: 0 });
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
 
 
   // Fetch recent workouts + weekly stats
@@ -39,6 +40,10 @@ const Dashboard = () => {
         let totalVol = 0;
         weekSnap.forEach(d => { totalVol += d.data().totalVolume || 0; });
         setWeekStats({ count: weekSnap.size, volume: totalVol });
+        // Friend requests count
+        const reqQ = query(collection(db, 'users', currentUser.uid, 'friendRequests'));
+        const reqSnap = await getDocs(reqQ);
+        setPendingRequestsCount(reqSnap.size);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
       }
@@ -119,6 +124,12 @@ const Dashboard = () => {
               </div>
               <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Wk Streak</span>
             </div>
+            <button onClick={() => navigate('/notifications')} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all relative">
+              <Bell size={20} />
+              {pendingRequestsCount > 0 && (
+                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-liftly-navy" />
+              )}
+            </button>
           </div>
         </div>
 

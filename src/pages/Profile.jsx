@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { Loader2, User, ChevronRight, Camera, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star, CreditCard } from 'lucide-react';
+import { Loader2, User, Users, ChevronRight, Camera, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ACHIEVEMENTS = [
@@ -278,6 +278,10 @@ const Profile = () => {
           {
             icon: <CreditCard size={18} />, iconBg: 'bg-emerald-500/10 text-emerald-500',
             label: 'My Plan', sub: 'License, features & expiration', to: '/my-plan'
+          },
+          {
+            icon: <Users size={18} />, iconBg: 'bg-purple-500/10 text-purple-400',
+            label: 'My Friends', sub: 'Manage connections & requests', to: '/friends'
           },
           {
             icon: <User size={18} />, iconBg: 'bg-blue-500/10 text-blue-500',

@@ -1,4 +1,8 @@
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { db } from '../../firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Home, Dumbbell, BarChart3, MessageCircle, User } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -11,6 +15,25 @@ const NAV_ITEMS = [
 ];
 
 const MainLayout = () => {
+  const { currentUser } = useAuth();
+  const [unreadDMsCount, setUnreadDMsCount] = useState(0);
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const dmQ = query(collection(db, 'users', currentUser.uid, 'dms'), where('unreadCount', '>', 0));
+    const unsubscribe = onSnapshot(dmQ, (snap) => {
+      let unreadTotal = 0;
+      snap.forEach(d => {
+        if (!d.data().isMuted) {
+          unreadTotal += d.data().unreadCount;
+        }
+      });
+      setUnreadDMsCount(unreadTotal);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
   return (
     <div className="flex justify-center min-h-screen" style={{ background: '#040810' }}>
       <div className="w-full max-w-[480px] min-h-screen relative shadow-2xl flex flex-col" style={{ background: '#070B14' }}>
@@ -70,6 +93,11 @@ const MainLayout = () => {
                             isActive ? 'scale-110' : 'group-hover:scale-105'
                           )}
                         />
+                        {label === 'Chat' && unreadDMsCount > 0 && (
+                          <div className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 bg-brand rounded-full flex items-center justify-center text-[8px] font-black text-[#070B14] border border-[#070B14] z-20">
+                            {unreadDMsCount > 99 ? '99+' : unreadDMsCount}
+                          </div>
+                        )}
                       </div>
 
                       <span

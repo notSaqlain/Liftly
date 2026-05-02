@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { MessageSquare, Edit, Search, Globe, Building2, ShieldAlert, Users } from 'lucide-react';
+import { MessageSquare, Edit, Search, Globe, Building2, ShieldAlert, Users, BellOff } from 'lucide-react';
 
 const ChatHub = () => {
   const { currentUser, userData } = useAuth();
@@ -190,7 +190,11 @@ const ChatHub = () => {
                         {conv.lastMessage || 'Say hello!'}
                       </p>
                     </div>
-                    {conv.unreadCount > 0 && (
+                    {conv.isMuted ? (
+                      <div className="shrink-0 flex items-center justify-center text-white/20">
+                        <BellOff size={16} />
+                      </div>
+                    ) : conv.unreadCount > 0 && (
                       <div className="w-5 h-5 rounded-full bg-liftly-teal flex items-center justify-center text-[10px] font-black text-liftly-navy shrink-0">
                         {conv.unreadCount}
                       </div>

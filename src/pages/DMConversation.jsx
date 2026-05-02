@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { ChevronLeft, Send, MessageCircle } from 'lucide-react';
+import { ChevronLeft, Send, MessageCircle, Bell, BellOff, MoreVertical, Edit2, Trash2, X } from 'lucide-react';
 
 const DMConversation = () => {
   const { conversationId } = useParams();
@@ -14,6 +14,9 @@ const DMConversation = () => {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [otherUser, setOtherUser] = useState({ name: 'Loading...', photo: null, uid: null, isOnline: false });
+  const [isMuted, setIsMuted] = useState(false);
+  const [activeMsgId, setActiveMsgId] = useState(null);
+  const [editingMsgId, setEditingMsgId] = useState(null);
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -37,6 +40,7 @@ const DMConversation = () => {
           photo: data.participantPhotos[otherUid] || null,
           isOnline: false
         });
+        setIsMuted(!!data.isMuted);
 
         if (data.unreadCount > 0) {
           updateDoc(dmRef, { unreadCount: 0 });
@@ -85,38 +89,72 @@ const DMConversation = () => {
     setNewMessage('');
     
     try {
-      const msgData = {
-        text,
-        uid: currentUser.uid,
-        displayName,
-        photoURL: photoURL || null,
-        createdAt: serverTimestamp(),
-      };
+      if (editingMsgId) {
+        await updateDoc(doc(db, 'dm_conversations', conversationId, 'messages', editingMsgId), {
+          text,
+          editedAt: serverTimestamp()
+        });
+        setEditingMsgId(null);
+      } else {
+        const msgData = {
+          text,
+          uid: currentUser.uid,
+          displayName,
+          photoURL: photoURL || null,
+          createdAt: serverTimestamp(),
+          isDeleted: false
+        };
 
-      // 1. Add message
-      await addDoc(collection(db, 'dm_conversations', conversationId, 'messages'), msgData);
+        // 1. Add message
+        await addDoc(collection(db, 'dm_conversations', conversationId, 'messages'), msgData);
 
-      // 2. Update parent DM docs
-      const updateData = {
-        lastMessage: text,
-        lastMessageAt: serverTimestamp()
-      };
+        // 2. Update parent DM docs
+        const updateData = {
+          lastMessage: text,
+          lastMessageAt: serverTimestamp()
+        };
 
-      // Update my side
-      await updateDoc(doc(db, 'users', currentUser.uid, 'dms', conversationId), updateData);
-      
-      // Update their side (increment unread)
-      const theirDmRef = doc(db, 'users', otherUser.uid, 'dms', conversationId);
-      const theirSnap = await getDoc(theirDmRef);
-      const currentUnread = theirSnap.exists() ? (theirSnap.data().unreadCount || 0) : 0;
-      await updateDoc(theirDmRef, { ...updateData, unreadCount: currentUnread + 1 });
-
+        // Update my side
+        await updateDoc(doc(db, 'users', currentUser.uid, 'dms', conversationId), updateData);
+        
+        // Update their side (increment unread)
+        const theirDmRef = doc(db, 'users', otherUser.uid, 'dms', conversationId);
+        const theirSnap = await getDoc(theirDmRef);
+        const currentUnread = theirSnap.exists() ? (theirSnap.data().unreadCount || 0) : 0;
+        await updateDoc(theirDmRef, { ...updateData, unreadCount: currentUnread + 1 });
+      }
     } catch (err) {
       console.error('Error sending message:', err);
       setNewMessage(text);
     } finally {
       setSending(false);
       inputRef.current?.focus();
+    }
+  };
+
+  const handleDelete = async (msgId) => {
+    try {
+      await updateDoc(doc(db, 'dm_conversations', conversationId, 'messages', msgId), {
+        text: '[This message was deleted]',
+        isDeleted: true
+      });
+      setActiveMsgId(null);
+    } catch (err) {
+      console.error('Error deleting message:', err);
+    }
+  };
+
+  const handleMuteToggle = async () => {
+    if (!currentUser || !conversationId) return;
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid, 'dms', conversationId), {
+        isMuted: newMutedState
+      });
+    } catch (err) {
+      console.error('Error toggling mute:', err);
+      setIsMuted(!newMutedState); // Revert on failure
     }
   };
 
@@ -157,10 +195,13 @@ const DMConversation = () => {
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-liftly-navy rounded-full" />
               )}
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h1 className="text-base font-black text-white truncate leading-tight">{otherUser.name}</h1>
               <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">{otherUser.isOnline ? 'Online' : 'Offline'}</p>
             </div>
+            <button onClick={handleMuteToggle} className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-white/50 active:scale-95 transition-all shrink-0">
+              {isMuted ? <BellOff size={18} className="text-red-400" /> : <Bell size={18} />}
+            </button>
           </div>
         </div>
       </div>
@@ -201,13 +242,28 @@ const DMConversation = () => {
                 </div>
               )}
               <div className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : 'flex-row'} ${msg.isFirst && !showDate ? 'mt-3' : 'mt-0.5'}`}>
-                <div className={`max-w-[80%] flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
-                  <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
-                    mine
-                      ? 'bg-liftly-teal text-white rounded-2xl rounded-br-md shadow-teal'
-                      : 'bg-white text-slate-800 rounded-2xl rounded-bl-md shadow-card border border-slate-100'
+                <div className={`max-w-[80%] flex flex-col relative ${mine ? 'items-end' : 'items-start'}`}>
+                  {activeMsgId === msg.id && mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) && (
+                    <div className="absolute top-0 right-0 -mt-10 bg-white shadow-card rounded-xl border border-slate-100 flex overflow-hidden z-20">
+                      <button onClick={() => { setEditingMsgId(msg.id); setNewMessage(msg.text); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-1.5 text-xs font-bold border-r border-slate-100 transition-colors">
+                        <Edit2 size={12} /> Edit
+                      </button>
+                      <button onClick={() => handleDelete(msg.id)} className="px-3 py-2 hover:bg-red-50 text-red-500 flex items-center gap-1.5 text-xs font-bold transition-colors">
+                        <Trash2 size={12} /> Delete
+                      </button>
+                    </div>
+                  )}
+                  <div 
+                    onClick={() => mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) ? setActiveMsgId(activeMsgId === msg.id ? null : msg.id) : null}
+                    className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
+                    msg.isDeleted 
+                      ? 'bg-slate-100 text-slate-400 italic rounded-2xl border border-slate-200'
+                      : mine
+                        ? 'bg-liftly-teal text-white rounded-2xl rounded-br-md shadow-teal cursor-pointer'
+                        : 'bg-white text-slate-800 rounded-2xl rounded-bl-md shadow-card border border-slate-100'
                   } ${msg.isFirst && !mine ? 'rounded-tl-2xl' : ''} ${msg.isFirst && mine ? 'rounded-tr-2xl' : ''}`}>
                     {msg.text}
+                    {msg.editedAt && !msg.isDeleted && <span className="text-[10px] opacity-70 ml-2">(edited)</span>}
                   </div>
                   {msg.isLast && (
                     <span className="text-[9px] font-semibold text-slate-300 mt-1 mx-1">{formatTime(msg.createdAt)}</span>
@@ -221,12 +277,20 @@ const DMConversation = () => {
       </div>
 
       <div className="fixed bottom-0 w-full max-w-[480px] z-[60] bg-white border-t border-slate-100 p-3 safe-area-bottom pb-4">
+        {editingMsgId && (
+          <div className="flex items-center justify-between px-4 py-2 bg-slate-100 text-xs font-bold text-slate-500 rounded-t-2xl">
+            <span>Editing message...</span>
+            <button onClick={() => { setEditingMsgId(null); setNewMessage(''); }} className="w-6 h-6 flex items-center justify-center bg-slate-200 rounded-full hover:bg-slate-300 transition-colors">
+              <X size={12} />
+            </button>
+          </div>
+        )}
         <form onSubmit={sendMessage} className="flex items-center gap-3">
           <div className="flex-1 flex items-center bg-slate-50 border border-slate-200 rounded-full px-4 focus-within:border-liftly-teal focus-within:ring-1 focus-within:ring-liftly-teal transition-all">
             <input
               ref={inputRef}
               type="text"
-              placeholder="Message..."
+              placeholder={editingMsgId ? "Edit your message..." : "Message..."}
               className="flex-1 h-12 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
