@@ -8,9 +8,9 @@ import { ChevronLeft, Dumbbell, MapPin, CheckCircle2, Wrench, AlertCircle, X } f
 const CATEGORIES = ['All', 'Cables', 'Free Weights', 'Cardio', 'Machines', 'Other'];
 
 const STATUS_CONFIG = {
-  'available':   { label: 'Available',   icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-  'maintenance': { label: 'Maintenance', icon: Wrench,       color: 'text-yellow-500',  bg: 'bg-yellow-500/10',  border: 'border-yellow-500/20' },
-  'broken':      { label: 'Broken',      icon: AlertCircle,  color: 'text-red-500',     bg: 'bg-red-500/10',     border: 'border-red-500/20' }
+  'available':   { label: 'Available',   icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+  'maintenance': { label: 'Maintenance', icon: Wrench,       color: 'text-yellow-400',  bg: 'bg-yellow-500/10',  border: 'border-yellow-500/20' },
+  'broken':      { label: 'Broken',      icon: AlertCircle,  color: 'text-red-400',     bg: 'bg-red-500/10',     border: 'border-red-500/20' }
 };
 
 const GymEquipment = () => {
@@ -18,7 +18,7 @@ const GymEquipment = () => {
   const navigate = useNavigate();
   const [equipment, setEquipment] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
-  const [selectedEq, setSelectedEq] = useState(null); // For bottom sheet
+  const [selectedEq, setSelectedEq] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const gymId = userData?.gymId;
@@ -59,7 +59,7 @@ const GymEquipment = () => {
 
   if (!gymId) {
     return (
-      <div className="bg-slate-50 min-h-screen flex flex-col">
+      <div className="bg-[#040810] min-h-screen flex flex-col">
         <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 w-32 h-32 bg-liftly-teal/15 rounded-full blur-3xl -mr-10 -mt-10" />
           <div className="relative z-10 flex items-center gap-3">
@@ -73,11 +73,11 @@ const GymEquipment = () => {
           <div className="w-16 h-16 rounded-3xl bg-liftly-teal/10 flex items-center justify-center mb-4">
             <MapPin size={28} className="text-liftly-teal" />
           </div>
-          <h3 className="font-black text-slate-800 text-lg mb-2">No gym license active</h3>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-[260px] mb-6">
+          <h3 className="font-black text-white text-lg mb-2">No gym license active</h3>
+          <p className="text-white/40 text-sm leading-relaxed max-w-[260px] mb-6">
             Activate your Liftly PRO license to view its equipment status.
           </p>
-          <button onClick={() => navigate('/my-plan')} className="px-6 py-3 bg-liftly-teal text-white font-black rounded-2xl active:scale-95 shadow-teal">
+          <button onClick={() => navigate('/my-plan')} className="px-6 py-3 bg-liftly-teal text-liftly-navy font-black rounded-2xl active:scale-95 shadow-teal">
             Activate License →
           </button>
         </div>
@@ -86,7 +86,7 @@ const GymEquipment = () => {
   }
 
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col pb-20">
+    <div className="bg-[#040810] min-h-screen flex flex-col pb-20">
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0">
         <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
         <div className="relative z-10 flex items-center gap-3">
@@ -103,14 +103,17 @@ const GymEquipment = () => {
         </div>
       </div>
 
-      <div className="px-4 py-4 bg-white shadow-sm border-b border-slate-100 sticky top-0 z-20">
+      {/* Category filter bar */}
+      <div className="px-4 py-4 bg-[#0D1526] border-b border-white/5 sticky top-0 z-20">
         <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1">
           {CATEGORIES.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2.5 rounded-2xl whitespace-nowrap text-xs font-black transition-all border ${
-                activeCategory === cat ? 'bg-liftly-navy text-white border-liftly-navy' : 'bg-slate-50 text-slate-500 border-slate-200'
+                activeCategory === cat 
+                  ? 'bg-liftly-teal text-liftly-navy border-liftly-teal shadow-teal' 
+                  : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10'
               }`}
             >
               {cat}
@@ -121,9 +124,9 @@ const GymEquipment = () => {
 
       <div className="p-4 grid gap-3">
         {loading ? (
-          [1,2,3,4].map(i => <div key={i} className="h-20 bg-slate-200 rounded-3xl shimmer" />)
+          [1,2,3,4].map(i => <div key={i} className="h-20 bg-white/5 rounded-3xl shimmer" />)
         ) : filteredEquipment.length === 0 ? (
-          <div className="text-center py-10 text-slate-400 text-sm">No equipment found in this category.</div>
+          <div className="text-center py-10 text-white/40 text-sm">No equipment found in this category.</div>
         ) : (
           filteredEquipment.map(eq => {
             const status = STATUS_CONFIG[eq.status || 'available'];
@@ -132,11 +135,11 @@ const GymEquipment = () => {
               <button
                 key={eq.id}
                 onClick={() => setSelectedEq(eq)}
-                className="bg-white p-4 rounded-3xl shadow-card border border-slate-100 flex items-center justify-between text-left active:scale-[0.98] transition-all"
+                className="bg-[#0D1526] p-4 rounded-3xl border border-white/5 flex items-center justify-between text-left active:scale-[0.98] transition-all hover:bg-white/5"
               >
                 <div>
-                  <h3 className="font-bold text-slate-800 text-sm">{eq.name}</h3>
-                  <span className="text-[10px] font-semibold text-slate-400">{eq.category}</span>
+                  <h3 className="font-bold text-white text-sm">{eq.name}</h3>
+                  <span className="text-[10px] font-semibold text-white/40">{eq.category}</span>
                 </div>
                 <div className={`px-3 py-1.5 rounded-xl border flex items-center gap-1.5 ${status.bg} ${status.border}`}>
                   <StatusIcon size={12} className={status.color} />
@@ -149,14 +152,14 @@ const GymEquipment = () => {
       </div>
 
       {selectedEq && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#0D1526] w-full max-w-[400px] rounded-4xl p-6 shadow-2xl border border-white/10 animate-slide-up">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-xl font-black text-slate-800">{selectedEq.name}</h3>
-                <p className="text-slate-400 text-sm">Update equipment status</p>
+                <h3 className="text-xl font-black text-white">{selectedEq.name}</h3>
+                <p className="text-white/40 text-sm">Update equipment status</p>
               </div>
-              <button onClick={() => setSelectedEq(null)} className="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500">
+              <button onClick={() => setSelectedEq(null)} className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center text-white/60 hover:text-white transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -170,11 +173,11 @@ const GymEquipment = () => {
                     key={key}
                     onClick={() => handleUpdateStatus(key)}
                     className={`w-full flex items-center gap-3 p-4 rounded-2xl border transition-all ${
-                      isActive ? `${config.bg} ${config.border} ring-2 ring-offset-2 ring-${config.color.split('-')[1]}-500` : 'bg-slate-50 border-slate-100 hover:bg-slate-100'
+                      isActive ? `${config.bg} ${config.border} ring-2 ring-offset-1 ring-offset-[#0D1526]` : 'bg-white/5 border-white/5 hover:bg-white/10'
                     }`}
                   >
-                    <Icon size={18} className={isActive ? config.color : 'text-slate-400'} />
-                    <span className={`font-bold ${isActive ? config.color : 'text-slate-600'}`}>{config.label}</span>
+                    <Icon size={18} className={isActive ? config.color : 'text-white/40'} />
+                    <span className={`font-bold ${isActive ? config.color : 'text-white/60'}`}>{config.label}</span>
                   </button>
                 );
               })}

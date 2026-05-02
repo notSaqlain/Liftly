@@ -152,7 +152,7 @@ const GroupChat = () => {
   const Icon = isGymMode ? Building2 : Globe;
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col relative animate-fade-in pb-20">
+    <div className="bg-[#040810] flex flex-col relative animate-fade-in" style={{ height: '100dvh' }}>
 
       {/* Header */}
       <div className="bg-liftly-navy px-4 pt-12 pb-4 relative overflow-hidden shrink-0 shadow-navy">
@@ -176,7 +176,7 @@ const GroupChat = () => {
           
           <button
             onClick={() => setShowOnlineList(!showOnlineList)}
-            className="flex items-center gap-1.5 bg-white/8 hover:bg-white/15 border border-white/10 rounded-2xl px-3 py-2 transition-all active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 bg-white/[0.08] hover:bg-white/15 border border-white/10 rounded-2xl px-3 py-2 transition-all active:scale-95 shrink-0"
           >
             <div className={`w-2 h-2 rounded-full ${isIncognito ? 'bg-slate-500' : 'bg-green-400 animate-pulse'}`} />
             <span className="text-white/70 text-xs font-bold">
@@ -325,7 +325,7 @@ const GroupChat = () => {
       </div>
 
       {/* Input */}
-      <div className="px-4 pb-4 pt-3 bg-[#040810] shrink-0 sticky bottom-0 z-10">
+      <div className="px-4 pb-4 pt-3 bg-[#040810] shrink-0 border-t border-white/5">
         {editingMsgId && (
           <div className="flex items-center justify-between px-4 py-2 bg-[#0D1526] border border-white/5 border-b-0 text-xs font-bold text-white/50 rounded-t-2xl">
             <span>Editing message...</span>

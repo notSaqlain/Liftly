@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../firebase';
-import { collection, query, where, getDocs, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ChevronLeft, Search, User as UserIcon, Loader2 } from 'lucide-react';
+import { collection, query, where, getDocs, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useSearchParams } from 'react-router-dom';
 
 const UserSearch = () => {
   const { currentUser, userData } = useAuth();
@@ -14,12 +15,11 @@ const UserSearch = () => {
   const [searching, setSearching] = useState(false);
   const [startingChat, setStartingChat] = useState(false);
 
-  // Auto-search if coming from TrainerHub
   useEffect(() => {
     const uid = searchParams.get('uid');
     const name = searchParams.get('name');
     if (uid && name) {
-      handleStartChat({ id: uid, firstName: name, photoURL: null }); // Mock user object to start chat
+      handleStartChat({ id: uid, firstName: name, photoURL: null });
     }
   }, [searchParams]);
 
@@ -32,7 +32,6 @@ const UserSearch = () => {
 
       setSearching(true);
       try {
-        // Prefix search trick in Firestore
         const q = query(
           collection(db, 'users'),
           where('firstName', '>=', searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1)),
@@ -41,7 +40,7 @@ const UserSearch = () => {
         const snap = await getDocs(q);
         const users = snap.docs
           .map(d => ({ id: d.id, ...d.data() }))
-          .filter(u => u.id !== currentUser.uid); // Exclude self
+          .filter(u => u.id !== currentUser.uid);
         setResults(users);
       } catch (error) {
         console.error('Error searching users:', error);
@@ -61,7 +60,6 @@ const UserSearch = () => {
       const ids = [currentUser.uid, otherUser.id].sort();
       const conversationId = ids.join('_');
 
-      // Check if conversation exists
       const myDmRef = doc(db, 'users', currentUser.uid, 'dms', conversationId);
       const docSnap = await getDoc(myDmRef);
 
@@ -84,10 +82,8 @@ const UserSearch = () => {
           unreadCount: 0
         };
 
-        // Create on my side
         await setDoc(myDmRef, baseDmData);
 
-        // Create on their side
         const theirDmRef = doc(db, 'users', otherUser.id, 'dms', conversationId);
         await setDoc(theirDmRef, { ...baseDmData, unreadCount: 1 });
       }
@@ -100,7 +96,7 @@ const UserSearch = () => {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col pb-20 animate-fade-in">
+    <div className="bg-[#040810] min-h-screen flex flex-col pb-20 animate-fade-in">
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0 shadow-navy">
         <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
         <div className="relative z-10 flex items-center gap-3">
@@ -114,13 +110,13 @@ const UserSearch = () => {
       <div className="p-4 flex-1 flex flex-col">
         <div className="relative mb-6">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search size={18} className="text-slate-400" />
+            <Search size={18} className="text-white/40" />
           </div>
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-3xl py-4 pl-12 pr-4 font-bold text-slate-800 focus:outline-none focus:border-liftly-teal shadow-sm placeholder:text-slate-400"
+            className="w-full bg-white/5 border border-white/10 rounded-3xl py-4 pl-12 pr-4 font-bold text-white placeholder:text-white/30 focus:outline-none focus:border-liftly-teal/50 focus:ring-1 focus:ring-liftly-teal/20 transition-all"
             placeholder="Search by first name..."
             autoFocus
           />
@@ -133,12 +129,12 @@ const UserSearch = () => {
 
         <div className="flex-1">
           {searchTerm.length < 2 ? (
-            <div className="text-center py-20 text-slate-400">
+            <div className="text-center py-20 text-white/30">
               <UserIcon size={40} className="mx-auto mb-4 opacity-20" />
               <p className="font-bold">Type a name to search</p>
             </div>
           ) : results.length === 0 && !searching ? (
-            <div className="text-center py-20 text-slate-400">
+            <div className="text-center py-20 text-white/30">
               <p className="font-bold">No users found</p>
             </div>
           ) : (
@@ -148,24 +144,24 @@ const UserSearch = () => {
                   key={user.id}
                   onClick={() => handleStartChat(user)}
                   disabled={startingChat}
-                  className="w-full bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between active:scale-[0.98] transition-all"
+                  className="w-full bg-[#0D1526] p-3 rounded-2xl border border-white/5 flex items-center justify-between active:scale-[0.98] transition-all hover:bg-white/5"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/10 shrink-0">
                       {user.photoURL ? (
                         <img src={user.photoURL} alt={user.firstName} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-400 font-black">
+                        <div className="w-full h-full flex items-center justify-center text-white/50 font-black">
                           {(user.firstName || '?').charAt(0)}
                         </div>
                       )}
                     </div>
                     <div className="text-left">
-                      <p className="font-bold text-slate-800">{user.firstName} {user.lastName}</p>
-                      <p className="text-xs text-slate-400">{user.gymName || 'No gym selected'}</p>
+                      <p className="font-bold text-white">{user.firstName} {user.lastName}</p>
+                      <p className="text-xs text-white/40">{user.gymName || 'No gym selected'}</p>
                     </div>
                   </div>
-                  <div className="px-4 py-2 bg-liftly-teal/10 text-liftly-teal text-xs font-black rounded-xl">
+                  <div className="px-4 py-2 bg-liftly-teal/10 text-liftly-teal text-xs font-black rounded-xl border border-liftly-teal/20">
                     Message
                   </div>
                 </button>

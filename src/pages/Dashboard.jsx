@@ -310,11 +310,11 @@ const Dashboard = () => {
 
       {/* Split Day Picker Modal */}
       {showSplitPicker && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
-            <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-6" />
-            <h3 className="text-xl font-black text-slate-800 mb-1">What are we hitting?</h3>
-            <p className="text-slate-400 text-sm mb-5">Select today's training day</p>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
+            <div className="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6" />
+            <h3 className="text-xl font-black text-white mb-1">What are we hitting?</h3>
+            <p className="text-white/40 text-sm mb-5">Select today's training day</p>
             <div className="space-y-2.5 max-h-[55vh] overflow-y-auto no-scrollbar">
               {activeSplit.map((dayName, idx) => {
                 const dayExercises = userData?.customRoutines?.[dayName] || [];
@@ -322,25 +322,25 @@ const Dashboard = () => {
                   <button
                     key={idx}
                     onClick={() => handleSelectDay(dayName)}
-                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 hover:bg-liftly-teal/5 border border-slate-100 hover:border-liftly-teal/20 transition-all active:scale-[0.98] text-left"
+                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] text-left"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-liftly-teal/10 flex items-center justify-center">
                         <Dumbbell size={16} className="text-liftly-teal" />
                       </div>
                       <div>
-                        <span className="font-black text-slate-800">{dayName}</span>
-                        <p className="text-xs text-slate-400">{dayExercises.length} exercises</p>
+                        <span className="font-black text-white">{dayName}</span>
+                        <p className="text-xs text-white/40">{dayExercises.length} exercises</p>
                       </div>
                     </div>
-                    <ChevronRight size={18} className="text-slate-300" />
+                    <ChevronRight size={18} className="text-white/30" />
                   </button>
                 );
               })}
             </div>
             <button
               onClick={() => setShowSplitPicker(false)}
-              className="w-full mt-5 py-4 rounded-2xl font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors text-sm"
+              className="w-full mt-5 py-4 rounded-2xl font-bold text-white/50 bg-white/5 hover:bg-white/10 transition-colors text-sm"
             >
               Cancel
             </button>

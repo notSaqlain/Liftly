@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -17,6 +17,9 @@ const NAV_ITEMS = [
 const MainLayout = () => {
   const { currentUser } = useAuth();
   const [unreadDMsCount, setUnreadDMsCount] = useState(0);
+  const location = useLocation();
+
+  const isChatPage = location.pathname.startsWith('/messages') || location.pathname.startsWith('/chat/group') || location.pathname.startsWith('/gym/support');
 
   useEffect(() => {
     if (!currentUser) return;
@@ -38,12 +41,13 @@ const MainLayout = () => {
     <div className="flex justify-center min-h-screen" style={{ background: '#040810' }}>
       <div className="w-full max-w-[480px] min-h-screen relative shadow-2xl flex flex-col" style={{ background: '#070B14' }}>
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto pb-[80px] no-scrollbar">
+        <main className={`flex-1 overflow-y-auto no-scrollbar ${isChatPage ? '' : 'pb-[80px]'}`}>
           <Outlet />
         </main>
 
         {/* Bottom Navigation Bar */}
-        <nav className="fixed bottom-0 w-full max-w-[480px] z-50">
+        {!isChatPage && (
+          <nav className="fixed bottom-0 w-full max-w-[480px] z-50">
           <div
             className="border-t"
             style={{
@@ -114,7 +118,8 @@ const MainLayout = () => {
               ))}
             </div>
           </div>
-        </nav>
+          </nav>
+        )}
       </div>
     </div>
   );

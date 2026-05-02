@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { ChevronLeft, Send, MessageCircle, Bell, BellOff, MoreVertical, Edit2, Trash2, X } from 'lucide-react';
+import { ChevronLeft, Send, MessageCircle, Bell, BellOff, Edit2, Trash2, X } from 'lucide-react';
 
 const DMConversation = () => {
   const { conversationId } = useParams();
@@ -105,19 +105,15 @@ const DMConversation = () => {
           isDeleted: false
         };
 
-        // 1. Add message
         await addDoc(collection(db, 'dm_conversations', conversationId, 'messages'), msgData);
 
-        // 2. Update parent DM docs
         const updateData = {
           lastMessage: text,
           lastMessageAt: serverTimestamp()
         };
 
-        // Update my side
         await updateDoc(doc(db, 'users', currentUser.uid, 'dms', conversationId), updateData);
         
-        // Update their side (increment unread)
         const theirDmRef = doc(db, 'users', otherUser.uid, 'dms', conversationId);
         const theirSnap = await getDoc(theirDmRef);
         const currentUnread = theirSnap.exists() ? (theirSnap.data().unreadCount || 0) : 0;
@@ -154,7 +150,7 @@ const DMConversation = () => {
       });
     } catch (err) {
       console.error('Error toggling mute:', err);
-      setIsMuted(!newMutedState); // Revert on failure
+      setIsMuted(!newMutedState);
     }
   };
 
@@ -171,9 +167,8 @@ const DMConversation = () => {
   });
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50 relative pb-[72px]">
-      {/* Safe padding for notch/status bar area in iOS can be added if using Capacitor */}
-      
+    <div className="flex flex-col bg-[#040810] relative" style={{ height: '100dvh' }}>
+      {/* Header */}
       <div className="bg-liftly-navy px-4 pt-12 pb-3 relative overflow-hidden shrink-0 shadow-sm z-10">
         <div className="absolute top-0 right-0 w-32 h-32 bg-liftly-teal/15 rounded-full blur-3xl -mr-10 -mt-10" />
         
@@ -206,14 +201,15 @@ const DMConversation = () => {
         </div>
       </div>
 
+      {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 no-scrollbar">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-20">
             <div className="w-16 h-16 rounded-3xl bg-liftly-teal/10 flex items-center justify-center mb-4">
               <MessageCircle size={28} className="text-liftly-teal" />
             </div>
-            <h3 className="font-black text-slate-700 mb-1">Say hello!</h3>
-            <p className="text-slate-400 text-sm">Start a conversation with {otherUser.name}.</p>
+            <h3 className="font-black text-white mb-1">Say hello!</h3>
+            <p className="text-white/40 text-sm">Start a conversation with {otherUser.name}.</p>
           </div>
         )}
 
@@ -238,17 +234,17 @@ const DMConversation = () => {
             <div key={msg.id} className="flex flex-col">
               {showDate && (
                 <div className="flex justify-center my-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{dateStr}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 px-3 py-1 rounded-full">{dateStr}</span>
                 </div>
               )}
               <div className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : 'flex-row'} ${msg.isFirst && !showDate ? 'mt-3' : 'mt-0.5'}`}>
                 <div className={`max-w-[80%] flex flex-col relative ${mine ? 'items-end' : 'items-start'}`}>
                   {activeMsgId === msg.id && mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) && (
-                    <div className="absolute top-0 right-0 -mt-10 bg-white shadow-card rounded-xl border border-slate-100 flex overflow-hidden z-20">
-                      <button onClick={() => { setEditingMsgId(msg.id); setNewMessage(msg.text); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-1.5 text-xs font-bold border-r border-slate-100 transition-colors">
+                    <div className="absolute top-0 right-0 -mt-10 bg-[#0D1526] shadow-card rounded-xl border border-white/10 flex overflow-hidden z-20">
+                      <button onClick={() => { setEditingMsgId(msg.id); setNewMessage(msg.text); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-white/5 text-white/60 flex items-center gap-1.5 text-xs font-bold border-r border-white/5 transition-colors">
                         <Edit2 size={12} /> Edit
                       </button>
-                      <button onClick={() => handleDelete(msg.id)} className="px-3 py-2 hover:bg-red-50 text-red-500 flex items-center gap-1.5 text-xs font-bold transition-colors">
+                      <button onClick={() => handleDelete(msg.id)} className="px-3 py-2 hover:bg-red-500/10 text-red-500 flex items-center gap-1.5 text-xs font-bold transition-colors">
                         <Trash2 size={12} /> Delete
                       </button>
                     </div>
@@ -257,16 +253,16 @@ const DMConversation = () => {
                     onClick={() => mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) ? setActiveMsgId(activeMsgId === msg.id ? null : msg.id) : null}
                     className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
                     msg.isDeleted 
-                      ? 'bg-slate-100 text-slate-400 italic rounded-2xl border border-slate-200'
+                      ? 'bg-white/5 text-white/30 italic rounded-2xl border border-white/5'
                       : mine
-                        ? 'bg-liftly-teal text-white rounded-2xl rounded-br-md shadow-teal cursor-pointer'
-                        : 'bg-white text-slate-800 rounded-2xl rounded-bl-md shadow-card border border-slate-100'
+                        ? 'bg-liftly-teal text-liftly-navy rounded-2xl rounded-br-md shadow-teal cursor-pointer font-bold'
+                        : 'bg-[#0D1526] text-white rounded-2xl rounded-bl-md border border-white/5'
                   } ${msg.isFirst && !mine ? 'rounded-tl-2xl' : ''} ${msg.isFirst && mine ? 'rounded-tr-2xl' : ''}`}>
                     {msg.text}
                     {msg.editedAt && !msg.isDeleted && <span className="text-[10px] opacity-70 ml-2">(edited)</span>}
                   </div>
                   {msg.isLast && (
-                    <span className="text-[9px] font-semibold text-slate-300 mt-1 mx-1">{formatTime(msg.createdAt)}</span>
+                    <span className="text-[9px] font-semibold text-white/30 mt-1 mx-1">{formatTime(msg.createdAt)}</span>
                   )}
                 </div>
               </div>
@@ -276,30 +272,34 @@ const DMConversation = () => {
         <div ref={bottomRef} />
       </div>
 
-      <div className="fixed bottom-0 w-full max-w-[480px] z-[60] bg-white border-t border-slate-100 p-3 safe-area-bottom pb-4">
+      {/* Input bar */}
+      <div className="px-4 pb-4 pt-3 bg-[#040810] shrink-0 border-t border-white/5">
         {editingMsgId && (
-          <div className="flex items-center justify-between px-4 py-2 bg-slate-100 text-xs font-bold text-slate-500 rounded-t-2xl">
+          <div className="flex items-center justify-between px-4 py-2 bg-[#0D1526] border border-white/5 border-b-0 text-xs font-bold text-white/50 rounded-t-2xl">
             <span>Editing message...</span>
-            <button onClick={() => { setEditingMsgId(null); setNewMessage(''); }} className="w-6 h-6 flex items-center justify-center bg-slate-200 rounded-full hover:bg-slate-300 transition-colors">
+            <button onClick={() => { setEditingMsgId(null); setNewMessage(''); }} className="w-6 h-6 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors">
               <X size={12} />
             </button>
           </div>
         )}
         <form onSubmit={sendMessage} className="flex items-center gap-3">
-          <div className="flex-1 flex items-center bg-slate-50 border border-slate-200 rounded-full px-4 focus-within:border-liftly-teal focus-within:ring-1 focus-within:ring-liftly-teal transition-all">
+          <div className={`flex-1 flex items-center bg-[#0D1526] border border-white/10 px-4 focus-within:border-liftly-teal/50 transition-all ${editingMsgId ? 'rounded-b-3xl rounded-t-none' : 'rounded-3xl'}`}>
             <input
               ref={inputRef}
               type="text"
               placeholder={editingMsgId ? "Edit your message..." : "Message..."}
-              className="flex-1 h-12 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none"
+              className="flex-1 h-12 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+              }}
             />
           </div>
           <button
             type="submit"
             disabled={!newMessage.trim() || sending}
-            className="w-12 h-12 rounded-full bg-liftly-teal text-white flex items-center justify-center shadow-teal active:scale-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            className="w-12 h-12 rounded-3xl bg-liftly-teal text-liftly-navy flex items-center justify-center shadow-teal active:scale-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           >
             <Send size={18} className="ml-0.5" />
           </button>

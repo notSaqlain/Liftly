@@ -40,14 +40,13 @@ const MyPlan = () => {
 
       const licenseData = docSnap.data();
       
-      // Update user document with license info
       await updateUserProfile(currentUser.uid, {
         licenseCode: licenseData.code,
         planName: licenseData.planName,
         gymName: licenseData.gymName,
         expiresAt: licenseData.expiresAt?.toDate ? licenseData.expiresAt.toDate().toISOString() : licenseData.expiresAt,
         features: licenseData.features || [],
-        gymId: licenseData.gymId || userData?.gymId || 'gym_placeholder' // Optional: if license implies a gym
+        gymId: licenseData.gymId || userData?.gymId || 'gym_placeholder'
       });
 
       setSuccess('Plan activated successfully!');
@@ -61,7 +60,7 @@ const MyPlan = () => {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col animate-fade-in pb-20">
+    <div className="bg-[#040810] min-h-screen flex flex-col animate-fade-in pb-20">
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0 shadow-navy">
         <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/15 rounded-full blur-2xl -ml-10 -mb-10" />
@@ -82,14 +81,14 @@ const MyPlan = () => {
 
       <div className="p-5 space-y-6">
         {success && (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-2xl flex items-center gap-3 animate-slide-up">
-            <CheckCircle2 size={20} className="text-emerald-500 shrink-0" />
+          <div className="bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 p-4 rounded-2xl flex items-center gap-3 animate-slide-up">
+            <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
             <p className="font-bold text-sm">{success}</p>
           </div>
         )}
         
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl font-bold text-sm animate-slide-up">
+          <div className="bg-red-500/15 border border-red-500/25 text-red-400 p-4 rounded-2xl font-bold text-sm animate-slide-up">
             {error}
           </div>
         )}
@@ -109,7 +108,7 @@ const MyPlan = () => {
                   {isExpired ? 'Expired' : 'Active Plan'}
                 </span>
                 <h2 className="text-2xl font-black text-white">{userData.planName}</h2>
-                <p className="text-slate-400 text-sm mt-1">{userData.gymName}</p>
+                <p className="text-white/40 text-sm mt-1">{userData.gymName}</p>
               </div>
               <ShieldCheck size={32} className="text-liftly-teal opacity-50" />
             </div>
@@ -118,7 +117,7 @@ const MyPlan = () => {
               {userData.features?.map((feature, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <CheckCircle2 size={16} className="text-liftly-teal" />
-                  <span className="text-slate-300 text-sm font-medium">{feature}</span>
+                  <span className="text-white/70 text-sm font-medium">{feature}</span>
                 </div>
               ))}
             </div>
@@ -135,17 +134,18 @@ const MyPlan = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl p-8 shadow-card border border-slate-100 text-center">
-            <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-6">
-              <CreditCard size={32} className="text-slate-300" />
+          <div className="bg-[#0D1526] rounded-3xl p-8 border border-white/5 text-center">
+            <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6">
+              <CreditCard size={32} className="text-white/20" />
             </div>
-            <h2 className="text-xl font-black text-slate-800 mb-2">No Active Plan</h2>
-            <p className="text-slate-500 text-sm mb-0">Enter your gym license code below to unlock premium features.</p>
+            <h2 className="text-xl font-black text-white mb-2">No Active Plan</h2>
+            <p className="text-white/40 text-sm">Enter your gym license code below to unlock premium features.</p>
           </div>
         )}
 
-        <div className="bg-white rounded-3xl p-6 shadow-card border border-slate-100">
-          <h3 className="font-black text-slate-800 mb-4 flex items-center gap-2">
+        {/* License input card */}
+        <div className="bg-[#0D1526] rounded-3xl p-6 border border-white/5">
+          <h3 className="font-black text-white mb-4 flex items-center gap-2">
             <Key size={18} className="text-liftly-teal" /> {hasPlan ? 'Update License' : 'Activate License'}
           </h3>
           <form onSubmit={handleActivate} className="flex gap-2">
@@ -154,18 +154,18 @@ const MyPlan = () => {
               value={licenseCode}
               onChange={(e) => setLicenseCode(e.target.value)}
               placeholder="Enter license code..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 font-bold text-sm text-slate-900 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal"
+              className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 h-12 font-bold text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-liftly-teal/50 focus:ring-1 focus:ring-liftly-teal/20 transition-all"
               required
             />
             <button
               type="submit"
               disabled={loading || !licenseCode.trim()}
-              className="px-6 py-3.5 bg-liftly-navy text-white font-black rounded-2xl shadow-navy active:scale-95 transition-all disabled:opacity-50"
+              className="px-6 py-3.5 bg-liftly-teal text-liftly-navy font-black rounded-2xl shadow-teal active:scale-95 transition-all disabled:opacity-50"
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : 'Activate'}
             </button>
           </form>
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-4 text-center">
+          <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold mt-4 text-center">
             Ask your gym reception for a code
           </p>
         </div>
