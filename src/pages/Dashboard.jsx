@@ -9,9 +9,9 @@ const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const CROWD_OPTIONS = [
-  { key: 'LOW',    emoji: '🟢', label: 'Quiet',    sub: 'Plenty of space',  color: 'bg-emerald-50 border-emerald-200 hover:border-emerald-400', active: 'bg-emerald-500 text-white border-emerald-500 shadow-lg' },
-  { key: 'MEDIUM', emoji: '🟡', label: 'Moderate', sub: 'A bit busy',        color: 'bg-amber-50 border-amber-200 hover:border-amber-400',   active: 'bg-amber-500 text-white border-amber-500 shadow-lg' },
-  { key: 'HIGH',   emoji: '🔴', label: 'Packed',   sub: 'Very crowded',      color: 'bg-red-50 border-red-200 hover:border-red-400',         active: 'bg-red-500 text-white border-red-500 shadow-lg' },
+  { key: 'LOW', emoji: '🟢', label: 'Quiet', sub: 'Plenty of space', color: 'bg-emerald-50 border-emerald-200 hover:border-emerald-400', active: 'bg-emerald-500 text-white border-emerald-500 shadow-lg' },
+  { key: 'MEDIUM', emoji: '🟡', label: 'Moderate', sub: 'A bit busy', color: 'bg-amber-50 border-amber-200 hover:border-amber-400', active: 'bg-amber-500 text-white border-amber-500 shadow-lg' },
+  { key: 'HIGH', emoji: '🔴', label: 'Packed', sub: 'Very crowded', color: 'bg-red-50 border-red-200 hover:border-red-400', active: 'bg-red-500 text-white border-red-500 shadow-lg' },
 ];
 
 const Dashboard = () => {
@@ -19,56 +19,14 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [reportedStatus, setReportedStatus] = useState(false);
   const [showSplitPicker, setShowSplitPicker] = useState(false);
-  const [showQuickTools, setShowQuickTools] = useState(false);
-  const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [weekStats, setWeekStats] = useState({ count: 0, volume: 0 });
-  const [crowdConsensus, setCrowdConsensus] = useState(null); // null = no data yet
 
-  // Calendar state
-  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
-  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
-  const [workoutDates, setWorkoutDates] = useState(new Set());
-
-  // Fetch workout dates for calendar
-  useEffect(() => {
-    if (!currentUser) return;
-    const fetchWorkoutDates = async () => {
-      const startOfMonth = new Date(calendarYear, calendarMonth, 1);
-      const endOfMonth = new Date(calendarYear, calendarMonth + 1, 0, 23, 59, 59);
-      try {
-        const q = query(
-          collection(db, 'users', currentUser.uid, 'user_workouts'),
-          where('completedAt', '>=', Timestamp.fromDate(startOfMonth)),
-          where('completedAt', '<=', Timestamp.fromDate(endOfMonth))
-        );
-        const snap = await getDocs(q);
-        const dates = new Set();
-        snap.forEach(doc => {
-          const d = doc.data().completedAt?.toDate();
-          if (d) dates.add(d.getDate());
-        });
-        setWorkoutDates(dates);
-      } catch (error) {
-        console.error('Error fetching workout dates:', error);
-      }
-    };
-    fetchWorkoutDates();
-  }, [currentUser, calendarMonth, calendarYear]);
 
   // Fetch recent workouts + weekly stats
   useEffect(() => {
     if (!currentUser) return;
     const fetchData = async () => {
       try {
-        // Recent 3 workouts
-        const recentQ = query(
-          collection(db, 'users', currentUser.uid, 'user_workouts'),
-          orderBy('completedAt', 'desc'),
-          limit(3)
-        );
-        const recentSnap = await getDocs(recentQ);
-        setRecentWorkouts(recentSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-
         // This week stats
         const startOfWeek = new Date();
         startOfWeek.setHours(0, 0, 0, 0);
@@ -88,67 +46,7 @@ const Dashboard = () => {
     fetchData();
   }, [currentUser]);
 
-  // Real-time crowd status consensus — last 4 hours
-  useEffect(() => {
-    if (!userData?.gymId) return; // Only fetch if gymId is set
 
-    const cutoff = new Date(Date.now() - 4 * 60 * 60 * 1000);
-    const q = query(
-      collection(db, 'gym_status'),
-      where('timestamp', '>=', Timestamp.fromDate(cutoff)),
-      where('gymId', '==', userData.gymId)
-    );
-    const unsub = onSnapshot(q, (snap) => {
-      if (snap.empty) { setCrowdConsensus(null); return; }
-      const counts = { LOW: 0, MEDIUM: 0, HIGH: 0 };
-      snap.forEach(d => {
-        const s = d.data().status;
-        if (counts[s] !== undefined) counts[s]++;
-      });
-      const majority = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
-      const total = counts.LOW + counts.MEDIUM + counts.HIGH;
-      setCrowdConsensus({ status: majority, total });
-    });
-    return () => unsub();
-  }, [userData?.gymId]);
-
-  const calendarDays = useMemo(() => {
-    const firstDay = new Date(calendarYear, calendarMonth, 1);
-    let startOffset = firstDay.getDay() - 1;
-    if (startOffset < 0) startOffset = 6;
-    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
-    const cells = [];
-    for (let i = 0; i < startOffset; i++) cells.push(null);
-    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-    return cells;
-  }, [calendarMonth, calendarYear]);
-
-  const today = new Date();
-  const isCurrentMonth = calendarMonth === today.getMonth() && calendarYear === today.getFullYear();
-
-  const prevMonth = () => {
-    if (calendarMonth === 0) { setCalendarMonth(11); setCalendarYear(y => y - 1); }
-    else setCalendarMonth(m => m - 1);
-  };
-  const nextMonth = () => {
-    if (calendarMonth === 11) { setCalendarMonth(0); setCalendarYear(y => y + 1); }
-    else setCalendarMonth(m => m + 1);
-  };
-
-  const reportCrowd = async (status) => {
-    if (!currentUser || reportedStatus) return;
-    try {
-      await addDoc(collection(db, 'gym_status'), {
-        status,
-        reportedBy: currentUser.uid,
-        gymId: userData?.gymId || null,
-        timestamp: serverTimestamp(),
-      });
-      setReportedStatus(true);
-    } catch (error) {
-      console.error('Error reporting gym status:', error);
-    }
-  };
 
   const displayName = userData?.firstName || currentUser?.displayName?.split(' ')[0] || currentUser?.email?.split('@')[0] || 'Lifter';
   const photoURL = userData?.photoURL || currentUser?.photoURL || null;
@@ -221,12 +119,6 @@ const Dashboard = () => {
               </div>
               <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Wk Streak</span>
             </div>
-            <button onClick={() => navigate('/chat')} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all relative">
-              <MessageSquare size={20} />
-            </button>
-            <button onClick={() => setShowQuickTools(true)} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all">
-              <Menu size={22} />
-            </button>
           </div>
         </div>
 
@@ -234,7 +126,7 @@ const Dashboard = () => {
         <div className="relative z-10 grid grid-cols-3 gap-3 mt-6">
           {[
             { label: 'This Week', value: weekStats.count, unit: 'workouts', icon: Calendar, color: 'text-liftly-teal' },
-            { label: 'Volume', value: weekStats.volume > 999 ? `${(weekStats.volume/1000).toFixed(1)}k` : weekStats.volume, unit: 'kg', icon: TrendingUp, color: 'text-blue-400' },
+            { label: 'Volume', value: weekStats.volume > 999 ? `${(weekStats.volume / 1000).toFixed(1)}k` : weekStats.volume, unit: 'kg', icon: TrendingUp, color: 'text-blue-400' },
             { label: 'Split', value: activeSplit ? `${activeSplit.length}d` : '—', unit: activeSplit ? 'active' : 'setup', icon: Dumbbell, color: 'text-purple-400' },
           ].map(({ label, value, unit, icon: Icon, color }) => (
             <div key={label} className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
@@ -275,15 +167,15 @@ const Dashboard = () => {
         {userData.gymId ? (
           <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-liftly-teal/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-            
+
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-black text-white text-lg leading-tight">{userData.gymName}</h3>
                   <div className="flex items-center gap-1.5 mt-1">
-                    <div className={`w-2 h-2 rounded-full ${crowdConsensus?.status === 'LOW' ? 'bg-emerald-500' : crowdConsensus?.status === 'MEDIUM' ? 'bg-amber-500' : crowdConsensus?.status === 'HIGH' ? 'bg-red-500' : 'bg-slate-500'}`} />
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <p className="text-xs font-bold text-white/50">
-                      {crowdConsensus ? `${CROWD_OPTIONS.find(o => o.key === crowdConsensus.status)?.label} right now` : 'No crowd data yet'}
+                      42 Active Lifters
                     </p>
                   </div>
                 </div>
@@ -330,176 +222,75 @@ const Dashboard = () => {
             </button>
           </div>
         )}
-        {recentWorkouts.length > 0 && (
-          <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100/80">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-liftly-teal/10 flex items-center justify-center">
-                  <Zap size={14} className="text-liftly-teal" />
-                </div>
-                <h3 className="font-black text-slate-800 text-sm">Recent Sessions</h3>
+        {/* ── Quick Tools ── */}
+        <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <Zap size={14} className="text-yellow-500" />
               </div>
-              <button onClick={() => navigate('/stats')} className="text-xs font-bold text-liftly-teal">
-                See All →
+              <h3 className="font-black text-white text-sm">Quick Tools</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <button onClick={() => navigate('/leaderboard')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                <Trophy size={16} className="text-yellow-400 mb-2" />
+                <p className="font-bold text-white text-sm">Leaderboard</p>
+                <p className="text-[10px] text-white/40">Global rankings</p>
               </button>
-            </div>
-            <div className="space-y-2">
-              {recentWorkouts.map((w) => {
-                const date = w.completedAt?.toDate?.();
-                const dateStr = date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-                return (
-                  <div key={w.id} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                    <div className="w-10 h-10 rounded-xl bg-liftly-teal/10 flex items-center justify-center shrink-0">
-                      <Dumbbell size={16} className="text-liftly-teal" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-slate-800 text-sm truncate">{w.day}</p>
-                      <p className="text-slate-400 text-[10px]">{w.totalSets} sets · {w.totalVolume?.toLocaleString() || 0} kg</p>
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-400 shrink-0">{dateStr}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── Workout Calendar ── */}
-        <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <Calendar size={14} className="text-blue-500" />
-              </div>
-              <h3 className="font-black text-white text-sm">Workout Calendar</h3>
-            </div>
-            <div className="flex items-center gap-1">
-              <button onClick={prevMonth} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 active:scale-90 transition-all">
-                <ChevronLeft size={14} />
+              <button onClick={() => navigate('/tools/bmi')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                <Activity size={16} className="text-emerald-500 mb-2" />
+                <p className="font-bold text-white text-sm">BMI Check</p>
+                <p className="text-[10px] text-white/40">Body mass index</p>
               </button>
-              <span className="text-xs font-bold text-white min-w-[110px] text-center">
-                {MONTHS[calendarMonth]} {calendarYear}
-              </span>
-              <button onClick={nextMonth} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 active:scale-90 transition-all">
-                <ChevronRight size={14} />
+              <button onClick={() => navigate('/tools/calories')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                <Flame size={16} className="text-orange-500 mb-2" />
+                <p className="font-bold text-white text-sm">Macros</p>
+                <p className="text-[10px] text-white/40">Daily targets</p>
               </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1 mb-1">
-            {DAYS.map(d => (
-              <div key={d} className="text-center text-[9px] font-black uppercase tracking-wider text-white/30 py-1">{d}</div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {calendarDays.map((day, i) => {
-              if (day === null) return <div key={`empty-${i}`} />;
-              const isToday = isCurrentMonth && day === today.getDate();
-              const hasWorkout = workoutDates.has(day);
-              return (
-                <div
-                  key={day}
-                  className={`relative aspect-square flex items-center justify-center rounded-xl text-xs font-bold transition-all ${
-                    isToday
-                      ? 'bg-liftly-teal text-liftly-navy'
-                      : hasWorkout
-                      ? 'bg-liftly-teal/15 text-liftly-teal'
-                      : 'text-white/40'
-                  }`}
-                >
-                  {day}
-                  {hasWorkout && !isToday && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-liftly-teal" />}
-                  {hasWorkout && isToday && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-liftly-navy" />}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center justify-center gap-5 mt-4 pt-3 border-t border-white/5">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm bg-liftly-teal" />
-              <span className="text-[10px] font-semibold text-white/40">Today</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm bg-liftly-teal/30" />
-              <span className="text-[10px] font-semibold text-white/40">Worked out</span>
+              <button onClick={() => navigate('/tools/weight')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                <Scale size={16} className="text-blue-500 mb-2" />
+                <p className="font-bold text-white text-sm">Weight</p>
+                <p className="text-[10px] text-white/40">Track progress</p>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* ── Gym Crowd Status ── */}
+
+
+        {/* ── Gym Crowd Status (V2) ── */}
         {userData.gymId && (
-          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <Users size={14} className="text-blue-500" />
+          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                <Users size={16} className="text-emerald-400" />
               </div>
-              <h3 className="font-black text-white text-sm">Gym Crowd Status</h3>
+              <h3 className="font-black text-white text-sm">Live Gym Crowd</h3>
             </div>
 
-            {/* Live Consensus */}
-            {(() => {
-              const opt = crowdConsensus ? CROWD_OPTIONS.find(o => o.key === crowdConsensus.status) : null;
-              return (
-                <div className="bg-white/5 border border-white/5 p-4 rounded-2xl mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="relative flex h-3 w-3">
-                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-400' : opt.key === 'MEDIUM' ? 'bg-amber-400' : 'bg-red-400') : 'bg-white/20'}`} />
-                      <span className={`relative inline-flex rounded-full h-3 w-3 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-500' : opt.key === 'MEDIUM' ? 'bg-amber-500' : 'bg-red-500') : 'bg-white/30'}`} />
-                    </span>
-                    <span className="text-xs font-bold text-white/70">
-                      {crowdConsensus ? `Community Consensus (${crowdConsensus.total} report${crowdConsensus.total !== 1 ? 's' : ''}):` : 'No reports in last 4h'}
-                    </span>
-                  </div>
-                  {opt ? (
-                    <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${
-                      opt.key === 'LOW' ? 'bg-emerald-500/20 text-emerald-400' :
-                      opt.key === 'MEDIUM' ? 'bg-amber-500/20 text-amber-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>{opt.emoji} {opt.label}</span>
-                  ) : (
-                    <span className="px-2 py-1 bg-white/5 text-white/40 text-[10px] font-black uppercase tracking-widest rounded-lg">— No data</span>
-                  )}
-                </div>
-              );
-            })()}
-
-            {reportedStatus ? (
-              <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0">
-                  <CheckCircle2 size={20} className="text-emerald-500" />
-                </div>
-                <div>
-                  <p className="font-bold text-emerald-400 text-sm">Thanks for reporting!</p>
-                  <p className="text-emerald-500/70 text-xs">Your update helps the community.</p>
+            <div className="flex items-center gap-4 mt-4">
+              <div className="relative flex items-center justify-center w-16 h-16 shrink-0">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <path className="text-white/5" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+                  <path className="text-emerald-500" strokeDasharray="30, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+                </svg>
+                <div className="absolute flex flex-col items-center">
+                  <span className="text-lg font-black text-white leading-none">42</span>
                 </div>
               </div>
-            ) : (
-              <>
-                <p className="text-white/40 text-xs font-medium mb-4">How crowded is your gym right now?</p>
-                <div className="grid grid-cols-3 gap-3">
-                  {CROWD_OPTIONS.map(({ key, emoji, label, sub, color }) => {
-                    const darkColorMap = {
-                      'LOW': 'bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40',
-                      'MEDIUM': 'bg-amber-500/5 border-amber-500/20 hover:border-amber-500/40',
-                      'HIGH': 'bg-red-500/5 border-red-500/20 hover:border-red-500/40'
-                    };
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => reportCrowd(key)}
-                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all active:scale-95 focus:outline-none ${darkColorMap[key]}`}
-                      >
-                        <span className="text-2xl mb-1">{emoji}</span>
-                        <span className="text-xs font-black text-white">{label}</span>
-                        <span className="text-[9px] text-white/40 font-medium">{sub}</span>
-                      </button>
-                    )
-                  })}
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  <p className="text-sm font-black text-white">Active Lifters</p>
                 </div>
-              </>
-            )}
+                <p className="text-xs text-white/50 font-medium">Moderate crowd. Plenty of space available.</p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -546,64 +337,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Quick Tools Modal */}
-      {showQuickTools && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h3 className="text-xl font-black text-slate-800">Quick Tools</h3>
-                <p className="text-slate-400 text-sm">Access your fitness calculators</p>
-              </div>
-              <button onClick={() => setShowQuickTools(false)} className="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 active:scale-90 transition-all">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              <button onClick={() => { setShowQuickTools(false); navigate('/leaderboard'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-yellow-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
-                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center shrink-0">
-                  <Trophy size={20} className="text-yellow-500" />
-                </div>
-                <div>
-                  <span className="font-black text-slate-800 block">Leaderboard</span>
-                  <span className="text-xs text-slate-400 font-semibold">View global community rankings</span>
-                </div>
-              </button>
-              
-              <button onClick={() => { setShowQuickTools(false); navigate('/tools/bmi'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
-                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                  <Activity size={20} className="text-emerald-500" />
-                </div>
-                <div>
-                  <span className="font-black text-slate-800 block">BMI Calculator</span>
-                  <span className="text-xs text-slate-400 font-semibold">Check your body mass index</span>
-                </div>
-              </button>
-              
-              <button onClick={() => { setShowQuickTools(false); navigate('/tools/calories'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
-                  <Flame size={20} className="text-orange-500" />
-                </div>
-                <div>
-                  <span className="font-black text-slate-800 block">Calorie Goals</span>
-                  <span className="text-xs text-slate-400 font-semibold">Calculate your daily macros</span>
-                </div>
-              </button>
-              
-              <button onClick={() => { setShowQuickTools(false); navigate('/tools/weight'); }} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-100 transition-all active:scale-[0.98] text-left">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                  <Scale size={20} className="text-blue-500" />
-                </div>
-                <div>
-                  <span className="font-black text-slate-800 block">Weight Tracker</span>
-                  <span className="text-xs text-slate-400 font-semibold">Log and view weight history</span>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };
