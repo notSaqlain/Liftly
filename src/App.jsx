@@ -9,6 +9,7 @@ import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Workout from './pages/Workout';
+import ExerciseDetail from './pages/ExerciseDetail';
 import AccountSettings from './pages/AccountSettings';
 import PersonalInfo from './pages/PersonalInfo';
 import Stats from './pages/Stats';
@@ -64,6 +65,7 @@ function App() {
           <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/workout" element={<Workout />} />
+            <Route path="/workout/exercise/:id" element={<ExerciseDetail />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/chat" element={<ChatHub />} />
             <Route path="/chat/group/:mode" element={<GroupChat />} />

@@ -111,7 +111,7 @@ const SeedFirestore = () => {
         This will seed the <code className="bg-white/10 px-1 py-0.5 rounded text-liftly-teal">12345678</code> license for <strong className="text-white">Palestre Italiane</strong>, along with mock trainers, equipment, and challenges.
       </p>
       
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-wrap gap-4 mb-6">
         <button 
           onClick={seedLicense} 
           disabled={loading}
@@ -144,6 +144,32 @@ const SeedFirestore = () => {
           className="px-6 py-3 bg-red-500/10 text-red-400 font-black rounded-2xl active:scale-95 transition-all border border-red-500/20"
         >
           {loading ? 'Cleaning...' : 'Nuke Other Test Accounts'}
+        </button>
+        <button
+          onClick={async () => {
+            setLoading(true);
+            setSuccess('');
+            try {
+              const snap = await getDocs(collection(db, 'users'));
+              let count = 0;
+              for (const docSnap of snap.docs) {
+                await updateDoc(doc(db, 'users', docSnap.id), {
+                  favoriteExercises: deleteField(),
+                  customRoutines: deleteField(),
+                });
+                count++;
+              }
+              setSuccess(`Cleared stale exercise data from ${count} user accounts. Ready for ExerciseDB IDs!`);
+            } catch (err) {
+              setSuccess('Error: ' + err.message);
+            } finally {
+              setLoading(false);
+            }
+          }}
+          disabled={loading}
+          className="px-6 py-3 bg-orange-500/10 text-orange-400 font-black rounded-2xl active:scale-95 transition-all border border-orange-500/20"
+        >
+          {loading ? 'Clearing...' : 'Clear Stale Exercise Data'}
         </button>
       </div>
 

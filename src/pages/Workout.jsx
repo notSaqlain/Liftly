@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { doc, updateDoc, arrayUnion, arrayRemove, deleteField } from 'firebase/firestore';
-import exercisesData from '../data/exercises.json';
-import { Search, Heart, Plus, X, Activity, CalendarDays, Dumbbell, Trash2, Check } from 'lucide-react';
+import { getAllExercises, getBodyPartList } from '../services/exerciseApi';
+import { Search, Heart, Plus, X, Activity, CalendarDays, Dumbbell, Trash2, Check, Loader2 } from 'lucide-react';
 import clsx from 'clsx';
 
-const MUSCLE_FILTERS = ['All', 'Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
-
 const Workout = () => {
+  const navigate = useNavigate();
   const { currentUser, userData } = useAuth();
+  const [exercisesData, setExercisesData] = useState([]);
+  const [muscleFilters, setMuscleFilters] = useState(['All']);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('split');
   const [searchQuery, setSearchQuery] = useState('');
   const [muscleFilter, setMuscleFilter] = useState('All');
@@ -34,6 +37,26 @@ const Workout = () => {
       setCustomRoutines(userData.customRoutines || {});
     }
   }, [userData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [exercises, bodyParts] = await Promise.all([
+          getAllExercises(),
+          getBodyPartList()
+        ]);
+        setExercisesData(exercises);
+        setMuscleFilters(['All', ...bodyParts]);
+      } catch (error) {
+        console.error('Error fetching API data:', error);
+        showToast('Error loading exercises');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const toggleFavorite = async (exerciseId) => {
     if (!currentUser) return;
@@ -140,9 +163,14 @@ const Workout = () => {
   };
 
   const filteredExercises = exercisesData.filter(ex => {
-    const matchSearch = ex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ex.muscleGroup.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchMuscle = muscleFilter === 'All' || ex.muscleGroup.toLowerCase().includes(muscleFilter.toLowerCase());
+    const matchSearch = 
+      (ex.name && ex.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (ex.target && ex.target.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (ex.bodyPart && ex.bodyPart.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+    const matchMuscle = muscleFilter === 'All' || 
+      (ex.bodyPart && ex.bodyPart.toLowerCase() === muscleFilter.toLowerCase());
+      
     return matchSearch && matchMuscle;
   });
 
@@ -158,10 +186,11 @@ const Workout = () => {
     const g = group.toLowerCase();
     if (g.includes('chest')) return 'bg-red-50 text-red-600';
     if (g.includes('back') || g.includes('lat')) return 'bg-blue-50 text-blue-600';
-    if (g.includes('leg') || g.includes('quad') || g.includes('glute') || g.includes('hamstr')) return 'bg-green-50 text-green-600';
+    if (g.includes('leg') || g.includes('quad') || g.includes('glute') || g.includes('hamstr') || g.includes('calf')) return 'bg-green-50 text-green-600';
     if (g.includes('shoulder')) return 'bg-purple-50 text-purple-600';
-    if (g.includes('arm') || g.includes('bicep') || g.includes('tricep')) return 'bg-orange-50 text-orange-600';
-    if (g.includes('core') || g.includes('abs')) return 'bg-yellow-50 text-yellow-600';
+    if (g.includes('arm') || g.includes('bicep') || g.includes('tricep') || g.includes('forearm')) return 'bg-orange-50 text-orange-600';
+    if (g.includes('core') || g.includes('abs') || g.includes('waist')) return 'bg-yellow-50 text-yellow-600';
+    if (g.includes('cardio')) return 'bg-pink-50 text-pink-600';
     return 'bg-slate-100 text-slate-500';
   };
 
@@ -232,12 +261,12 @@ const Workout = () => {
               />
             </div>
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
-              {MUSCLE_FILTERS.map(f => (
+              {muscleFilters.map(f => (
                 <button
                   key={f}
                   onClick={() => setMuscleFilter(f)}
                   className={clsx(
-                    'px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 border transition-all active:scale-95',
+                    'px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 border transition-all active:scale-95 capitalize',
                     muscleFilter === f
                       ? 'bg-liftly-teal text-white border-liftly-teal shadow-teal'
                       : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300'
@@ -306,9 +335,9 @@ const Workout = () => {
                                 <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0">
                                   <Dumbbell size={15} className="text-slate-400" />
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-bold text-slate-700 truncate">{ex.name}</p>
-                                  <span className={`text-[9px] uppercase font-black px-1.5 py-0.5 rounded-md ${getMuscleColor(ex.muscleGroup)}`}>{ex.muscleGroup}</span>
+                                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/workout/exercise/${ex.id}`)}>
+                                  <p className="text-sm font-bold text-slate-700 truncate capitalize">{ex.name}</p>
+                                  <span className={`text-[9px] uppercase font-black px-1.5 py-0.5 rounded-md ${getMuscleColor(ex.bodyPart)}`}>{ex.bodyPart}</span>
                                 </div>
                                 <button
                                   onClick={() => removeExercise(dayName, exId)}
@@ -346,53 +375,62 @@ const Workout = () => {
         {/* ── Exercises ── */}
         {activeTab === 'exercises' && (
           <div className="animate-fade-in space-y-3">
-            {filteredExercises.map(exercise => {
-              const isFav = favorites.includes(exercise.id);
-              const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
-              return (
-                <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-                    <Dumbbell size={18} className="text-slate-300" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-black text-slate-800 text-sm truncate">{exercise.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${getMuscleColor(exercise.muscleGroup)}`}>{exercise.muscleGroup}</span>
-                      <span className="text-[10px] font-semibold text-slate-300">{exercise.equipment}</span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => toggleFavorite(exercise.id)}
-                    className={clsx('w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0', isFav ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-300 hover:text-red-400')}
-                  >
-                    <Heart size={17} className={isFav ? 'fill-red-500' : ''} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (isInRoutine) {
-                        removeExercise(targetRoutineForAdd, exercise.id);
-                      } else {
-                        handleAddClick(exercise.id);
-                      }
-                    }}
-                    className={clsx(
-                      "w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0",
-                      isInRoutine
-                        ? "bg-emerald-50 text-emerald-500 border border-emerald-100"
-                        : "bg-liftly-navy text-white shadow-navy"
-                    )}
-                  >
-                    {isInRoutine ? <Check size={17} /> : <Plus size={17} />}
-                  </button>
-                </div>
-              );
-            })}
-            {filteredExercises.length === 0 && (
-              <div className="text-center py-12">
-                <Dumbbell className="mx-auto text-slate-200 w-12 h-12 mb-3" />
-                <p className="text-slate-400 font-bold">No exercises found</p>
-                <p className="text-slate-300 text-sm">Try a different search or filter</p>
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="w-10 h-10 text-liftly-teal animate-spin mb-4" />
+                <p className="text-slate-500 font-bold">Caricamento esercizi...</p>
               </div>
+            ) : (
+              <>
+                {filteredExercises.map(exercise => {
+                  const isFav = favorites.includes(exercise.id);
+                  const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
+                  return (
+                    <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
+                      <div className="w-11 h-11 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                        <Dumbbell size={18} className="text-slate-300" />
+                      </div>
+                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/workout/exercise/${exercise.id}`)}>
+                        <h3 className="font-black text-slate-800 text-sm truncate capitalize">{exercise.name}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${getMuscleColor(exercise.bodyPart)}`}>{exercise.bodyPart}</span>
+                          <span className="text-[10px] font-semibold text-slate-300 capitalize">{exercise.equipment}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => toggleFavorite(exercise.id)}
+                        className={clsx('w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0', isFav ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-300 hover:text-red-400')}
+                      >
+                        <Heart size={17} className={isFav ? 'fill-red-500' : ''} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (isInRoutine) {
+                            removeExercise(targetRoutineForAdd, exercise.id);
+                          } else {
+                            handleAddClick(exercise.id);
+                          }
+                        }}
+                        className={clsx(
+                          "w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0",
+                          isInRoutine
+                            ? "bg-emerald-50 text-emerald-500 border border-emerald-100"
+                            : "bg-liftly-navy text-white shadow-navy"
+                        )}
+                      >
+                        {isInRoutine ? <Check size={17} /> : <Plus size={17} />}
+                      </button>
+                    </div>
+                  );
+                })}
+                {filteredExercises.length === 0 && (
+                  <div className="text-center py-12">
+                    <Dumbbell className="mx-auto text-slate-200 w-12 h-12 mb-3" />
+                    <p className="text-slate-400 font-bold">No exercises found</p>
+                    <p className="text-slate-300 text-sm">Try a different search or filter</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -416,9 +454,9 @@ const Workout = () => {
                     <div className="w-11 h-11 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
                       <Heart size={18} className="text-red-400 fill-red-400" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-black text-slate-800 text-sm truncate">{exercise.name}</h3>
-                      <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${getMuscleColor(exercise.muscleGroup)}`}>{exercise.muscleGroup}</span>
+                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/workout/exercise/${exercise.id}`)}>
+                      <h3 className="font-black text-slate-800 text-sm truncate capitalize">{exercise.name}</h3>
+                      <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${getMuscleColor(exercise.bodyPart)}`}>{exercise.bodyPart}</span>
                     </div>
                     <button onClick={() => toggleFavorite(exercise.id)} className="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center active:scale-90 transition-all">
                       <Heart size={17} className="fill-red-500" />
