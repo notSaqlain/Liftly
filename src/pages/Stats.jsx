@@ -7,7 +7,7 @@ import {
   LineChart, Line, CartesianGrid,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
-import { Dumbbell, Trophy, TrendingUp, CalendarDays, Radar as RadarIcon, Target, Flame, Clock } from 'lucide-react';
+import { Dumbbell, Trophy, TrendingUp, CalendarDays, Radar as RadarIcon, Target, Flame, Clock, ChevronDown } from 'lucide-react';
 import exercisesData from '../data/exercises.json';
 
 const MUSCLE_GROUPS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
@@ -22,6 +22,7 @@ const Stats = () => {
   const [workoutHistory, setWorkoutHistory] = useState([]);
   const [allWorkouts, setAllWorkouts] = useState([]);
   const [selectedExercise, setSelectedExercise] = useState('Bench Press');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [progressData, setProgressData] = useState([]);
 
   useEffect(() => {
@@ -239,15 +240,32 @@ const Stats = () => {
                     </div>
                     <h3 className="font-black text-white">Best Weight</h3>
                   </div>
-                  <select
-                    value={selectedExercise}
-                    onChange={(e) => setSelectedExercise(e.target.value)}
-                    className="text-[10px] font-bold bg-[#040810] border border-white/10 text-white px-2 py-1.5 rounded-lg focus:ring-0 outline-none cursor-pointer"
-                  >
-                    {availableExercises.map(name => (
-                      <option key={name} value={name}>{name}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="flex items-center gap-2 text-[10px] font-bold bg-[#040810] border border-white/10 text-white px-2 py-1.5 rounded-lg focus:ring-0 outline-none cursor-pointer hover:bg-white/5 transition-colors"
+                    >
+                      {selectedExercise} <ChevronDown size={12} className="opacity-50" />
+                    </button>
+                    {isDropdownOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
+                        <div className="absolute right-0 top-full mt-1 w-40 bg-[#0D1526] border border-white/10 rounded-xl shadow-card overflow-hidden z-50">
+                          <div className="max-h-48 overflow-y-auto">
+                            {availableExercises.map(name => (
+                              <button
+                                key={name}
+                                onClick={() => { setSelectedExercise(name); setIsDropdownOpen(false); }}
+                                className={`w-full text-left px-3 py-2 text-[10px] font-bold hover:bg-white/10 transition-colors ${selectedExercise === name ? 'text-indigo-400 bg-indigo-500/10' : 'text-white'}`}
+                              >
+                                {name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
                 {progressData.length > 1 ? (
                   <div className="h-48 w-full">
