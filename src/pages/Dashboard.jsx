@@ -322,11 +322,11 @@ const Dashboard = () => {
               <MapPin size={24} className="text-liftly-teal" />
             </div>
             <div className="flex-1">
-              <h3 className="font-black text-white text-sm">No Gym Selected</h3>
-              <p className="text-xs text-white/40 mt-0.5">Link your gym to unlock local features.</p>
+              <h3 className="font-black text-white text-sm">No License Active</h3>
+              <p className="text-xs text-white/40 mt-0.5">Activate PRO license to unlock local features.</p>
             </div>
-            <button onClick={() => navigate('/personal-info')} className="px-4 py-2 bg-liftly-teal text-white text-xs font-black rounded-xl active:scale-95 transition-all">
-              Link →
+            <button onClick={() => navigate('/my-plan')} className="px-4 py-2 bg-liftly-teal text-white text-xs font-black rounded-xl active:scale-95 transition-all">
+              Activate →
             </button>
           </div>
         )}

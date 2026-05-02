@@ -143,10 +143,10 @@ const Leaderboard = () => {
             <div className="w-16 h-16 rounded-3xl bg-white/5 flex items-center justify-center mb-4 border border-white/10">
               <Building2 size={28} className="text-white/30" />
             </div>
-            <h3 className="font-black text-white text-lg mb-1">No gym selected</h3>
-            <p className="text-sm text-white/50 font-medium mb-4">Set your gym to view local rankings.</p>
-            <button onClick={() => navigate('/personal-info')} className="px-4 py-2 bg-liftly-teal text-white text-xs font-black rounded-xl active:scale-95 transition-all">
-              Link Gym →
+            <h3 className="font-black text-white text-lg mb-1">No gym license active</h3>
+            <p className="text-sm text-white/50 font-medium mb-4">Activate PRO license to view local rankings.</p>
+            <button onClick={() => navigate('/my-plan')} className="px-4 py-2 bg-liftly-teal text-white text-xs font-black rounded-xl active:scale-95 transition-all">
+              Activate License →
             </button>
           </div>
         ) : (

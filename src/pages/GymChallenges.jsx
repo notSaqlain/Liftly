@@ -104,12 +104,12 @@ const GymChallenges = () => {
           <div className="w-16 h-16 rounded-3xl bg-liftly-teal/10 flex items-center justify-center mb-4">
             <MapPin size={28} className="text-liftly-teal" />
           </div>
-          <h3 className="font-black text-slate-800 text-lg mb-2">No gym selected</h3>
+          <h3 className="font-black text-slate-800 text-lg mb-2">No gym license active</h3>
           <p className="text-slate-400 text-sm leading-relaxed max-w-[260px] mb-6">
-            Select your gym to participate in local challenges.
+            Activate your Liftly PRO license to participate in local challenges.
           </p>
-          <button onClick={() => navigate('/personal-info')} className="px-6 py-3 bg-liftly-teal text-white font-black rounded-2xl active:scale-95 shadow-teal">
-            Set My Gym →
+          <button onClick={() => navigate('/my-plan')} className="px-6 py-3 bg-liftly-teal text-white font-black rounded-2xl active:scale-95 shadow-teal">
+            Activate License →
           </button>
         </div>
       </div>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { db } from '../../firebase';
-import { doc, setDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, serverTimestamp, getDocs, updateDoc, deleteField, deleteDoc } from 'firebase/firestore';
+import { useAuth } from '../../context/AuthContext';
 
 const SeedFirestore = () => {
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
 
@@ -109,13 +111,41 @@ const SeedFirestore = () => {
         This will seed the <code className="bg-white/10 px-1 py-0.5 rounded text-liftly-teal">12345678</code> license for <strong className="text-white">Palestre Italiane</strong>, along with mock trainers, equipment, and challenges.
       </p>
       
-      <button 
-        onClick={seedLicense} 
-        disabled={loading}
-        className="px-6 py-3 bg-liftly-teal text-liftly-navy font-black rounded-2xl active:scale-95 transition-all"
-      >
-        {loading ? 'Seeding...' : 'Seed Data'}
-      </button>
+      <div className="flex gap-4 mb-6">
+        <button 
+          onClick={seedLicense} 
+          disabled={loading}
+          className="px-6 py-3 bg-liftly-teal text-liftly-navy font-black rounded-2xl active:scale-95 transition-all"
+        >
+          {loading ? 'Seeding...' : 'Seed Data'}
+        </button>
+        <button 
+          onClick={async () => {
+            if (!currentUser) return;
+            setLoading(true);
+            setSuccess('');
+            try {
+              const snap = await getDocs(collection(db, 'users'));
+              let count = 0;
+              for (const docSnap of snap.docs) {
+                if (docSnap.id !== currentUser.uid) {
+                  await deleteDoc(doc(db, 'users', docSnap.id));
+                  count++;
+                }
+              }
+              setSuccess(`Successfully deleted ${count} other test accounts!`);
+            } catch (err) {
+              setSuccess('Error: ' + err.message);
+            } finally {
+              setLoading(false);
+            }
+          }}
+          disabled={loading}
+          className="px-6 py-3 bg-red-500/10 text-red-400 font-black rounded-2xl active:scale-95 transition-all border border-red-500/20"
+        >
+          {loading ? 'Cleaning...' : 'Nuke Other Test Accounts'}
+        </button>
+      </div>
 
       {success && (
         <div className={`mt-6 p-4 rounded-xl text-sm font-bold max-w-md ${
