@@ -1,15 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { MessageSquare, Edit, Search, Globe, Building2, ShieldAlert, Users, BellOff } from 'lucide-react';
+import { collection, query, orderBy, onSnapshot, getDoc, doc, deleteDoc } from 'firebase/firestore';
+import { MessageSquare, Edit, Search, Globe, Building2, ShieldAlert, Users, BellOff, Trash2 } from 'lucide-react';
 
 const ChatHub = () => {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
+  const [liveProfiles, setLiveProfiles] = useState({});
   const [loading, setLoading] = useState(true);
+  const [showDeleteFor, setShowDeleteFor] = useState(null);
+  
+  const pressTimer = useRef(null);
 
   const hasGym = !!userData?.gymId;
 
@@ -21,8 +25,32 @@ const ChatHub = () => {
       orderBy('lastMessageAt', 'desc')
     );
 
-    const unsub = onSnapshot(q, (snap) => {
-      setConversations(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const unsub = onSnapshot(q, async (snap) => {
+      const convs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setConversations(convs);
+      
+      // Fetch live profiles for the other participants
+      const profiles = { ...liveProfiles };
+      let updated = false;
+      
+      for (const conv of convs) {
+        const otherUid = conv.participantUids?.find(id => id !== currentUser.uid);
+        if (otherUid && !profiles[otherUid]) {
+          try {
+            const userSnap = await getDoc(doc(db, 'users', otherUid));
+            if (userSnap.exists()) {
+              profiles[otherUid] = userSnap.data();
+              updated = true;
+            }
+          } catch (e) {
+            console.error('Error fetching profile:', e);
+          }
+        }
+      }
+      
+      if (updated) {
+        setLiveProfiles(profiles);
+      }
       setLoading(false);
     });
 
@@ -40,16 +68,51 @@ const ChatHub = () => {
   };
 
   const getOtherParticipant = (conv) => {
-    const otherUid = conv.participantUids.find(id => id !== currentUser.uid);
+    const otherUid = conv.participantUids?.find(id => id !== currentUser.uid);
+    const liveProfile = liveProfiles[otherUid];
+    
+    if (liveProfile) {
+      return {
+        uid: otherUid,
+        name: liveProfile.firstName ? `${liveProfile.firstName} ${liveProfile.lastName || ''}`.trim() : (conv.participantNames?.[otherUid] || 'Unknown'),
+        photo: liveProfile.photoURL || liveProfile.googlePhotoURL || conv.participantPhotos?.[otherUid] || null
+      };
+    }
+    
     return {
       uid: otherUid,
-      name: conv.participantNames[otherUid] || 'Unknown',
-      photo: conv.participantPhotos[otherUid] || null
+      name: conv.participantNames?.[otherUid] || 'Unknown',
+      photo: conv.participantPhotos?.[otherUid] || null
     };
   };
 
+  const handleTouchStart = (convId) => {
+    pressTimer.current = setTimeout(() => {
+      setShowDeleteFor(convId);
+    }, 600); // 600ms hold to show delete
+  };
+
+  const handleTouchEnd = () => {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+    }
+  };
+
+  const handleDeleteChat = async (e, convId) => {
+    e.stopPropagation();
+    try {
+      await deleteDoc(doc(db, 'users', currentUser.uid, 'dms', convId));
+      setShowDeleteFor(null);
+    } catch (err) {
+      console.error('Error deleting chat:', err);
+    }
+  };
+
+  // Only show chats that have a lastMessage, so we don't see empty chats
+  const activeConversations = conversations.filter(conv => conv.lastMessage);
+
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col pb-24 animate-fade-in">
+    <div className="bg-[#040810] min-h-screen flex flex-col pb-24 animate-fade-in" onClick={() => setShowDeleteFor(null)}>
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0 shadow-navy">
         <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
         
@@ -148,7 +211,7 @@ const ChatHub = () => {
             <div className="space-y-2">
               {[1, 2, 3].map(i => <div key={i} className="h-20 bg-white/5 rounded-3xl shimmer" />)}
             </div>
-          ) : conversations.length === 0 ? (
+          ) : activeConversations.length === 0 ? (
             <div className="text-center py-10 flex flex-col items-center bg-[#0D1526] rounded-3xl border border-white/5">
               <div className="w-16 h-16 rounded-3xl bg-white/5 flex items-center justify-center mb-4">
                 <MessageSquare size={24} className="text-white/20" />
@@ -161,45 +224,71 @@ const ChatHub = () => {
             </div>
           ) : (
             <div className="space-y-2">
-              {conversations.map(conv => {
+              {activeConversations.map(conv => {
                 const otherUser = getOtherParticipant(conv);
+                const isShowingDelete = showDeleteFor === conv.id;
+                
                 return (
-                  <button
-                    key={conv.id}
-                    onClick={() => navigate(`/messages/${conv.id}`)}
-                    className="w-full bg-[#0D1526] p-4 rounded-3xl border border-white/5 flex items-center gap-4 active:scale-[0.98] transition-all text-left hover:bg-white/5 group"
+                  <div 
+                    key={conv.id} 
+                    className="relative overflow-hidden rounded-3xl"
+                    onTouchStart={() => handleTouchStart(conv.id)}
+                    onTouchEnd={handleTouchEnd}
+                    onTouchMove={handleTouchEnd}
+                    onMouseDown={() => handleTouchStart(conv.id)}
+                    onMouseUp={handleTouchEnd}
+                    onMouseLeave={handleTouchEnd}
                   >
-                    <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 bg-white/10 border border-white/10 relative">
-                      {otherUser.photo ? (
-                        <img src={otherUser.photo} alt={otherUser.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white/50 font-black text-lg">
-                          {otherUser.name.charAt(0).toUpperCase()}
+                    {isShowingDelete && (
+                      <div className="absolute inset-0 z-20 bg-red-500/90 backdrop-blur-sm flex items-center justify-between px-6 animate-fade-in">
+                        <span className="font-black text-white">Delete Chat?</span>
+                        <div className="flex gap-2">
+                          <button onClick={(e) => { e.stopPropagation(); setShowDeleteFor(null); }} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white active:scale-95 transition-all">
+                            X
+                          </button>
+                          <button onClick={(e) => handleDeleteChat(e, conv.id)} className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-500 active:scale-95 transition-all">
+                            <Trash2 size={18} />
+                          </button>
                         </div>
-                      )}
-                      {conv.unreadCount > 0 && (
-                        <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-liftly-teal rounded-full border-2 border-[#0D1526]" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-baseline mb-0.5">
-                        <h3 className={`font-bold truncate pr-2 ${conv.unreadCount > 0 ? 'text-white' : 'text-white/80'}`}>{otherUser.name}</h3>
-                        <span className={`text-[10px] font-semibold shrink-0 ${conv.unreadCount > 0 ? 'text-liftly-teal' : 'text-white/30'}`}>{formatTime(conv.lastMessageAt)}</span>
-                      </div>
-                      <p className={`text-sm truncate ${conv.unreadCount > 0 ? 'text-white font-medium' : 'text-white/40'}`}>
-                        {conv.lastMessage || 'Say hello!'}
-                      </p>
-                    </div>
-                    {conv.isMuted ? (
-                      <div className="shrink-0 flex items-center justify-center text-white/20">
-                        <BellOff size={16} />
-                      </div>
-                    ) : conv.unreadCount > 0 && (
-                      <div className="w-5 h-5 rounded-full bg-liftly-teal flex items-center justify-center text-[10px] font-black text-liftly-navy shrink-0">
-                        {conv.unreadCount}
                       </div>
                     )}
-                  </button>
+                    
+                    <button
+                      onClick={() => !isShowingDelete && navigate(`/messages/${conv.id}`)}
+                      className={`w-full bg-[#0D1526] p-4 border border-white/5 flex items-center gap-4 transition-all text-left group hover:bg-white/5 ${isShowingDelete ? 'opacity-0' : 'active:scale-[0.98]'}`}
+                    >
+                      <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 bg-white/10 border border-white/10 relative">
+                        {otherUser.photo ? (
+                          <img src={otherUser.photo} alt={otherUser.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/50 font-black text-lg">
+                            {otherUser.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        {conv.unreadCount > 0 && (
+                          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-liftly-teal rounded-full border-2 border-[#0D1526]" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-baseline mb-0.5">
+                          <h3 className={`font-bold truncate pr-2 ${conv.unreadCount > 0 ? 'text-white' : 'text-white/80'}`}>{otherUser.name}</h3>
+                          <span className={`text-[10px] font-semibold shrink-0 ${conv.unreadCount > 0 ? 'text-liftly-teal' : 'text-white/30'}`}>{formatTime(conv.lastMessageAt)}</span>
+                        </div>
+                        <p className={`text-sm truncate ${conv.unreadCount > 0 ? 'text-white font-medium' : 'text-white/40'}`}>
+                          {conv.lastMessage}
+                        </p>
+                      </div>
+                      {conv.isMuted ? (
+                        <div className="shrink-0 flex items-center justify-center text-white/20">
+                          <BellOff size={16} />
+                        </div>
+                      ) : conv.unreadCount > 0 && (
+                        <div className="w-5 h-5 rounded-full bg-liftly-teal flex items-center justify-center text-[10px] font-black text-liftly-navy shrink-0">
+                          {conv.unreadCount}
+                        </div>
+                      )}
+                    </button>
+                  </div>
                 );
               })}
             </div>

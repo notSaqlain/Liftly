@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
 import { ChevronLeft, Send, MessageCircle, Bell, BellOff, Edit2, Trash2, X } from 'lucide-react';
 
 const DMConversation = () => {
@@ -34,10 +34,15 @@ const DMConversation = () => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const otherUid = data.participantUids.find(id => id !== currentUser.uid);
+        
+        // Fetch live user data for updated photo and name
+        const otherUserSnap = await getDoc(doc(db, 'users', otherUid));
+        const otherUserData = otherUserSnap.exists() ? otherUserSnap.data() : {};
+        
         setOtherUser({
           uid: otherUid,
-          name: data.participantNames[otherUid] || 'User',
-          photo: data.participantPhotos[otherUid] || null,
+          name: otherUserData.firstName ? `${otherUserData.firstName} ${otherUserData.lastName || ''}`.trim() : (data.participantNames?.[otherUid] || 'User'),
+          photo: otherUserData.photoURL || otherUserData.googlePhotoURL || data.participantPhotos?.[otherUid] || null,
           isOnline: false
         });
         setIsMuted(!!data.isMuted);
@@ -112,12 +117,32 @@ const DMConversation = () => {
           lastMessageAt: serverTimestamp()
         };
 
-        await updateDoc(doc(db, 'users', currentUser.uid, 'dms', conversationId), updateData);
+        const dmBaseData = {
+          participantUids: [currentUser.uid, otherUser.uid],
+          participantNames: {
+            [currentUser.uid]: displayName,
+            [otherUser.uid]: otherUser.name
+          },
+          participantPhotos: {
+            [currentUser.uid]: photoURL || null,
+            [otherUser.uid]: otherUser.photo || null
+          }
+        };
+
+        await setDoc(doc(db, 'users', currentUser.uid, 'dms', conversationId), {
+          ...dmBaseData,
+          ...updateData
+        }, { merge: true });
         
         const theirDmRef = doc(db, 'users', otherUser.uid, 'dms', conversationId);
         const theirSnap = await getDoc(theirDmRef);
         const currentUnread = theirSnap.exists() ? (theirSnap.data().unreadCount || 0) : 0;
-        await updateDoc(theirDmRef, { ...updateData, unreadCount: currentUnread + 1 });
+        
+        await setDoc(theirDmRef, { 
+          ...dmBaseData,
+          ...updateData, 
+          unreadCount: currentUnread + 1 
+        }, { merge: true });
       }
     } catch (err) {
       console.error('Error sending message:', err);
