@@ -154,7 +154,7 @@ const MyPlan = () => {
               value={licenseCode}
               onChange={(e) => setLicenseCode(e.target.value)}
               placeholder="Enter license code..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 font-bold text-sm focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal"
+              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 font-bold text-sm text-slate-900 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal"
               required
             />
             <button

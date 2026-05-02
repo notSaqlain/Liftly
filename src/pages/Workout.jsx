@@ -99,15 +99,15 @@ const Workout = () => {
   const saveToRoutine = async (dayName, overrideExerciseId = null) => {
     const exerciseToSave = overrideExerciseId || addingExerciseId;
     if (!exerciseToSave || !currentUser) return;
-    
+
     const updatedRoutines = { ...customRoutines };
     if (!updatedRoutines[dayName]) updatedRoutines[dayName] = [];
-    
+
     if (!updatedRoutines[dayName].includes(exerciseToSave)) {
       updatedRoutines[dayName] = [...updatedRoutines[dayName], exerciseToSave];
       setCustomRoutines(updatedRoutines);
       if (!overrideExerciseId) setAddingExerciseId(null);
-      
+
       try {
         const userRef = doc(db, 'users', currentUser.uid);
         await updateDoc(userRef, { [`customRoutines.${dayName}`]: arrayUnion(exerciseToSave) });
@@ -213,7 +213,7 @@ const Workout = () => {
                     <p className="text-sm font-black">{targetRoutineForAdd}</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setTargetRoutineForAdd(null)}
                   className="px-4 py-1.5 bg-white text-liftly-navy text-xs font-black rounded-xl active:scale-95 transition-all"
                 >
@@ -377,8 +377,8 @@ const Workout = () => {
                     }}
                     className={clsx(
                       "w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0",
-                      isInRoutine 
-                        ? "bg-emerald-50 text-emerald-500 border border-emerald-100" 
+                      isInRoutine
+                        ? "bg-emerald-50 text-emerald-500 border border-emerald-100"
                         : "bg-liftly-navy text-white shadow-navy"
                     )}
                   >
@@ -433,8 +433,8 @@ const Workout = () => {
                       }}
                       className={clsx(
                         "w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 shrink-0",
-                        isInRoutine 
-                          ? "bg-emerald-50 text-emerald-500 border border-emerald-100" 
+                        isInRoutine
+                          ? "bg-emerald-50 text-emerald-500 border border-emerald-100"
                           : "bg-liftly-navy text-white shadow-navy"
                       )}
                     >
@@ -485,7 +485,7 @@ const Workout = () => {
             <input
               type="text"
               autoFocus
-              placeholder="e.g. Chest & Tris"
+              placeholder="e.g. Chest & Tris, Upper Body"
               value={newRoutineName}
               onChange={e => setNewRoutineName(e.target.value)}
               className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm text-slate-800 font-semibold focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all mb-5"
