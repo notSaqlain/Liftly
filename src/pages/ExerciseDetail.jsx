@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getExerciseById } from '../services/exerciseApi';
-import { ChevronLeft, Dumbbell, Target, Zap, ListOrdered, Gauge, BookOpen } from 'lucide-react';
+import { ChevronLeft, Dumbbell, Target, Zap, ListOrdered, BookOpen } from 'lucide-react';
+import ExerciseGif from '../components/ExerciseGif';
 
 // Mappa i colori e le icone in base alla parte del corpo
 const getBodyPartTheme = (part = '') => {
@@ -16,14 +17,6 @@ const getBodyPartTheme = (part = '') => {
   return { gradient: 'from-slate-500/30 to-slate-900/10', accent: '#94a3b8', ring: 'border-slate-500/20', badge: 'bg-slate-500/20 text-slate-300 border-slate-500/30', emoji: '🏋️' };
 };
 
-// Colori per il badge difficoltà
-const getDifficultyStyle = (level = '') => {
-  const l = level.toLowerCase();
-  if (l === 'beginner') return { text: 'text-green-300', bg: 'bg-green-500/15', border: 'border-green-500/30' };
-  if (l === 'intermediate') return { text: 'text-yellow-300', bg: 'bg-yellow-500/15', border: 'border-yellow-500/30' };
-  if (l === 'expert') return { text: 'text-red-300', bg: 'bg-red-500/15', border: 'border-red-500/30' };
-  return { text: 'text-slate-300', bg: 'bg-slate-500/15', border: 'border-slate-500/30' };
-};
 
 const ExerciseDetail = () => {
   const { id } = useParams();
@@ -78,7 +71,6 @@ const ExerciseDetail = () => {
   }
 
   const theme = getBodyPartTheme(exercise.bodyPart);
-  const diffStyle = getDifficultyStyle(exercise.difficulty);
 
   return (
     <div className="flex flex-col h-full bg-[#0a0e1a] overflow-y-auto no-scrollbar">
@@ -99,37 +91,8 @@ const ExerciseDetail = () => {
 
       <div className="flex-1 p-5 space-y-4">
 
-        {/* Scheda visiva dell'esercizio — animata tramite CSS */}
-        <div className={`w-full rounded-3xl border ${theme.ring} bg-gradient-to-br ${theme.gradient} relative overflow-hidden`}
-          style={{ minHeight: '200px' }}>
-          {/* Cerchi decorativi animati di sfondo */}
-          <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full opacity-10 animate-pulse"
-            style={{ background: theme.accent }} />
-          <div className="absolute -bottom-8 -left-8 w-36 h-36 rounded-full opacity-10 animate-pulse"
-            style={{ background: theme.accent, animationDelay: '1s' }} />
-
-          {/* Contenuto centrale */}
-          <div className="relative z-10 flex flex-col items-center justify-center p-10 text-center gap-3">
-            <div className="text-7xl animate-bounce" style={{ animationDuration: '2s' }}>
-              {theme.emoji}
-            </div>
-            <p className="text-white font-black text-xl capitalize">{exercise.name}</p>
-            <div className="flex gap-2 flex-wrap justify-center mt-1">
-              {/* Difficoltà */}
-              {exercise.difficulty && (
-                <span className={`text-xs font-black uppercase tracking-wider px-3 py-1 rounded-xl border ${diffStyle.bg} ${diffStyle.text} ${diffStyle.border}`}>
-                  <Gauge size={10} className="inline mr-1" />{exercise.difficulty}
-                </span>
-              )}
-              {/* Categoria */}
-              {exercise.category && (
-                <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-xl border bg-white/10 text-white/70 border-white/10">
-                  {exercise.category}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* GIF animata (con fallback alla card CSS se non disponibile) */}
+        <ExerciseGif gifUrl={exercise.gifUrl} theme={theme} />
 
         {/* Badge: muscolo target + attrezzatura + parte del corpo */}
         <div className="flex flex-wrap gap-2">
@@ -147,20 +110,20 @@ const ExerciseDetail = () => {
           </div>
         </div>
 
-        {/* Descrizione generale — mostrata solo se presente */}
-        {exercise.description && (
+        {/* Muscolo primario sinergista — mostrato solo se presente */}
+        {exercise.muscleGroup && (
           <div className="bg-[#111827] rounded-2xl p-4 border border-white/5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: `${theme.accent}22` }}>
                 <BookOpen size={14} style={{ color: theme.accent }} />
               </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Descrizione</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Muscolo primario</p>
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">{exercise.description}</p>
+            <p className="text-sm text-slate-300 leading-relaxed capitalize">{exercise.muscleGroup}</p>
           </div>
         )}
 
-        {/* Muscoli secondari — mostrati solo se presenti */}
+        {/* Muscoli secondari */}
         {exercise.secondaryMuscles?.length > 0 && (
           <div className="bg-[#111827] rounded-2xl p-4 border border-white/5">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">Muscoli secondari</p>

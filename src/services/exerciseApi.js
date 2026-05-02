@@ -1,80 +1,74 @@
-import axios from 'axios';
+// URL base per i file raw del repository GitHub
+const GITHUB_BASE = 'https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main';
+const EXERCISES_URL = `${GITHUB_BASE}/data/exercises.json`;
 
-// Chiave di cache usata nel localStorage — così non bruciamo crediti API inutilmente
-const CACHE_KEY = 'liftly_exercises_cache';
-
-// Configurazione base di axios per ExerciseDB su RapidAPI
-const apiClient = axios.create({
-  baseURL: 'https://exercisedb.p.rapidapi.com',
-  headers: {
-    'x-rapidapi-host': 'exercisedb.p.rapidapi.com',
-    'x-rapidapi-key': import.meta.env.VITE_RAPID_API_KEY,
-  },
-});
+// Cache in memoria per la sessione corrente (non localStorage — nessun problema di ToS)
+let exercisesCache = null;
 
 /**
- * Recupera tutti gli esercizi disponibili.
- * Prima controlla il localStorage: se i dati ci sono già, li usa direttamente
- * senza fare nessuna chiamata all'API (risparmio di crediti prezioso!).
+ * Converte un record dal formato del dataset GitHub
+ * al formato usato internamente dall'app.
+ * Mantiene compatibilità con i componenti esistenti.
  */
-export const getAllExercises = async () => {
-  // Proviamo prima dalla cache locale
-  const cached = localStorage.getItem(CACHE_KEY);
-  if (cached) {
-    try {
-      return JSON.parse(cached);
-    } catch {
-      // Se il JSON è corrotto, ignoriamo e ricarichiamo dall'API
-      localStorage.removeItem(CACHE_KEY);
-    }
-  }
+const normalizeExercise = (ex) => {
+  // Le istruzioni nel dataset sono una stringa unica → le dividiamo in passi
+  const rawInstructions = ex.instructions?.en || '';
+  const steps = rawInstructions
+    .split(/\.\s+/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(s => (s.endsWith('.') ? s : `${s}.`));
 
-  // Nessuna cache trovata — scaricamento completo dall'API
-  const { data } = await apiClient.get('/exercises', {
-    params: { limit: 1300, offset: 0 },
-  });
-
-  // Salviamo tutto nel localStorage per le sessioni future
-  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-  return data;
+  return {
+    id: ex.id,
+    name: ex.name,
+    bodyPart: ex.body_part || ex.category || '',
+    category: ex.category || '',
+    equipment: ex.equipment || '',
+    target: ex.target || '',
+    muscleGroup: ex.muscle_group || '',
+    secondaryMuscles: Array.isArray(ex.secondary_muscles) ? ex.secondary_muscles : [],
+    instructions: steps,
+    // URL completi per GIF e immagine statica (pubblici, nessuna autenticazione richiesta)
+    gifUrl: ex.gif_url ? `${GITHUB_BASE}/${ex.gif_url}` : null,
+    imageUrl: ex.image ? `${GITHUB_BASE}/${ex.image}` : null,
+  };
 };
 
 /**
- * Recupera la lista delle parti del corpo disponibili.
- * Usata per popolare i chip di filtro in modo dinamico.
+ * Recupera tutti gli esercizi dal dataset GitHub.
+ * Usa una cache in memoria per evitare download ripetuti nella stessa sessione.
+ */
+export const getAllExercises = async () => {
+  if (exercisesCache) return exercisesCache;
+
+  const response = await fetch(EXERCISES_URL);
+  if (!response.ok) {
+    throw new Error(`Impossibile caricare il dataset: ${response.status}`);
+  }
+
+  const data = await response.json();
+  exercisesCache = data.map(normalizeExercise);
+  return exercisesCache;
+};
+
+/**
+ * Recupera la lista delle parti del corpo uniche.
+ * Usata per popolare i chip di filtro nella schermata Workout.
  */
 export const getBodyPartList = async () => {
-  const { data } = await apiClient.get('/exercises/bodyPartList');
-  return data;
+  const exercises = await getAllExercises();
+  const parts = [...new Set(exercises.map(ex => ex.bodyPart))]
+    .filter(Boolean)
+    .sort();
+  return parts;
 };
 
 /**
  * Recupera un singolo esercizio tramite il suo ID.
- * Prima controlla se è già presente nella cache locale per evitare
- * una chiamata extra all'API.
+ * Sfrutta la cache in memoria per non riscaricare tutto il dataset.
  */
 export const getExerciseById = async (id) => {
-  // Proviamo a trovarlo direttamente nella cache
-  const cached = localStorage.getItem(CACHE_KEY);
-  if (cached) {
-    try {
-      const exercises = JSON.parse(cached);
-      const found = exercises.find((ex) => ex.id === id);
-      if (found) return found;
-    } catch {
-      // Cache corrotta, andiamo avanti con la chiamata diretta
-    }
-  }
-
-  // Fallback: chiamata diretta all'API per questo specifico esercizio
-  const { data } = await apiClient.get(`/exercises/exercise/${id}`);
-  return data;
-};
-
-/**
- * Svuota la cache locale degli esercizi.
- * Utile per forzare un aggiornamento fresco dall'API.
- */
-export const clearExerciseCache = () => {
-  localStorage.removeItem(CACHE_KEY);
+  const exercises = await getAllExercises();
+  return exercises.find(ex => ex.id === id) ?? null;
 };
