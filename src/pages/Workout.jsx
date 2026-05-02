@@ -195,7 +195,7 @@ const Workout = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 relative">
+    <div className="flex flex-col h-full bg-[#040810] relative">
 
       {/* Toast Notification */}
       {toastMessage && (
@@ -205,12 +205,13 @@ const Workout = () => {
       )}
 
       {/* Sticky Header */}
-      <div className="bg-white border-b border-slate-100 sticky top-0 z-20 shadow-sm">
-        <div className="px-5 pt-12 pb-3">
-          <h1 className="text-2xl font-black text-liftly-navy mb-4 tracking-tight">Workout Hub</h1>
+      <div className="bg-liftly-navy border-b border-white/5 sticky top-0 z-20">
+        <div className="px-5 pt-12 pb-3 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#00d4aa]/10 rounded-full blur-3xl -mr-8 -mt-8" />
+          <h1 className="text-2xl font-black text-white mb-4 tracking-tight relative z-10">Workout Hub</h1>
 
           {/* Tabs */}
-          <div className="flex bg-slate-100 p-1 rounded-2xl gap-1">
+          <div className="flex bg-white/5 p-1 rounded-2xl gap-1 relative z-10">
             {TABS.map(({ key, icon, label }) => (
               <button
                 key={key}
@@ -218,8 +219,8 @@ const Workout = () => {
                 className={clsx(
                   'flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all duration-200',
                   activeTab === key
-                    ? 'bg-white text-liftly-teal shadow-sm'
-                    : 'text-slate-400 hover:text-slate-600'
+                    ? 'bg-white/10 text-[#00d4aa] shadow-sm'
+                    : 'text-white/30 hover:text-white/60'
                 )}
               >
                 {icon} {label}
@@ -251,11 +252,11 @@ const Workout = () => {
               </div>
             )}
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
               <input
                 type="text"
                 placeholder="Search exercises or muscles…"
-                className="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all"
+                className="w-full h-11 bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#00d4aa] focus:ring-1 focus:ring-[#00d4aa] transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -268,8 +269,8 @@ const Workout = () => {
                   className={clsx(
                     'px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 border transition-all active:scale-95 capitalize',
                     muscleFilter === f
-                      ? 'bg-liftly-teal text-white border-liftly-teal shadow-teal'
-                      : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300'
+                      ? 'bg-[#00d4aa] text-[#040810] border-[#00d4aa]'
+                      : 'bg-white/5 text-white/50 border-white/10 hover:border-white/20'
                   )}
                 >
                   {f}
@@ -281,26 +282,26 @@ const Workout = () => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar pb-[80px]">
 
         {/* ── My Split ── */}
         {activeTab === 'split' && (
           <div className="animate-fade-in space-y-4">
             <div className="flex justify-between items-center mt-2">
-              <h2 className="font-black text-lg text-slate-800">Your Routines</h2>
-              <button onClick={() => setShowNewRoutineModal(true)} className="bg-liftly-navy text-white px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 active:scale-95 transition-all">
+              <h2 className="font-black text-lg text-white">Your Routines</h2>
+              <button onClick={() => setShowNewRoutineModal(true)} className="bg-white/10 text-white px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 active:scale-95 transition-all border border-white/10">
                 <Plus size={14} /> New
               </button>
             </div>
 
             {activeSplit.length === 0 ? (
-              <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-card mt-4">
-                <div className="w-16 h-16 bg-liftly-teal/10 text-liftly-teal rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <div className="bg-[#0D1526] rounded-3xl p-10 text-center border border-white/5 mt-4">
+                <div className="w-16 h-16 bg-[#00d4aa]/10 text-[#00d4aa] rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/5">
                   <Dumbbell size={28} />
                 </div>
-                <h3 className="font-black text-lg text-slate-800 mb-2">No Routines Yet</h3>
-                <p className="text-slate-400 text-sm">Create a custom routine to start building your workout plan.</p>
-                <button onClick={() => setShowNewRoutineModal(true)} className="mt-6 px-6 py-3 bg-liftly-teal text-white font-black rounded-2xl active:scale-95 transition-all shadow-teal">
+                <h3 className="font-black text-lg text-white mb-2">No Routines Yet</h3>
+                <p className="text-white/40 text-sm">Create a custom routine to start building your workout plan.</p>
+                <button onClick={() => setShowNewRoutineModal(true)} className="mt-6 px-6 py-3 bg-[#00d4aa] text-[#040810] font-black rounded-2xl active:scale-95 transition-all">
                   Create Routine
                 </button>
               </div>
@@ -309,17 +310,17 @@ const Workout = () => {
                 {activeSplit.map((dayName, idx) => {
                   const dayExercises = customRoutines[dayName] || [];
                   return (
-                    <div key={idx} className="bg-white rounded-3xl border border-slate-100 shadow-card overflow-hidden">
-                      <div className="px-5 py-4 border-b border-slate-50 flex justify-between items-center">
+                    <div key={idx} className="bg-[#0D1526] rounded-3xl border border-white/5 overflow-hidden">
+                      <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center">
                         <div>
-                          <h3 className="font-black text-slate-800">{dayName}</h3>
-                          <p className="text-xs text-slate-400 font-semibold">{dayExercises.length} exercise{dayExercises.length !== 1 ? 's' : ''}</p>
+                          <h3 className="font-black text-white">{dayName}</h3>
+                          <p className="text-xs text-white/40 font-semibold">{dayExercises.length} exercise{dayExercises.length !== 1 ? 's' : ''}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           {dayExercises.length > 0 && (
-                            <span className="text-[10px] font-black text-liftly-teal bg-liftly-teal/10 px-2 py-0.5 rounded-lg">Active</span>
+                            <span className="text-[10px] font-black text-[#00d4aa] bg-[#00d4aa]/10 px-2 py-0.5 rounded-lg border border-[#00d4aa]/20">Active</span>
                           )}
-                          <button onClick={() => handleDeleteRoutine(dayName)} className="w-8 h-8 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
+                          <button onClick={() => handleDeleteRoutine(dayName)} className="w-8 h-8 rounded-xl text-white/20 hover:text-red-400 hover:bg-red-500/10 flex items-center justify-center transition-colors">
                             <Trash2 size={14} />
                           </button>
                         </div>
@@ -331,17 +332,17 @@ const Workout = () => {
                             const ex = exercisesData.find(e => e.id === exId);
                             if (!ex) return null;
                             return (
-                              <div key={exId} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                                <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0">
-                                  <Dumbbell size={15} className="text-slate-400" />
+                              <div key={exId} className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
+                                <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                  <Dumbbell size={15} className="text-white/30" />
                                 </div>
                                 <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/workout/exercise/${ex.id}`)}>
-                                  <p className="text-sm font-bold text-slate-700 truncate capitalize">{ex.name}</p>
+                                  <p className="text-sm font-bold text-white truncate capitalize">{ex.name}</p>
                                   <span className={`text-[9px] uppercase font-black px-1.5 py-0.5 rounded-md ${getMuscleColor(ex.bodyPart)}`}>{ex.bodyPart}</span>
                                 </div>
                                 <button
                                   onClick={() => removeExercise(dayName, exId)}
-                                  className="w-8 h-8 rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
+                                  className="w-8 h-8 rounded-xl text-white/20 hover:text-red-400 hover:bg-red-500/10 flex items-center justify-center transition-colors"
                                 >
                                   <Trash2 size={14} />
                                 </button>
@@ -349,9 +350,9 @@ const Workout = () => {
                             );
                           })
                         ) : (
-                          <div className="p-4 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 text-center">
-                            <p className="text-sm text-slate-400 font-semibold">No exercises added yet</p>
-                            <p className="text-xs text-slate-300 mt-0.5">Tap below to add exercises to this routine</p>
+                          <div className="p-4 rounded-2xl bg-white/5 border-2 border-dashed border-white/10 text-center">
+                            <p className="text-sm text-white/40 font-semibold">No exercises added yet</p>
+                            <p className="text-xs text-white/20 mt-0.5">Tap below to add exercises to this routine</p>
                           </div>
                         )}
                         <button
@@ -359,7 +360,7 @@ const Workout = () => {
                             setTargetRoutineForAdd(dayName);
                             setActiveTab('exercises');
                           }}
-                          className="w-full mt-2 py-3 border-2 border-dashed border-liftly-teal/30 text-liftly-teal font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-liftly-teal/5 transition-colors active:scale-[0.98]"
+                          className="w-full mt-2 py-3 border-2 border-dashed border-[#00d4aa]/30 text-[#00d4aa] font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-[#00d4aa]/5 transition-colors active:scale-[0.98]"
                         >
                           <Plus size={16} /> Add Exercises
                         </button>
@@ -377,8 +378,8 @@ const Workout = () => {
           <div className="animate-fade-in space-y-3">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="w-10 h-10 text-liftly-teal animate-spin mb-4" />
-                <p className="text-slate-500 font-bold">Caricamento esercizi...</p>
+                <Loader2 className="w-10 h-10 text-[#00d4aa] animate-spin mb-4" />
+                <p className="text-white/40 font-bold">Caricamento esercizi...</p>
               </div>
             ) : (
               <>
@@ -386,22 +387,22 @@ const Workout = () => {
                   const isFav = favorites.includes(exercise.id);
                   const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
                   return (
-                    <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-                        <Dumbbell size={18} className="text-slate-300" />
+                    <div key={exercise.id} className="bg-[#0D1526] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                      <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
+                        <Dumbbell size={18} className="text-white/20" />
                       </div>
                       <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/workout/exercise/${exercise.id}`)}>
-                        <h3 className="font-black text-slate-800 text-sm truncate capitalize">{exercise.name}</h3>
+                        <h3 className="font-black text-white text-sm truncate capitalize">{exercise.name}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${getMuscleColor(exercise.bodyPart)}`}>{exercise.bodyPart}</span>
-                          <span className="text-[10px] font-semibold text-slate-300 capitalize">{exercise.equipment}</span>
+                          <span className="text-[10px] font-semibold text-white/25 capitalize">{exercise.equipment}</span>
                         </div>
                       </div>
                       <button
                         onClick={() => toggleFavorite(exercise.id)}
-                        className={clsx('w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0', isFav ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-300 hover:text-red-400')}
+                        className={clsx('w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0', isFav ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/20 hover:text-red-400')}
                       >
-                        <Heart size={17} className={isFav ? 'fill-red-500' : ''} />
+                        <Heart size={17} className={isFav ? 'fill-red-400' : ''} />
                       </button>
                       <button
                         onClick={() => {
@@ -414,8 +415,8 @@ const Workout = () => {
                         className={clsx(
                           "w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 shrink-0",
                           isInRoutine
-                            ? "bg-emerald-50 text-emerald-500 border border-emerald-100"
-                            : "bg-liftly-navy text-white shadow-navy"
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/20"
+                            : "bg-[#00d4aa] text-[#040810]"
                         )}
                       >
                         {isInRoutine ? <Check size={17} /> : <Plus size={17} />}
@@ -425,9 +426,9 @@ const Workout = () => {
                 })}
                 {filteredExercises.length === 0 && (
                   <div className="text-center py-12">
-                    <Dumbbell className="mx-auto text-slate-200 w-12 h-12 mb-3" />
-                    <p className="text-slate-400 font-bold">No exercises found</p>
-                    <p className="text-slate-300 text-sm">Try a different search or filter</p>
+                    <Dumbbell className="mx-auto text-white/10 w-12 h-12 mb-3" />
+                    <p className="text-white/40 font-bold">No exercises found</p>
+                    <p className="text-white/20 text-sm">Try a different search or filter</p>
                   </div>
                 )}
               </>
@@ -439,27 +440,27 @@ const Workout = () => {
         {activeTab === 'favorites' && (
           <div className="animate-fade-in space-y-3">
             {favoriteExercises.length === 0 ? (
-              <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-card">
-                <div className="w-14 h-14 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+              <div className="bg-[#0D1526] rounded-3xl p-10 text-center border border-white/5">
+                <div className="w-14 h-14 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/5">
                   <Heart size={24} className="text-red-400" />
                 </div>
-                <h3 className="font-black text-slate-800 mb-2">No favorites yet</h3>
-                <p className="text-slate-400 text-sm">Tap the heart on any exercise to save it here.</p>
+                <h3 className="font-black text-white mb-2">No favorites yet</h3>
+                <p className="text-white/40 text-sm">Tap the heart on any exercise to save it here.</p>
               </div>
             ) : (
               favoriteExercises.map(exercise => {
                 const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
                 return (
-                  <div key={exercise.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-card flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
+                  <div key={exercise.id} className="bg-[#0D1526] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                    <div className="w-11 h-11 rounded-2xl bg-red-500/10 flex items-center justify-center shrink-0 border border-red-500/20">
                       <Heart size={18} className="text-red-400 fill-red-400" />
                     </div>
                     <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/workout/exercise/${exercise.id}`)}>
-                      <h3 className="font-black text-slate-800 text-sm truncate capitalize">{exercise.name}</h3>
+                      <h3 className="font-black text-white text-sm truncate capitalize">{exercise.name}</h3>
                       <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${getMuscleColor(exercise.bodyPart)}`}>{exercise.bodyPart}</span>
                     </div>
-                    <button onClick={() => toggleFavorite(exercise.id)} className="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center active:scale-90 transition-all">
-                      <Heart size={17} className="fill-red-500" />
+                    <button onClick={() => toggleFavorite(exercise.id)} className="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center active:scale-90 transition-all border border-red-500/20">
+                      <Heart size={17} className="fill-red-400" />
                     </button>
                     <button
                       onClick={() => {
@@ -472,8 +473,8 @@ const Workout = () => {
                       className={clsx(
                         "w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 shrink-0",
                         isInRoutine
-                          ? "bg-emerald-50 text-emerald-500 border border-emerald-100"
-                          : "bg-liftly-navy text-white shadow-navy"
+                          ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/20"
+                          : "bg-[#00d4aa] text-[#040810]"
                       )}
                     >
                       {isInRoutine ? <Check size={17} /> : <Plus size={17} />}
@@ -488,26 +489,26 @@ const Workout = () => {
 
       {/* Add To Routine Modal */}
       {addingExerciseId && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
-            <div className="w-8 h-1 bg-slate-200 rounded-full mx-auto mb-5" />
-            <h3 className="text-xl font-black text-slate-800 mb-1">Add to Routine</h3>
-            <p className="text-slate-400 text-sm mb-5">Which day in your split?</p>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-3xl p-6 shadow-2xl animate-slide-up">
+            <div className="w-8 h-1 bg-white/10 rounded-full mx-auto mb-5" />
+            <h3 className="text-xl font-black text-white mb-1">Add to Routine</h3>
+            <p className="text-white/40 text-sm mb-5">Which day in your split?</p>
             <div className="space-y-2.5 max-h-[55vh] overflow-y-auto no-scrollbar">
               {activeSplit?.map((dayName, idx) => (
                 <button
                   key={idx}
                   onClick={() => saveToRoutine(dayName)}
-                  className="w-full flex items-center gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-liftly-teal/5 border border-slate-100 hover:border-liftly-teal/20 transition-all active:scale-[0.98] text-left"
+                  className="w-full flex items-center gap-3 p-4 rounded-2xl bg-white/5 hover:bg-[#00d4aa]/5 border border-white/5 hover:border-[#00d4aa]/20 transition-all active:scale-[0.98] text-left"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-liftly-teal/10 flex items-center justify-center">
-                    <Plus size={16} className="text-liftly-teal" />
+                  <div className="w-9 h-9 rounded-xl bg-[#00d4aa]/10 flex items-center justify-center">
+                    <Plus size={16} className="text-[#00d4aa]" />
                   </div>
-                  <span className="font-black text-slate-700">{dayName}</span>
+                  <span className="font-black text-white">{dayName}</span>
                 </button>
               ))}
             </div>
-            <button onClick={() => setAddingExerciseId(null)} className="w-full mt-5 py-4 rounded-2xl font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">
+            <button onClick={() => setAddingExerciseId(null)} className="w-full mt-5 py-4 rounded-2xl font-bold text-white/40 bg-white/5 hover:bg-white/10 transition-colors text-sm">
               Cancel
             </button>
           </div>
@@ -516,23 +517,23 @@ const Workout = () => {
 
       {/* Create New Routine Modal */}
       {showNewRoutineModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
-            <h3 className="text-xl font-black text-slate-800 mb-1">New Routine</h3>
-            <p className="text-slate-400 text-sm mb-5">Give your custom routine a name.</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-3xl p-6 shadow-2xl animate-slide-up">
+            <h3 className="text-xl font-black text-white mb-1">New Routine</h3>
+            <p className="text-white/40 text-sm mb-5">Give your custom routine a name.</p>
             <input
               type="text"
               autoFocus
               placeholder="e.g. Chest & Tris, Upper Body"
               value={newRoutineName}
               onChange={e => setNewRoutineName(e.target.value)}
-              className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm text-slate-800 font-semibold focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all mb-5"
+              className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white font-semibold placeholder:text-white/30 focus:outline-none focus:border-[#00d4aa] focus:ring-1 focus:ring-[#00d4aa] transition-all mb-5"
             />
             <div className="flex gap-3">
-              <button onClick={() => setShowNewRoutineModal(false)} className="flex-1 py-4 rounded-2xl font-bold text-slate-400 bg-slate-50 hover:bg-slate-100 transition-colors text-sm">
+              <button onClick={() => setShowNewRoutineModal(false)} className="flex-1 py-4 rounded-2xl font-bold text-white/40 bg-white/5 hover:bg-white/10 transition-colors text-sm">
                 Cancel
               </button>
-              <button onClick={handleCreateRoutine} className="flex-1 py-4 rounded-2xl font-bold text-white bg-liftly-teal hover:bg-teal-400 transition-colors shadow-teal text-sm">
+              <button onClick={handleCreateRoutine} className="flex-1 py-4 rounded-2xl font-bold text-[#040810] bg-[#00d4aa] hover:bg-[#00b894] transition-colors text-sm">
                 Create
               </button>
             </div>
