@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { createPortal } from 'react-dom';
 import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare, Bell } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -315,9 +316,9 @@ const Dashboard = () => {
       </div>
 
       {/* Split Day Picker Modal */}
-      {showSplitPicker && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
+      {showSplitPicker && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[480px] mx-auto rounded-4xl p-6 shadow-2xl animate-slide-up">
             <div className="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6" />
             <h3 className="text-xl font-black text-white mb-1">What are we hitting?</h3>
             <p className="text-white/40 text-sm mb-5">Select today's training day</p>
@@ -351,7 +352,8 @@ const Dashboard = () => {
               Cancel
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
 

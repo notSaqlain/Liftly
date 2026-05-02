@@ -8,6 +8,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 import { Dumbbell, Trophy, TrendingUp, CalendarDays, Radar as RadarIcon, Target, Flame, Clock, ChevronDown } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import exercisesData from '../data/exercises.json';
 
 const MUSCLE_GROUPS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core'];
@@ -26,6 +27,7 @@ const Stats = () => {
   const [progressData, setProgressData] = useState([]);
   const [visibleHistory, setVisibleHistory] = useState(5);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+  const [showMuscleDetails, setShowMuscleDetails] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -81,7 +83,7 @@ const Stats = () => {
           });
         });
         const maxSets = Math.max(...Object.values(muscleCount), 1);
-        setMuscleGroupData(MUSCLE_GROUPS.map(m => ({ muscle: m, value: Math.round((muscleCount[m] / maxSets) * 100) })));
+        setMuscleGroupData(MUSCLE_GROUPS.map(m => ({ muscle: m, value: Math.round((muscleCount[m] / maxSets) * 100), rawSets: muscleCount[m] })));
 
       } catch (err) {
         console.error('Error fetching stats:', err);
@@ -216,17 +218,34 @@ const Stats = () => {
                 </div>
                 <span className="text-[10px] font-bold bg-purple-500/10 border border-white/5 text-purple-400 px-2.5 py-1 rounded-lg">All Time</span>
               </div>
-              <div className="h-60 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="75%" data={muscleGroupData}>
-                    <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                    <PolarAngleAxis dataKey="muscle" tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 700 }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                    <Radar name="Volume" dataKey="value" stroke="#a855f7" fill="#a855f7" fillOpacity={0.35} strokeWidth={2.5} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="text-center text-[10px] text-white/30 uppercase tracking-widest font-bold mt-1">Training distribution</p>
+              {!showMuscleDetails ? (
+                <div className="h-60 w-full animate-fade-in">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="75%" data={muscleGroupData}>
+                      <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                      <PolarAngleAxis dataKey="muscle" tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 700 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                      <Radar name="Volume" dataKey="value" stroke="#a855f7" fill="#a855f7" fillOpacity={0.35} strokeWidth={2.5} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-60 w-full overflow-y-auto no-scrollbar animate-fade-in space-y-2 pt-2">
+                  {muscleGroupData.map(item => (
+                    <div key={item.muscle} className="flex justify-between items-center bg-white/5 p-3 rounded-2xl border border-white/5">
+                      <span className="font-bold text-white text-sm">{item.muscle}</span>
+                      <span className="font-black text-purple-400 text-sm">{item.rawSets} <span className="text-white/40 text-[10px] uppercase font-bold tracking-widest ml-1">sets</span></span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <button 
+                onClick={() => setShowMuscleDetails(!showMuscleDetails)}
+                className="w-full text-center text-[10px] text-white/50 hover:text-white uppercase tracking-widest font-bold mt-4 transition-colors py-2.5 active:scale-95 bg-white/5 rounded-xl border border-white/5"
+              >
+                {showMuscleDetails ? 'View Graph' : 'View Detailed Sets'}
+              </button>
             </div>
 
             {/* Progress Line Chart */}
@@ -333,9 +352,9 @@ const Stats = () => {
       </div>
 
       {/* Workout Details Modal */}
-      {selectedWorkout && (
+      {selectedWorkout && createPortal(
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 pb-8 sm:pb-4 animate-fade-in" onClick={() => setSelectedWorkout(null)}>
-          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[480px] mx-auto rounded-4xl p-6 shadow-2xl animate-slide-up flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
             <div className="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6 shrink-0" />
             <div className="flex justify-between items-start mb-6 shrink-0">
               <div>
@@ -375,7 +394,8 @@ const Stats = () => {
               Close
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

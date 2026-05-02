@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { createPortal } from 'react-dom';
 import { db } from '../firebase';
 import { doc, updateDoc, arrayUnion, arrayRemove, deleteField } from 'firebase/firestore';
 import { getAllExercises, getBodyPartList } from '../services/exerciseApi';
@@ -504,9 +505,9 @@ const Workout = () => {
       </div>
 
       {/* Add To Routine Modal */}
-      {addingExerciseId && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-3xl p-6 shadow-2xl animate-slide-up">
+      {addingExerciseId && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[480px] mx-auto rounded-3xl p-6 shadow-2xl animate-slide-up">
             <div className="w-8 h-1 bg-white/10 rounded-full mx-auto mb-5" />
             <h3 className="text-xl font-black text-white mb-1">Add to Routine</h3>
             <p className="text-white/40 text-sm mb-5">Which day in your split?</p>
@@ -528,13 +529,14 @@ const Workout = () => {
               Cancel
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Create New Routine Modal */}
-      {showNewRoutineModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-3xl p-6 shadow-2xl animate-slide-up">
+      {showNewRoutineModal && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-[#0D1526] border border-white/10 w-full max-w-[480px] mx-auto rounded-3xl p-6 shadow-2xl animate-slide-up">
             <h3 className="text-xl font-black text-white mb-1">New Routine</h3>
             <p className="text-white/40 text-sm mb-5">Give your custom routine a name.</p>
             <input

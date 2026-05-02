@@ -207,7 +207,7 @@ const GymChallenges = () => {
       </div>
 
       {logModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
           <div className="bg-[#0D1526] border border-white/10 w-full max-w-[400px] rounded-4xl p-6 shadow-2xl animate-slide-up">
             <h3 className="text-xl font-black text-white mb-1">{logModal.title}</h3>
             <p className="text-white/40 text-sm mb-6">Enter your total {logModal.metric}</p>

@@ -184,7 +184,7 @@ const TrainerHub = () => {
       </div>
 
       {selectedTrainer && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-[#040810] animate-slide-up">
+        <div className="fixed inset-0 z-[100] flex flex-col bg-[#040810] animate-slide-up">
           <div className="relative h-64 shrink-0">
             {selectedTrainer.photoURL ? (
               <img src={selectedTrainer.photoURL} alt={selectedTrainer.name} className="w-full h-full object-cover" />

@@ -152,7 +152,7 @@ const GymEquipment = () => {
       </div>
 
       {selectedEq && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-[#0D1526] w-full max-w-[400px] rounded-4xl p-6 shadow-2xl border border-white/10 animate-slide-up">
             <div className="flex justify-between items-start mb-6">
               <div>
