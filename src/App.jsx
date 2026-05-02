@@ -17,8 +17,19 @@ import BmiCalculator from './pages/tools/BmiCalculator';
 import CalorieGoals from './pages/tools/CalorieGoals';
 import WeightTracker from './pages/tools/WeightTracker';
 import ActiveWorkout from './pages/ActiveWorkout';
-import LiftChat from './pages/LiftChat';
+import GroupChat from './pages/GroupChat';
 import Leaderboard from './pages/Leaderboard';
+
+// B2B Pages
+import GymEquipment from './pages/GymEquipment';
+import TrainerHub from './pages/TrainerHub';
+import GymChallenges from './pages/GymChallenges';
+import GymSupport from './pages/GymSupport';
+import MyPlan from './pages/MyPlan';
+import ChatHub from './pages/ChatHub';
+import UserSearch from './pages/UserSearch';
+import DMConversation from './pages/DMConversation';
+import SeedFirestore from './pages/tools/SeedFirestore';
 
 // 404
 const NotFound = () => (
@@ -51,7 +62,8 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/workout" element={<Workout />} />
             <Route path="/stats" element={<Stats />} />
-            <Route path="/chat" element={<LiftChat />} />
+            <Route path="/chat" element={<ChatHub />} />
+            <Route path="/chat/group/:mode" element={<GroupChat />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<AccountSettings />} />
@@ -61,6 +73,16 @@ function App() {
             <Route path="/tools/bmi" element={<BmiCalculator />} />
             <Route path="/tools/calories" element={<CalorieGoals />} />
             <Route path="/tools/weight" element={<WeightTracker />} />
+
+            {/* B2B Pages */}
+            <Route path="/gym/equipment" element={<GymEquipment />} />
+            <Route path="/gym/trainers" element={<TrainerHub />} />
+            <Route path="/gym/challenges" element={<GymChallenges />} />
+            <Route path="/gym/support" element={<GymSupport />} />
+            <Route path="/my-plan" element={<MyPlan />} />
+            <Route path="/messages/search" element={<UserSearch />} />
+            <Route path="/messages/:conversationId" element={<DMConversation />} />
+            <Route path="/dev/seed" element={<SeedFirestore />} />
           </Route>
 
           {/* 404 */}

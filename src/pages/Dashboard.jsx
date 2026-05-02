@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy } from 'lucide-react';
+import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -90,10 +90,13 @@ const Dashboard = () => {
 
   // Real-time crowd status consensus — last 4 hours
   useEffect(() => {
+    if (!userData?.gymId) return; // Only fetch if gymId is set
+
     const cutoff = new Date(Date.now() - 4 * 60 * 60 * 1000);
     const q = query(
       collection(db, 'gym_status'),
-      where('timestamp', '>=', Timestamp.fromDate(cutoff))
+      where('timestamp', '>=', Timestamp.fromDate(cutoff)),
+      where('gymId', '==', userData.gymId)
     );
     const unsub = onSnapshot(q, (snap) => {
       if (snap.empty) { setCrowdConsensus(null); return; }
@@ -107,7 +110,7 @@ const Dashboard = () => {
       setCrowdConsensus({ status: majority, total });
     });
     return () => unsub();
-  }, []);
+  }, [userData?.gymId]);
 
   const calendarDays = useMemo(() => {
     const firstDay = new Date(calendarYear, calendarMonth, 1);
@@ -138,6 +141,7 @@ const Dashboard = () => {
       await addDoc(collection(db, 'gym_status'), {
         status,
         reportedBy: currentUser.uid,
+        gymId: userData?.gymId || null,
         timestamp: serverTimestamp(),
       });
       setReportedStatus(true);
@@ -183,7 +187,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-slate-50 min-h-full animate-fade-in">
+    <div className="bg-[#040810] min-h-full animate-fade-in">
 
       {/* ── Header ── */}
       <div className="bg-liftly-navy px-6 pt-12 pb-8 relative overflow-hidden">
@@ -217,6 +221,9 @@ const Dashboard = () => {
               </div>
               <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Wk Streak</span>
             </div>
+            <button onClick={() => navigate('/chat')} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all relative">
+              <MessageSquare size={20} />
+            </button>
             <button onClick={() => setShowQuickTools(true)} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all">
               <Menu size={22} />
             </button>
@@ -264,9 +271,65 @@ const Dashboard = () => {
           </div>
         </button>
 
+        {/* ── Gym Hub Card ── */}
+        {userData.gymId ? (
+          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-liftly-teal/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="font-black text-white text-lg leading-tight">{userData.gymName}</h3>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className={`w-2 h-2 rounded-full ${crowdConsensus?.status === 'LOW' ? 'bg-emerald-500' : crowdConsensus?.status === 'MEDIUM' ? 'bg-amber-500' : crowdConsensus?.status === 'HIGH' ? 'bg-red-500' : 'bg-slate-500'}`} />
+                    <p className="text-xs font-bold text-white/50">
+                      {crowdConsensus ? `${CROWD_OPTIONS.find(o => o.key === crowdConsensus.status)?.label} right now` : 'No crowd data yet'}
+                    </p>
+                  </div>
+                </div>
+                <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 shrink-0">
+                  <Building2 size={20} className="text-liftly-teal" />
+                </div>
+              </div>
 
-
-        {/* ── Recent Workouts ── */}
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                <button onClick={() => navigate('/gym/equipment')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                  <Dumbbell size={16} className="text-liftly-teal mb-2" />
+                  <p className="font-bold text-white text-sm">Equipment</p>
+                  <p className="text-[10px] text-white/40">Status & Reports</p>
+                </button>
+                <button onClick={() => navigate('/gym/trainers')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                  <Users size={16} className="text-purple-400 mb-2" />
+                  <p className="font-bold text-white text-sm">Trainers</p>
+                  <p className="text-[10px] text-white/40">Book & Message</p>
+                </button>
+                <button onClick={() => navigate('/gym/challenges')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                  <Target size={16} className="text-orange-400 mb-2" />
+                  <p className="font-bold text-white text-sm">Challenges</p>
+                  <p className="text-[10px] text-white/40">Join & Compete</p>
+                </button>
+                <button onClick={() => navigate('/gym/support')} className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl text-left transition-all border border-white/5">
+                  <ShieldAlert size={16} className="text-blue-400 mb-2" />
+                  <p className="font-bold text-white text-sm">Support</p>
+                  <p className="text-[10px] text-white/40">Contact Staff</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center shrink-0">
+              <MapPin size={24} className="text-liftly-teal" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-black text-white text-sm">No Gym Selected</h3>
+              <p className="text-xs text-white/40 mt-0.5">Link your gym to unlock local features.</p>
+            </div>
+            <button onClick={() => navigate('/personal-info')} className="px-4 py-2 bg-liftly-teal text-white text-xs font-black rounded-xl active:scale-95 transition-all">
+              Link →
+            </button>
+          </div>
+        )}
         {recentWorkouts.length > 0 && (
           <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100/80">
             <div className="flex items-center justify-between mb-4">
@@ -302,22 +365,22 @@ const Dashboard = () => {
         )}
 
         {/* ── Workout Calendar ── */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100/80">
+        <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
                 <Calendar size={14} className="text-blue-500" />
               </div>
-              <h3 className="font-black text-slate-800 text-sm">Workout Calendar</h3>
+              <h3 className="font-black text-white text-sm">Workout Calendar</h3>
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={prevMonth} className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+              <button onClick={prevMonth} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 active:scale-90 transition-all">
                 <ChevronLeft size={14} />
               </button>
-              <span className="text-xs font-bold text-slate-600 min-w-[110px] text-center">
+              <span className="text-xs font-bold text-white min-w-[110px] text-center">
                 {MONTHS[calendarMonth]} {calendarYear}
               </span>
-              <button onClick={nextMonth} className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+              <button onClick={nextMonth} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 active:scale-90 transition-all">
                 <ChevronRight size={14} />
               </button>
             </div>
@@ -325,7 +388,7 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-7 gap-1 mb-1">
             {DAYS.map(d => (
-              <div key={d} className="text-center text-[9px] font-black uppercase tracking-wider text-slate-300 py-1">{d}</div>
+              <div key={d} className="text-center text-[9px] font-black uppercase tracking-wider text-white/30 py-1">{d}</div>
             ))}
           </div>
 
@@ -339,97 +402,106 @@ const Dashboard = () => {
                   key={day}
                   className={`relative aspect-square flex items-center justify-center rounded-xl text-xs font-bold transition-all ${
                     isToday
-                      ? 'bg-liftly-navy text-white shadow-navy'
+                      ? 'bg-liftly-teal text-liftly-navy'
                       : hasWorkout
                       ? 'bg-liftly-teal/15 text-liftly-teal'
-                      : 'text-slate-400'
+                      : 'text-white/40'
                   }`}
                 >
                   {day}
                   {hasWorkout && !isToday && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-liftly-teal" />}
-                  {hasWorkout && isToday && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white" />}
+                  {hasWorkout && isToday && <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-liftly-navy" />}
                 </div>
               );
             })}
           </div>
 
-          <div className="flex items-center justify-center gap-5 mt-4 pt-3 border-t border-slate-50">
+          <div className="flex items-center justify-center gap-5 mt-4 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm bg-liftly-navy" />
-              <span className="text-[10px] font-semibold text-slate-400">Today</span>
+              <div className="w-2.5 h-2.5 rounded-sm bg-liftly-teal" />
+              <span className="text-[10px] font-semibold text-white/40">Today</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 rounded-sm bg-liftly-teal/30" />
-              <span className="text-[10px] font-semibold text-slate-400">Worked out</span>
+              <span className="text-[10px] font-semibold text-white/40">Worked out</span>
             </div>
           </div>
         </div>
 
         {/* ── Gym Crowd Status ── */}
-        <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100/80">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Users size={14} className="text-blue-500" />
+        {userData.gymId && (
+          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <Users size={14} className="text-blue-500" />
+              </div>
+              <h3 className="font-black text-white text-sm">Gym Crowd Status</h3>
             </div>
-            <h3 className="font-black text-slate-800 text-sm">Gym Crowd Status</h3>
-          </div>
 
-          {/* Live Consensus */}
-          {(() => {
-            const opt = crowdConsensus ? CROWD_OPTIONS.find(o => o.key === crowdConsensus.status) : null;
-            return (
-              <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-3 w-3">
-                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-400' : opt.key === 'MEDIUM' ? 'bg-amber-400' : 'bg-red-400') : 'bg-slate-300'}`} />
-                    <span className={`relative inline-flex rounded-full h-3 w-3 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-500' : opt.key === 'MEDIUM' ? 'bg-amber-500' : 'bg-red-500') : 'bg-slate-300'}`} />
-                  </span>
-                  <span className="text-xs font-bold text-slate-600">
-                    {crowdConsensus ? `Community Consensus (${crowdConsensus.total} report${crowdConsensus.total !== 1 ? 's' : ''}):` : 'No reports in last 4h'}
-                  </span>
+            {/* Live Consensus */}
+            {(() => {
+              const opt = crowdConsensus ? CROWD_OPTIONS.find(o => o.key === crowdConsensus.status) : null;
+              return (
+                <div className="bg-white/5 border border-white/5 p-4 rounded-2xl mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-3 w-3">
+                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-400' : opt.key === 'MEDIUM' ? 'bg-amber-400' : 'bg-red-400') : 'bg-white/20'}`} />
+                      <span className={`relative inline-flex rounded-full h-3 w-3 ${opt ? (opt.key === 'LOW' ? 'bg-emerald-500' : opt.key === 'MEDIUM' ? 'bg-amber-500' : 'bg-red-500') : 'bg-white/30'}`} />
+                    </span>
+                    <span className="text-xs font-bold text-white/70">
+                      {crowdConsensus ? `Community Consensus (${crowdConsensus.total} report${crowdConsensus.total !== 1 ? 's' : ''}):` : 'No reports in last 4h'}
+                    </span>
+                  </div>
+                  {opt ? (
+                    <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${
+                      opt.key === 'LOW' ? 'bg-emerald-500/20 text-emerald-400' :
+                      opt.key === 'MEDIUM' ? 'bg-amber-500/20 text-amber-400' :
+                      'bg-red-500/20 text-red-400'
+                    }`}>{opt.emoji} {opt.label}</span>
+                  ) : (
+                    <span className="px-2 py-1 bg-white/5 text-white/40 text-[10px] font-black uppercase tracking-widest rounded-lg">— No data</span>
+                  )}
                 </div>
-                {opt ? (
-                  <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${
-                    opt.key === 'LOW' ? 'bg-emerald-100 text-emerald-700' :
-                    opt.key === 'MEDIUM' ? 'bg-amber-100 text-amber-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>{opt.emoji} {opt.label}</span>
-                ) : (
-                  <span className="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-lg">— No data</span>
-                )}
-              </div>
-            );
-          })()}
+              );
+            })()}
 
-          {reportedStatus ? (
-            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-                <CheckCircle2 size={20} className="text-emerald-500" />
+            {reportedStatus ? (
+              <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0">
+                  <CheckCircle2 size={20} className="text-emerald-500" />
+                </div>
+                <div>
+                  <p className="font-bold text-emerald-400 text-sm">Thanks for reporting!</p>
+                  <p className="text-emerald-500/70 text-xs">Your update helps the community.</p>
+                </div>
               </div>
-              <div>
-                <p className="font-bold text-emerald-700 text-sm">Thanks for reporting!</p>
-                <p className="text-emerald-600/70 text-xs">Your update helps the community.</p>
-              </div>
-            </div>
-          ) : (
-            <>
-              <p className="text-slate-400 text-xs font-medium mb-4">How crowded is your gym right now?</p>
-              <div className="grid grid-cols-3 gap-3">
-                {CROWD_OPTIONS.map(({ key, emoji, label, sub, color }) => (
-                  <button
-                    key={key}
-                    onClick={() => reportCrowd(key)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all active:scale-95 focus:outline-none ${color}`}
-                  >
-                    <span className="text-2xl mb-1">{emoji}</span>
-                    <span className="text-xs font-black text-slate-700">{label}</span>
-                    <span className="text-[9px] text-slate-400 font-medium">{sub}</span>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <p className="text-white/40 text-xs font-medium mb-4">How crowded is your gym right now?</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {CROWD_OPTIONS.map(({ key, emoji, label, sub, color }) => {
+                    const darkColorMap = {
+                      'LOW': 'bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40',
+                      'MEDIUM': 'bg-amber-500/5 border-amber-500/20 hover:border-amber-500/40',
+                      'HIGH': 'bg-red-500/5 border-red-500/20 hover:border-red-500/40'
+                    };
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => reportCrowd(key)}
+                        className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all active:scale-95 focus:outline-none ${darkColorMap[key]}`}
+                      >
+                        <span className="text-2xl mb-1">{emoji}</span>
+                        <span className="text-xs font-black text-white">{label}</span>
+                        <span className="text-[9px] text-white/40 font-medium">{sub}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="h-4" />
       </div>

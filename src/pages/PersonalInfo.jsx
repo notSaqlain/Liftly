@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, Save, Loader2, User, Ruler, Weight, Calendar, Dumbbell, Target, TrendingUp, Heart, Clock, MapPin } from 'lucide-react';
-import GymSearch from '../components/GymSearch';
+import { ChevronLeft, Save, Loader2, User, Ruler, Weight, Calendar, Dumbbell, Target, TrendingUp, Heart, Clock } from 'lucide-react';
 
 const inputClass = "w-full h-14 bg-slate-50 border border-slate-200 rounded-2xl px-4 text-sm text-slate-800 font-semibold focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all";
 const selectClass = "w-full h-14 bg-slate-50 border border-slate-200 rounded-2xl px-4 text-sm text-slate-800 font-semibold focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all appearance-none";
@@ -34,8 +33,7 @@ const PersonalInfo = () => {
   const [fitnessGoal, setFitnessGoal] = useState('General Fitness');
   const [trainingStyle, setTrainingStyle] = useState('');
 
-  // Gym
-  const [selectedGym, setSelectedGym] = useState(null); // { id, name }
+
 
   useEffect(() => {
     const load = async () => {
@@ -55,9 +53,7 @@ const PersonalInfo = () => {
           setExperienceLevel(data.experienceLevel || 'Beginner');
           setFitnessGoal(data.fitnessGoal || 'General Fitness');
           setTrainingStyle(data.trainingStyle || '');
-          if (data.gymId && data.gymName) {
-            setSelectedGym({ id: data.gymId, name: data.gymName });
-          }
+
         }
       } catch (err) {
         console.error(err);
@@ -89,8 +85,6 @@ const PersonalInfo = () => {
         experienceLevel,
         fitnessGoal,
         trainingStyle,
-        gymId: selectedGym?.id || null,
-        gymName: selectedGym?.name || null,
       });
       const displayName = `${firstName} ${lastName}`.trim();
       if (displayName) await updateDisplayName(displayName);
@@ -260,26 +254,7 @@ const PersonalInfo = () => {
           </div>
         </SectionCard>
 
-        {/* ─── Gym ─── */}
-        <SectionCard title="Your Gym" icon={<MapPin size={18} />} iconBg="bg-teal-50 text-teal-500">
-          <p className="text-slate-400 text-xs font-medium mb-4 leading-relaxed">
-            Select your gym to enable gym-scoped LiftChat and crowd reporting. Can't find it? Type the name and create it.
-          </p>
-          <GymSearch
-            selectedGym={selectedGym}
-            onSelect={setSelectedGym}
-            dark={false}
-          />
-          {selectedGym && (
-            <button
-              type="button"
-              onClick={() => setSelectedGym(null)}
-              className="text-xs text-slate-400 hover:text-slate-600 transition-colors font-semibold mt-2"
-            >
-              Clear gym selection
-            </button>
-          )}
-        </SectionCard>
+
 
         {/* Save Button */}
         <button onClick={handleSave} disabled={saving} className="w-full h-14 bg-liftly-teal hover:bg-teal-400 text-white font-black text-base rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-60 shadow-teal-lg mt-6">

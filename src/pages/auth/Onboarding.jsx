@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, ArrowRight, ArrowLeft, User, Ruler, Target, MapPin } from 'lucide-react';
+import { Loader2, ArrowRight, ArrowLeft, User, Ruler, Target, Key } from 'lucide-react';
 import liftlyLogo from '../../assets/liftly_white.png';
-import GymSearch from '../../components/GymSearch';
+import { db } from '../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const STEPS = [
   { id: 1, title: 'Tell us about you', subtitle: 'Basic personal info', icon: User },
   { id: 2, title: 'Your body metrics', subtitle: 'For accurate calculations', icon: Ruler },
   { id: 3, title: 'Your fitness goals', subtitle: 'Help us tailor your experience', icon: Target },
-  { id: 4, title: 'Your gym', subtitle: 'Find your training ground', icon: MapPin },
+  { id: 4, title: 'Gym Membership', subtitle: 'Enter your license key (optional)', icon: Key },
 ];
 
 const inputClass = "w-full h-13 bg-white/8 border border-white/12 rounded-2xl px-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal transition-all font-medium";
@@ -38,8 +39,8 @@ const Onboarding = () => {
   const [experienceLevel, setExperienceLevel] = useState('');
   const [goal, setGoal] = useState('');
 
-  // Step 4 — Gym
-  const [selectedGym, setSelectedGym] = useState(null); // { id, name }
+  // Step 4 — Gym License
+  const [licenseCode, setLicenseCode] = useState('');
 
   const validateStep = () => {
     if (step === 1) {
@@ -65,9 +66,33 @@ const Onboarding = () => {
     e.preventDefault();
     if (!validateStep()) return;
     setLoading(true);
+    setError('');
+    
     try {
+      let licenseDataToSave = {};
+
+      if (licenseCode.trim()) {
+        const docRef = doc(db, 'licenses', licenseCode.trim());
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+          throw new Error('Invalid license code. Please check and try again or skip for now.');
+        }
+        
+        const lData = docSnap.data();
+        licenseDataToSave = {
+          gymId: lData.gymId || 'gym_placeholder',
+          gymName: lData.gymName,
+          licenseCode: lData.code || licenseCode.trim(),
+          planName: lData.planName,
+          expiresAt: lData.expiresAt?.toDate ? lData.expiresAt.toDate().toISOString() : lData.expiresAt,
+          features: lData.features || []
+        };
+      }
+
       const displayName = `${firstName} ${lastName}`.trim();
       if (displayName) await updateDisplayName(displayName);
+      
       await updateUserProfile(currentUser.uid, {
         firstName, lastName,
         age: parseInt(age, 10),
@@ -77,9 +102,7 @@ const Onboarding = () => {
         trainingDays: parseInt(trainingDays, 10),
         experienceLevel,
         fitnessGoal: goal,
-        // Gym (optional)
-        gymId: selectedGym?.id || null,
-        gymName: selectedGym?.name || null,
+        ...licenseDataToSave,
         onboardingComplete: true
       });
       navigate('/');
@@ -232,22 +255,30 @@ const Onboarding = () => {
               <div className="space-y-4">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-2">
                   <p className="text-white/60 text-xs font-medium leading-relaxed">
-                    Search for your gym below. If it doesn't exist yet, you can create it — others from the same gym will be able to find it and join you on <span className="text-liftly-teal font-bold">LiftChat</span>.
+                    If your gym gave you a <span className="text-liftly-teal font-bold">Liftly PRO</span> license key, enter it below to unlock premium features and connect with your local gym community.
                   </p>
                 </div>
 
-                <GymSearch
-                  selectedGym={selectedGym}
-                  onSelect={setSelectedGym}
-                  dark={true}
-                />
+                <div>
+                  <label className={labelClass}>License Code</label>
+                  <div className="relative">
+                    <Key size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 123456789" 
+                      className={`${inputClass} pl-12 uppercase`} 
+                      value={licenseCode} 
+                      onChange={e => setLicenseCode(e.target.value)} 
+                    />
+                  </div>
+                </div>
 
                 <button
                   type="button"
-                  onClick={() => setSelectedGym(null)}
+                  onClick={() => setLicenseCode('')}
                   className="text-xs text-white/30 hover:text-white/60 transition-colors font-semibold mt-1"
                 >
-                  {selectedGym ? 'Clear selection' : 'Skip — I\'ll set this later in Profile'}
+                  {licenseCode ? 'Clear license' : 'Skip — I\'ll set this later in My Plan'}
                 </button>
               </div>
             )}

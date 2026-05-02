@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { Loader2, User, ChevronRight, Camera, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star } from 'lucide-react';
+import { Loader2, User, ChevronRight, Camera, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ACHIEVEMENTS = [
@@ -136,7 +136,7 @@ const Profile = () => {
   });
 
   return (
-    <div className="bg-slate-50 min-h-full">
+    <div className="bg-[#040810] min-h-full">
       {/* Toast */}
       {message.text && (
         <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] max-w-[420px] w-[90%] px-4 py-3 rounded-2xl text-sm font-bold text-center shadow-lg animate-slide-up ${
@@ -221,13 +221,13 @@ const Profile = () => {
 
         {/* Achievements */}
         {unlockedAchievements.length > 0 && (
-          <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100">
+          <div className="bg-[#0D1526] rounded-3xl p-5 border border-white/5">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-xl bg-yellow-50 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-yellow-500/10 flex items-center justify-center">
                 <Trophy size={15} className="text-yellow-500" />
               </div>
-              <h2 className="font-black text-slate-800 text-sm">Achievements</h2>
-              <span className="ml-auto text-[10px] font-bold bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-lg">
+              <h2 className="font-black text-white text-sm">Achievements</h2>
+              <span className="ml-auto text-[10px] font-bold bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-lg">
                 {unlockedAchievements.length}/{ACHIEVEMENTS.length}
               </span>
             </div>
@@ -239,8 +239,8 @@ const Profile = () => {
                     key={a.id}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                       unlocked
-                        ? 'bg-yellow-50 border-yellow-200 text-yellow-700'
-                        : 'bg-slate-50 border-slate-100 text-slate-300'
+                        ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
+                        : 'bg-white/5 border-white/5 text-white/30'
                     }`}
                   >
                     <span className={unlocked ? '' : 'grayscale opacity-40'}>{a.icon}</span>
@@ -254,18 +254,18 @@ const Profile = () => {
 
         {/* Photo Options */}
         {(googleLinked && googlePhotoURL) && (
-          <div className="bg-white rounded-2xl p-4 shadow-card border border-slate-100">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Photo Options</p>
+          <div className="bg-[#0D1526] rounded-2xl p-4 border border-white/5">
+            <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Photo Options</p>
             <div className="space-y-2">
               <button onClick={() => fileInputRef.current?.click()} className="w-full h-11 bg-liftly-teal/10 hover:bg-liftly-teal/20 text-liftly-teal font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
                 <Camera size={16} /> Upload Custom Photo
               </button>
-              <button onClick={handleUseGooglePhoto} disabled={saving} className="w-full h-11 bg-slate-50 hover:bg-blue-50 text-slate-700 font-bold text-sm rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 border border-slate-200 disabled:opacity-60">
+              <button onClick={handleUseGooglePhoto} disabled={saving} className="w-full h-11 bg-white/5 hover:bg-white/10 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 border border-white/5 disabled:opacity-60">
                 <img src={googlePhotoURL} alt="Google" className="w-6 h-6 rounded-full object-cover" referrerPolicy="no-referrer" />
                 Use Google Photo
               </button>
               {photoURL && (
-                <button onClick={handleRemovePhoto} disabled={saving} className="w-full h-11 bg-red-50 hover:bg-red-100 text-red-500 font-bold text-sm rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-60">
+                <button onClick={handleRemovePhoto} disabled={saving} className="w-full h-11 bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold text-sm rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-60">
                   Remove Photo
                 </button>
               )}
@@ -276,31 +276,35 @@ const Profile = () => {
         {/* Navigation Links */}
         {[
           {
-            icon: <User size={18} />, iconBg: 'bg-blue-50 text-blue-500',
+            icon: <CreditCard size={18} />, iconBg: 'bg-emerald-500/10 text-emerald-500',
+            label: 'My Plan', sub: 'License, features & expiration', to: '/my-plan'
+          },
+          {
+            icon: <User size={18} />, iconBg: 'bg-blue-500/10 text-blue-500',
             label: 'Personal Information', sub: 'Body metrics, training & goals', to: '/personal-info'
           },
           {
-            icon: <Trophy size={18} />, iconBg: 'bg-yellow-50 text-yellow-500',
+            icon: <Trophy size={18} />, iconBg: 'bg-yellow-500/10 text-yellow-500',
             label: 'Leaderboard', sub: 'Global rankings & community stats', to: '/leaderboard'
           },
           {
-            icon: <Settings size={18} />, iconBg: 'bg-slate-100 text-slate-500',
+            icon: <Settings size={18} />, iconBg: 'bg-slate-500/10 text-slate-400',
             label: 'Account Settings', sub: 'Email, password, security & more', to: '/settings'
           },
         ].map(({ icon, iconBg, label, sub, to }) => (
           <button
             key={to}
             onClick={() => navigate(to)}
-            className="w-full bg-white rounded-2xl p-4 flex items-center justify-between shadow-card border border-slate-100 active:scale-[0.98] transition-all"
+            className="w-full bg-[#0D1526] rounded-2xl p-4 flex items-center justify-between border border-white/5 active:scale-[0.98] transition-all"
           >
             <div className="flex items-center space-x-3">
               <span className={`p-2.5 rounded-xl ${iconBg}`}>{icon}</span>
               <div className="text-left">
-                <p className="font-bold text-slate-800 text-sm">{label}</p>
-                <p className="text-slate-400 text-xs">{sub}</p>
+                <p className="font-bold text-white text-sm">{label}</p>
+                <p className="text-white/40 text-xs">{sub}</p>
               </div>
             </div>
-            <ChevronRight size={18} className="text-slate-300" />
+            <ChevronRight size={18} className="text-white/20" />
           </button>
         ))}
 
