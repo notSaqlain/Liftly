@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
-import exercisesData from '../data/exercises.json';
 import { ChevronLeft, Plus, Minus, Check, Dumbbell, Trophy, Timer, Pause, Play, RotateCcw, Flame } from 'lucide-react';
+import { getAllExercises } from '../services/exerciseApi';
 
 const REST_PRESETS = [
   { sec: 60, label: '1m', sub: 'Short' },
@@ -41,13 +41,29 @@ const ActiveWorkout = () => {
   const dayName = searchParams.get('day') || 'Workout';
 
   const dayExerciseIds = useMemo(() => userData?.customRoutines?.[dayName] || [], [userData, dayName]);
-  const exercises = useMemo(() => dayExerciseIds.map(id => exercisesData.find(e => e.id === id)).filter(Boolean), [dayExerciseIds]);
+  const [exercises, setExercises] = useState([]);
+  const [exercisesLoading, setExercisesLoading] = useState(true);
 
-  const [workoutLog, setWorkoutLog] = useState(() => {
-    const initial = {};
-    exercises.forEach(ex => { initial[ex.id] = [{ weight: '', reps: '', done: false }]; });
-    return initial;
-  });
+  const [workoutLog, setWorkoutLog] = useState({});
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const allExercises = await getAllExercises();
+        const activeExs = dayExerciseIds.map(id => allExercises.find(e => e.id === id)).filter(Boolean);
+        setExercises(activeExs);
+        
+        const initialLog = {};
+        activeExs.forEach(ex => { initialLog[ex.id] = [{ weight: '', reps: '', done: false }]; });
+        setWorkoutLog(initialLog);
+      } catch (err) {
+        console.error('Error fetching exercises:', err);
+      } finally {
+        setExercisesLoading(false);
+      }
+    };
+    loadData();
+  }, [dayExerciseIds]);
 
   const [saving, setSaving] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -138,7 +154,7 @@ const ActiveWorkout = () => {
       exercises: Object.entries(workoutLog)
         .filter(([_, sets]) => sets.some(s => s.done))
         .map(([exerciseId, sets]) => {
-          const ex = exercisesData.find(e => e.id === exerciseId);
+          const ex = exercises.find(e => e.id === exerciseId);
           return {
             exerciseId,
             name: ex?.name || exerciseId,
@@ -191,15 +207,22 @@ const ActiveWorkout = () => {
       // If currentWeekKey === lastWeekKey: already counted this week, no streak change.
 
       // ── Track best 1RM for big lifts ──
+      const BIG_LIFTS_MAP = {
+        '0025': 'bench_press',
+        '0032': 'deadlift',
+        '0043': 'squat'
+      };
+
       const currentBest1RM = userData?.best1RM || {};
       workoutData.exercises.forEach(ex => {
-        if (['bench_press', 'deadlift', 'squat'].includes(ex.exerciseId)) {
+        const liftKey = BIG_LIFTS_MAP[ex.exerciseId];
+        if (liftKey) {
           const maxWeight = Math.max(...ex.sets.map(s => s.weight || 0), 0);
-          if (maxWeight > (currentBest1RM[ex.exerciseId] || 0)) {
+          if (maxWeight > (currentBest1RM[liftKey] || 0)) {
             // Nested map (for profile display)
-            userUpdates[`best1RM.${ex.exerciseId}`] = maxWeight;
+            userUpdates[`best1RM.${liftKey}`] = maxWeight;
             // Flat field (for Leaderboard orderBy — Firestore can't index nested maps)
-            userUpdates[`best1RM_${ex.exerciseId}`] = maxWeight;
+            userUpdates[`best1RM_${liftKey}`] = maxWeight;
           }
         }
       });
@@ -276,7 +299,7 @@ const ActiveWorkout = () => {
   const isRestComplete = restElapsed >= restTarget;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#040810] flex flex-col animate-fade-in">
 
       {/* Header */}
       <div className="bg-liftly-navy px-4 pt-12 pb-4 flex flex-col sticky top-0 z-20 shadow-navy">
@@ -305,34 +328,34 @@ const ActiveWorkout = () => {
 
       {/* Rest Timer Banner */}
       {showRestTimer && (
-        <div className={`mx-4 mt-3 rounded-2xl overflow-hidden border transition-all ${isRestComplete ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200 shadow-card'}`}>
+        <div className={`mx-4 mt-3 rounded-2xl overflow-hidden border transition-all ${isRestComplete ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-[#0D1526] border-white/5'}`}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Timer size={15} className={isRestComplete ? 'text-emerald-500' : 'text-orange-500'} />
-                <span className="text-xs font-black uppercase tracking-wider text-slate-500">
+                <Timer size={15} className={isRestComplete ? 'text-emerald-400' : 'text-orange-400'} />
+                <span className="text-xs font-black uppercase tracking-wider text-white/50">
                   {isRestComplete ? 'Rest Complete!' : `Target: ${Math.floor(restTarget/60)}m ${restTarget%60}s`}
                 </span>
               </div>
-              <button onClick={() => setShowRestTimer(false)} className="text-slate-300 text-xs font-bold hover:text-slate-500">Dismiss</button>
+              <button onClick={() => setShowRestTimer(false)} className="text-white/30 text-xs font-bold hover:text-white/60">Dismiss</button>
             </div>
 
             <div className="flex items-center justify-between mb-3">
-              <span className={`text-3xl font-black tabular-nums flex items-baseline ${isRestComplete ? 'text-emerald-500 animate-pulse' : 'text-liftly-navy'}`}>
+              <span className={`text-3xl font-black tabular-nums flex items-baseline ${isRestComplete ? 'text-emerald-400 animate-pulse' : 'text-white'}`}>
                 {restMins}:{restSecs.toString().padStart(2, '0')}
                 {overage > 0 && <span className="text-xl ml-1 text-emerald-400">+{overageMins > 0 ? `${overageMins}:` : ''}{overageSecs.toString().padStart(2, '0')}</span>}
               </span>
               <div className="flex gap-2">
-                <button onClick={() => { setRestElapsed(0); setRestRunning(true); }} className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 active:scale-90 transition-all">
+                <button onClick={() => { setRestElapsed(0); setRestRunning(true); }} className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 active:scale-90 transition-all">
                   <RotateCcw size={15} />
                 </button>
-                <button onClick={() => setRestRunning(!restRunning)} className={`w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-all ${restRunning ? 'bg-orange-100 text-orange-500' : 'bg-liftly-teal/10 text-liftly-teal'}`}>
+                <button onClick={() => setRestRunning(!restRunning)} className={`w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-all ${restRunning ? 'bg-orange-500/10 text-orange-400' : 'bg-liftly-teal/10 text-liftly-teal'}`}>
                   {restRunning ? <Pause size={15} /> : <Play size={15} className="ml-0.5" />}
                 </button>
               </div>
             </div>
 
-            <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
+            <div className="h-2 bg-white/5 rounded-full overflow-hidden mb-3">
               <div className={`h-full rounded-full transition-all duration-1000 ease-linear ${isRestComplete ? 'bg-emerald-400' : 'bg-orange-400'}`} style={{ width: `${restProgress}%` }} />
             </div>
 
@@ -341,7 +364,7 @@ const ActiveWorkout = () => {
                 <button
                   key={sec}
                   onClick={() => startRest(sec, false)}
-                  className={`flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 ${restTarget === sec && !isRestComplete ? 'bg-liftly-navy text-white border-liftly-navy' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
+                  className={`flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 ${restTarget === sec && !isRestComplete ? 'bg-liftly-teal text-[#040810] border-liftly-teal' : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10'}`}
                 >
                   {label}
                   <span className="block text-[8px] opacity-60 font-semibold">{sub}</span>
@@ -353,7 +376,7 @@ const ActiveWorkout = () => {
                   const parsed = parseInt(val, 10);
                   if (parsed > 0) startRest(parsed, false);
                 }}
-                className="flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 flex flex-col items-center justify-center"
+                className="flex-1 py-2 rounded-xl text-[11px] font-black border transition-all active:scale-95 bg-white/5 text-white/50 border-white/5 hover:bg-white/10 flex flex-col items-center justify-center"
               >
                 Custom
                 <span className="block text-[8px] opacity-60 font-semibold">Set Secs</span>
@@ -365,12 +388,16 @@ const ActiveWorkout = () => {
 
       {/* Exercise List */}
       <div className="flex-1 overflow-y-auto p-4 pb-32 space-y-4">
-        {exercises.length === 0 ? (
-          <div className="bg-white rounded-3xl p-10 text-center border border-slate-100 shadow-card mt-8">
-            <Dumbbell className="mx-auto text-slate-200 w-12 h-12 mb-3" />
-            <h3 className="font-black text-lg text-slate-800 mb-2">No exercises for {dayName}</h3>
-            <p className="text-slate-400 text-sm mb-4">Go to the Workout tab to add exercises to this day.</p>
-            <button onClick={() => navigate('/workout')} className="px-6 py-2.5 bg-liftly-teal text-white font-bold text-sm rounded-xl active:scale-95 transition-all shadow-teal">
+        {exercisesLoading ? (
+          <div className="flex justify-center p-10">
+            <div className="w-8 h-8 border-2 border-liftly-teal border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : exercises.length === 0 ? (
+          <div className="bg-[#0D1526] rounded-3xl p-10 text-center border border-white/5 mt-8">
+            <Dumbbell className="mx-auto text-white/10 w-12 h-12 mb-3" />
+            <h3 className="font-black text-lg text-white mb-2">No exercises for {dayName}</h3>
+            <p className="text-white/40 text-sm mb-4">Go to the Workout tab to add exercises to this day.</p>
+            <button onClick={() => navigate('/workout')} className="px-6 py-2.5 bg-liftly-teal text-[#040810] font-bold text-sm rounded-xl active:scale-95 transition-all shadow-teal">
               Browse Exercises
             </button>
           </div>
@@ -380,17 +407,17 @@ const ActiveWorkout = () => {
             const completedSets = sets.filter(s => s.done).length;
             const progress = completedSets / sets.length;
             return (
-              <div key={exercise.id} className="bg-white rounded-2xl border border-slate-100 shadow-card overflow-hidden">
+              <div key={exercise.id} className="bg-[#0D1526] rounded-2xl border border-white/5 overflow-hidden">
                 <div className="px-4 py-3.5 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-liftly-teal/10 flex items-center justify-center shrink-0">
                     <Dumbbell size={17} className="text-liftly-teal" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-black text-sm text-slate-800 truncate">{exercise.name}</h3>
-                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400">{exercise.muscleGroup}</p>
+                    <h3 className="font-black text-sm text-white truncate">{exercise.name}</h3>
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-white/40">{exercise.muscleGroup || exercise.bodyPart}</p>
                   </div>
                   {completedSets > 0 && (
-                    <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg shrink-0">
+                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg shrink-0 border border-emerald-500/20">
                       {completedSets}/{sets.length}
                     </span>
                   )}
@@ -398,42 +425,42 @@ const ActiveWorkout = () => {
 
                 {/* Progress bar */}
                 {completedSets > 0 && (
-                  <div className="h-1 bg-slate-50">
+                  <div className="h-1 bg-[#040810]">
                     <div className="h-full bg-liftly-teal transition-all duration-500 ease-out" style={{ width: `${progress * 100}%` }} />
                   </div>
                 )}
 
                 <div className="px-4 py-3">
                   <div className="flex items-center gap-2 mb-2.5">
-                    <div className="w-8 text-center"><span className="text-[9px] uppercase font-black text-slate-300">Set</span></div>
-                    <div className="flex-1"><span className="text-[9px] uppercase font-black text-slate-300 pl-2">Kg</span></div>
-                    <div className="flex-1"><span className="text-[9px] uppercase font-black text-slate-300 pl-2">Reps</span></div>
-                    <div className="w-10 text-center"><span className="text-[9px] uppercase font-black text-slate-300">✓</span></div>
+                    <div className="w-8 text-center"><span className="text-[9px] uppercase font-black text-white/30">Set</span></div>
+                    <div className="flex-1"><span className="text-[9px] uppercase font-black text-white/30 pl-2">Kg</span></div>
+                    <div className="flex-1"><span className="text-[9px] uppercase font-black text-white/30 pl-2">Reps</span></div>
+                    <div className="w-10 text-center"><span className="text-[9px] uppercase font-black text-white/30">✓</span></div>
                   </div>
 
                   {sets.map((set, idx) => (
                     <div key={idx} className={`flex items-center gap-2 mb-2 transition-all ${set.done ? 'opacity-50' : ''}`}>
                       <div className="w-8 text-center">
-                        <span className="text-xs font-black text-slate-400">{idx + 1}</span>
+                        <span className="text-xs font-black text-white/40">{idx + 1}</span>
                       </div>
                       <div className="flex-1">
                         <input
                           type="number" inputMode="decimal" placeholder="—" value={set.weight}
                           onChange={(e) => updateSet(exercise.id, idx, 'weight', e.target.value)}
-                          className="w-full h-11 bg-slate-50 text-center font-black text-sm text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-slate-300 transition-all"
+                          className="w-full h-11 bg-white/5 text-center font-black text-sm text-white rounded-xl border border-white/10 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-white/20 transition-all"
                         />
                       </div>
                       <div className="flex-1">
                         <input
                           type="number" step="1" inputMode="numeric" placeholder="—" value={set.reps}
                           onChange={(e) => updateSet(exercise.id, idx, 'reps', e.target.value.replace(/[^0-9]/g, ''))}
-                          className="w-full h-11 bg-slate-50 text-center font-black text-sm text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-slate-300 transition-all"
+                          className="w-full h-11 bg-white/5 text-center font-black text-sm text-white rounded-xl border border-white/10 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-white/20 transition-all"
                         />
                       </div>
                       <div className="w-10 flex justify-center">
                         <button
                           onClick={() => toggleSetDone(exercise.id, idx)}
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${set.done ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${set.done ? 'bg-emerald-500 text-[#040810]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
                         >
                           <Check size={16} strokeWidth={3} />
                         </button>
@@ -442,11 +469,11 @@ const ActiveWorkout = () => {
                   ))}
 
                   <div className="flex gap-2 mt-2">
-                    <button onClick={() => addSet(exercise.id)} className="flex-1 py-2.5 rounded-xl bg-slate-50 hover:bg-liftly-teal/5 border border-dashed border-slate-200 hover:border-liftly-teal/30 text-slate-400 hover:text-liftly-teal text-xs font-black flex items-center justify-center gap-1 transition-all active:scale-95">
+                    <button onClick={() => addSet(exercise.id)} className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-dashed border-white/10 text-white/40 hover:text-white text-xs font-black flex items-center justify-center gap-1 transition-all active:scale-95">
                       <Plus size={13} /> Add Set
                     </button>
                     {sets.length > 1 && (
-                      <button onClick={() => removeSet(exercise.id)} className="py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-red-50 border border-dashed border-slate-200 hover:border-red-200 text-slate-400 hover:text-red-500 text-xs font-black flex items-center justify-center transition-all active:scale-95">
+                      <button onClick={() => removeSet(exercise.id)} className="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-red-500/10 border border-dashed border-white/10 hover:border-red-500/30 text-white/40 hover:text-red-400 text-xs font-black flex items-center justify-center transition-all active:scale-95">
                         <Minus size={13} />
                       </button>
                     )}
@@ -460,7 +487,7 @@ const ActiveWorkout = () => {
 
       {/* Floating Finish Button */}
       {exercises.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-50 via-slate-50/90 to-transparent z-30 pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#040810] via-[#040810]/90 to-transparent z-30 pointer-events-none">
           <div className="max-w-[480px] mx-auto pointer-events-auto">
             <button
               onClick={handleFinishWorkout}
@@ -490,7 +517,7 @@ const ElapsedTime = ({ startTime }) => {
   const elapsed = Math.floor((Date.now() - startTime) / 1000);
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
-  return <span className="text-xs font-black text-slate-600 tabular-nums">{mins}:{secs.toString().padStart(2, '0')}</span>;
+  return <span className="text-xs font-black text-white/80 tabular-nums">{mins}:{secs.toString().padStart(2, '0')}</span>;
 };
 
 export default ActiveWorkout;

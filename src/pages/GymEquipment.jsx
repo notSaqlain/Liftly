@@ -129,7 +129,8 @@ const GymEquipment = () => {
           <div className="text-center py-10 text-white/40 text-sm">No equipment found in this category.</div>
         ) : (
           filteredEquipment.map(eq => {
-            const status = STATUS_CONFIG[eq.status || 'available'];
+            const statusKey = (eq.status || 'available').toLowerCase();
+            const status = STATUS_CONFIG[statusKey] || STATUS_CONFIG['available'];
             const StatusIcon = status.icon;
             return (
               <button
@@ -167,7 +168,7 @@ const GymEquipment = () => {
             <div className="space-y-3">
               {Object.entries(STATUS_CONFIG).map(([key, config]) => {
                 const Icon = config.icon;
-                const isActive = selectedEq.status === key;
+                const isActive = (selectedEq.status || 'available').toLowerCase() === key;
                 return (
                   <button
                     key={key}
