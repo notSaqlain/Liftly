@@ -21,22 +21,21 @@ const ExerciseGif = ({ gifUrl, theme }) => {
 
   return (
     <div
-      className={`w-full rounded-3xl border ${theme.ring} overflow-hidden bg-[#111827] flex items-center justify-center relative`}
-      style={{ minHeight: '220px' }}
+      className={`w-full rounded-3xl border ${theme.ring} overflow-hidden bg-white relative`}
+      style={{ aspectRatio: '4/3' }}
     >
       {/* Placeholder mentre la GIF si carica */}
       {!loaded && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white z-10">
           <div className="text-5xl animate-pulse">{theme.emoji}</div>
-          <p className="text-white/30 text-xs font-semibold">Caricamento GIF…</p>
+          <p className="text-slate-400 text-xs font-semibold">Caricamento GIF…</p>
         </div>
       )}
 
       <img
         src={gifUrl}
         alt="Dimostrazione esercizio"
-        className={`w-full object-contain rounded-3xl transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-        style={{ maxHeight: '340px' }}
+        className={`w-full h-full object-contain transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
       />
