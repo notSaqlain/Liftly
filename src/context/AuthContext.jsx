@@ -84,9 +84,9 @@ export const AuthProvider = ({ children }) => {
       result = await signInWithCredential(auth, credential);
       user = result.user;
     } else {
-      // Web: always use popup (redirect is flaky on mobile web and resets state)
-      result = await signInWithPopup(auth, googleProvider);
-      user = result.user;
+      // Web: use redirect which is reliable on mobile browsers (PWA/Safari/Chrome)
+      await signInWithRedirect(auth, googleProvider);
+      return; // The app will redirect, handleRedirectResult will pick it up on reload
     }
 
     const userDoc = await getDoc(doc(db, 'users', user.uid));

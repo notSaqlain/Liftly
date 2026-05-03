@@ -294,7 +294,7 @@ const DMConversation = () => {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 no-scrollbar">
+      <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-2 no-scrollbar" onClick={() => { setActiveReactionMenu(null); setActiveMsgId(null); }}>
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-20">
             <div className="w-16 h-16 rounded-3xl bg-liftly-teal/10 flex items-center justify-center mb-4">
@@ -322,6 +322,8 @@ const DMConversation = () => {
             }
           }
 
+          const hasReactions = msg.reactions && Object.keys(msg.reactions).length > 0;
+
           return (
             <div key={msg.id} className="flex flex-col">
               {showDate && (
@@ -331,28 +333,88 @@ const DMConversation = () => {
               )}
               <div className={`flex items-end gap-2 ${mine ? 'flex-row-reverse' : 'flex-row'} ${msg.isFirst && !showDate ? 'mt-3' : 'mt-0.5'}`}>
                 <div className={`max-w-[80%] flex flex-col relative ${mine ? 'items-end' : 'items-start'}`}>
-                  {activeMsgId === msg.id && mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) && (
-                    <div className="absolute top-0 right-0 -mt-10 bg-[#0D1526] shadow-card rounded-xl border border-white/10 flex overflow-hidden z-20">
-                      <button onClick={() => { setEditingMsgId(msg.id); setNewMessage(msg.text); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-white/5 text-white/60 flex items-center gap-1.5 text-xs font-bold border-r border-white/5 transition-colors">
-                        <Edit2 size={12} /> Edit
-                      </button>
-                      <button onClick={() => handleDelete(msg.id)} className="px-3 py-2 hover:bg-red-500/10 text-red-500 flex items-center gap-1.5 text-xs font-bold transition-colors">
-                        <Trash2 size={12} /> Delete
-                      </button>
+                  
+                  {/* Reaction Menu Tooltip */}
+                  {activeReactionMenu === msg.id && !msg.isDeleted && (
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-12 bg-[#0D1526] shadow-card rounded-2xl border border-white/10 flex p-1.5 gap-1 z-30 animate-fade-in" onClick={(e) => e.stopPropagation()}>
+                      {EMOJIS.map(emoji => (
+                        <button 
+                          key={emoji}
+                          onClick={() => handleReact(msg.id, emoji, msg.reactions)}
+                          className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors text-lg active:scale-75"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
                     </div>
                   )}
+
+                  {/* Context Menu (Long Press) */}
+                  {activeMsgId === msg.id && !msg.isDeleted && (
+                    <div className={`absolute top-0 ${mine ? 'right-0' : 'left-0'} -mt-10 bg-[#0D1526] shadow-card rounded-xl border border-white/10 flex overflow-hidden z-20 animate-fade-in`} onClick={(e) => e.stopPropagation()}>
+                      <button onClick={() => { setReplyingTo({ id: msg.id, text: msg.text, name: mine ? displayName : otherUser.name }); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-white/5 text-white/60 flex items-center gap-1.5 text-xs font-bold border-r border-white/5 transition-colors">
+                        <Reply size={12} /> Reply
+                      </button>
+                      {mine && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) && (
+                        <>
+                          <button onClick={() => { setEditingMsgId(msg.id); setNewMessage(msg.text); setActiveMsgId(null); inputRef.current?.focus(); }} className="px-3 py-2 hover:bg-white/5 text-white/60 flex items-center gap-1.5 text-xs font-bold border-r border-white/5 transition-colors">
+                            <Edit2 size={12} /> Edit
+                          </button>
+                          <button onClick={() => handleDelete(msg.id)} className="px-3 py-2 hover:bg-red-500/10 text-red-500 flex items-center gap-1.5 text-xs font-bold transition-colors">
+                            <Trash2 size={12} /> Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+
                   <div 
-                    onClick={() => mine && !msg.isDeleted && (Date.now() - (msg.createdAt?.toMillis ? msg.createdAt.toMillis() : Date.now()) < 15 * 60 * 1000) ? setActiveMsgId(activeMsgId === msg.id ? null : msg.id) : null}
-                    className={`px-4 py-2.5 text-sm font-medium leading-relaxed ${
+                    onClick={(e) => { e.stopPropagation(); handleSingleTap(msg.id); }}
+                    onTouchStart={() => handleTouchStart(msg.id)}
+                    onTouchEnd={handleTouchEnd}
+                    onTouchMove={handleTouchEnd}
+                    onMouseDown={() => handleTouchStart(msg.id)}
+                    onMouseUp={handleTouchEnd}
+                    onMouseLeave={handleTouchEnd}
+                    className={`px-4 py-2.5 text-sm font-medium leading-relaxed select-none relative ${
                     msg.isDeleted 
                       ? 'bg-white/5 text-white/30 italic rounded-2xl border border-white/5'
                       : mine
                         ? 'bg-liftly-teal text-liftly-navy rounded-2xl rounded-br-md shadow-teal cursor-pointer font-bold'
                         : 'bg-[#0D1526] text-white rounded-2xl rounded-bl-md border border-white/5'
-                  } ${msg.isFirst && !mine ? 'rounded-tl-2xl' : ''} ${msg.isFirst && mine ? 'rounded-tr-2xl' : ''}`}>
+                  } ${msg.isFirst && !mine ? 'rounded-tl-2xl' : ''} ${msg.isFirst && mine ? 'rounded-tr-2xl' : ''}`}
+                  >
+                    {/* Reply Block */}
+                    {msg.replyTo && !msg.isDeleted && (
+                      <div className={`mb-1.5 pl-2 border-l-2 text-xs rounded-r bg-black/10 py-1 pr-2 ${mine ? 'border-liftly-navy/30 text-liftly-navy/80' : 'border-liftly-teal text-white/60'}`}>
+                        <div className="font-black mb-0.5">{msg.replyTo.name}</div>
+                        <div className="truncate max-w-[150px] opacity-80">{msg.replyTo.text}</div>
+                      </div>
+                    )}
+                    
                     {msg.text}
                     {msg.editedAt && !msg.isDeleted && <span className="text-[10px] opacity-70 ml-2">(edited)</span>}
                   </div>
+
+                  {/* Reactions Display */}
+                  {hasReactions && !msg.isDeleted && (
+                    <div className={`flex flex-wrap gap-1 mt-1 z-10 relative ${mine ? 'justify-end pr-1' : 'justify-start pl-1'}`}>
+                      {Object.entries(msg.reactions).map(([emoji, users]) => {
+                        const iReacted = users.includes(currentUser.uid);
+                        return (
+                          <button
+                            key={emoji}
+                            onClick={(e) => { e.stopPropagation(); handleReact(msg.id, emoji, msg.reactions); }}
+                            className={`px-1.5 py-0.5 rounded-full border text-[10px] flex items-center gap-1 transition-colors ${iReacted ? 'bg-liftly-teal/20 border-liftly-teal text-liftly-teal' : 'bg-[#0D1526] border-white/10 text-white/60'}`}
+                          >
+                            <span>{emoji}</span>
+                            <span className="font-bold">{users.length}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
                   {msg.isLast && (
                     <span className="text-[9px] font-semibold text-white/30 mt-1 mx-1">{formatTime(msg.createdAt)}</span>
                   )}
@@ -366,6 +428,17 @@ const DMConversation = () => {
 
       {/* Input bar */}
       <div className="px-4 pb-4 pt-3 bg-[#040810] shrink-0 border-t border-white/5">
+        {replyingTo && !editingMsgId && (
+          <div className="flex items-center justify-between px-4 py-2 bg-[#0D1526] border border-white/5 border-b-0 text-xs text-white/60 rounded-t-2xl">
+            <div className="flex flex-col">
+              <span className="font-bold text-liftly-teal">Replying to {replyingTo.name}</span>
+              <span className="truncate max-w-[200px]">{replyingTo.text}</span>
+            </div>
+            <button onClick={() => setReplyingTo(null)} className="w-6 h-6 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+              <X size={12} />
+            </button>
+          </div>
+        )}
         {editingMsgId && (
           <div className="flex items-center justify-between px-4 py-2 bg-[#0D1526] border border-white/5 border-b-0 text-xs font-bold text-white/50 rounded-t-2xl">
             <span>Editing message...</span>
@@ -375,7 +448,7 @@ const DMConversation = () => {
           </div>
         )}
         <form onSubmit={sendMessage} className="flex items-center gap-3">
-          <div className={`flex-1 flex items-center bg-[#0D1526] border border-white/10 px-4 focus-within:border-liftly-teal/50 transition-all ${editingMsgId ? 'rounded-b-3xl rounded-t-none' : 'rounded-3xl'}`}>
+          <div className={`flex-1 flex items-center bg-[#0D1526] border border-white/10 px-4 focus-within:border-liftly-teal/50 transition-all ${editingMsgId || replyingTo ? 'rounded-b-3xl rounded-t-none' : 'rounded-3xl'}`}>
             <input
               ref={inputRef}
               type="text"
