@@ -70,7 +70,7 @@ const WeightTracker = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
         
         {/* Log Weight Card */}
         <div className="bg-white rounded-3xl p-5 shadow-card border border-slate-100">

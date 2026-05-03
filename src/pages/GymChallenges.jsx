@@ -88,7 +88,7 @@ const GymChallenges = () => {
 
   if (!gymId) {
     return (
-      <div className="bg-[#040810] min-h-screen flex flex-col">
+      <div className="bg-[#040810] min-h-full flex flex-col">
         <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/15 rounded-full blur-3xl -mr-10 -mt-10" />
           <div className="relative z-10 flex items-center gap-3">
@@ -115,7 +115,7 @@ const GymChallenges = () => {
   }
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col pb-20">
+    <div className="bg-[#040810] min-h-full flex flex-col">
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0">
         <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/15 rounded-full blur-3xl -mr-16 -mt-16" />
         <div className="relative z-10 flex items-center gap-3">

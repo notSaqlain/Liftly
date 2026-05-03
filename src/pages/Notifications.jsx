@@ -61,7 +61,7 @@ const Notifications = () => {
   };
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col pb-20 animate-fade-in">
+    <div className="bg-[#040810] min-h-full flex flex-col animate-fade-in">
       <div className="bg-liftly-navy px-4 pt-12 pb-6 relative overflow-hidden shrink-0 shadow-navy">
         <div className="absolute top-0 right-0 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
         <div className="relative z-10 flex items-center gap-3">

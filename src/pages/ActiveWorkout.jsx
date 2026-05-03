@@ -241,7 +241,7 @@ const ActiveWorkout = () => {
   if (finished) {
     const durationMins = Math.round((Date.now() - startTime) / 60000);
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in relative overflow-hidden"
+      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center animate-fade-in relative overflow-hidden"
         style={{ background: 'linear-gradient(160deg, #001540 0%, #002070 60%, #001540 100%)' }}>
         <div className="absolute top-0 right-0 w-64 h-64 bg-liftly-teal/15 rounded-full blur-3xl -mr-20 -mt-20" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
@@ -387,7 +387,7 @@ const ActiveWorkout = () => {
       )}
 
       {/* Exercise List */}
-      <div className="flex-1 overflow-y-auto p-4 pb-32 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {exercisesLoading ? (
           <div className="flex justify-center p-10">
             <div className="w-8 h-8 border-2 border-liftly-teal border-t-transparent rounded-full animate-spin" />

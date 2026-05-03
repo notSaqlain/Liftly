@@ -101,7 +101,7 @@ const Leaderboard = () => {
   }, [activeCategory, boardMode, gymId, currentUser]);
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col animate-fade-in pb-20">
+    <div className="bg-[#040810] min-h-full flex flex-col animate-fade-in">
       
       {/* ── Header ── */}
       <div className="bg-liftly-navy px-6 pt-12 pb-4 relative overflow-hidden shrink-0 z-10 shadow-navy">

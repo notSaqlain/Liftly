@@ -160,7 +160,7 @@ const AccountSettings = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
 
         {/* Provider badges */}
         <div className="flex gap-2">

@@ -291,7 +291,7 @@ const Workout = () => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar pb-[80px]">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
 
         {/* ── My Split ── */}
         {activeTab === 'split' && (

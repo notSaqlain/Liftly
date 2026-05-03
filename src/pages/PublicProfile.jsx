@@ -179,7 +179,7 @@ const PublicProfile = () => {
 
   if (!user) {
     return (
-      <div className="bg-[#040810] min-h-screen flex flex-col items-center justify-center p-6 text-center">
+      <div className="bg-[#040810] min-h-full flex flex-col items-center justify-center p-6 text-center">
         <h2 className="text-2xl font-black text-white mb-2">User Not Found</h2>
         <p className="text-white/40 mb-6">This lifter doesn't exist or deleted their account.</p>
         <button onClick={() => navigate(-1)} className="px-6 py-3 bg-white/10 text-white rounded-2xl font-bold">Go Back</button>
@@ -197,7 +197,7 @@ const PublicProfile = () => {
   });
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col pb-20 relative animate-fade-in">
+    <div className="bg-[#040810] min-h-full flex flex-col relative animate-fade-in">
       {/* Header */}
       <div className="bg-liftly-navy px-4 pt-12 pb-8 relative overflow-hidden shrink-0 shadow-navy rounded-b-[40px]">
         <div className="absolute top-0 right-0 w-64 h-64 bg-liftly-teal/10 rounded-full blur-3xl -mr-20 -mt-20" />

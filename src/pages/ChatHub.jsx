@@ -112,7 +112,7 @@ const ChatHub = () => {
   const activeConversations = conversations.filter(conv => conv.lastMessage);
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col pb-24 animate-fade-in" onClick={() => setShowDeleteFor(null)}>
+    <div className="bg-[#040810] min-h-full flex flex-col animate-fade-in" onClick={() => setShowDeleteFor(null)}>
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0 shadow-navy">
         <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
         

@@ -133,7 +133,7 @@ const Stats = () => {
   const hasData = totalWorkouts > 0;
 
   return (
-    <div className="bg-[#040810] min-h-full animate-fade-in pb-[80px]">
+    <div className="bg-[#040810] min-h-full animate-fade-in">
 
       {/* Header */}
       <div className="bg-liftly-navy px-6 pt-12 pb-8 relative overflow-hidden">

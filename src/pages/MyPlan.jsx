@@ -60,7 +60,7 @@ const MyPlan = () => {
   };
 
   return (
-    <div className="bg-[#040810] min-h-screen flex flex-col animate-fade-in pb-20">
+    <div className="bg-[#040810] min-h-full flex flex-col animate-fade-in">
       <div className="bg-liftly-navy px-6 pt-12 pb-6 relative overflow-hidden shrink-0 shadow-navy">
         <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/15 rounded-full blur-2xl -ml-10 -mb-10" />

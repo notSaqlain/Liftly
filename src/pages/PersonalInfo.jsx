@@ -131,7 +131,7 @@ const PersonalInfo = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
 
         {/* ─── Basic Information ─── */}
         <SectionCard title="Basic Information" icon={<User size={18} />} iconBg="bg-blue-500/15 text-blue-400">
