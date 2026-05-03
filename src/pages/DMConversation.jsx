@@ -3,7 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, getDoc, setDoc } from 'firebase/firestore';
-import { ChevronLeft, Send, MessageCircle, Bell, BellOff, Edit2, Trash2, X } from 'lucide-react';
+import { ChevronLeft, Send, MessageCircle, Bell, BellOff, Edit2, Trash2, X, Reply } from 'lucide-react';
+
+const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
 const DMConversation = () => {
   const { conversationId } = useParams();
@@ -15,8 +17,14 @@ const DMConversation = () => {
   const [sending, setSending] = useState(false);
   const [otherUser, setOtherUser] = useState({ name: 'Loading...', photo: null, uid: null, isOnline: false });
   const [isMuted, setIsMuted] = useState(false);
-  const [activeMsgId, setActiveMsgId] = useState(null);
+  
+  // Interaction states
+  const [activeMsgId, setActiveMsgId] = useState(null); // Used for Context Menu (Reply/Edit/Delete)
+  const [activeReactionMenu, setActiveReactionMenu] = useState(null); // Used for Emoji picker
   const [editingMsgId, setEditingMsgId] = useState(null);
+  const [replyingTo, setReplyingTo] = useState(null);
+  
+  const pressTimer = useRef(null);
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -92,6 +100,10 @@ const DMConversation = () => {
     
     setSending(true);
     setNewMessage('');
+    const currentReply = replyingTo;
+    setReplyingTo(null);
+    setActiveMsgId(null);
+    setActiveReactionMenu(null);
     
     try {
       if (editingMsgId) {
@@ -107,7 +119,8 @@ const DMConversation = () => {
           displayName,
           photoURL: photoURL || null,
           createdAt: serverTimestamp(),
-          isDeleted: false
+          isDeleted: false,
+          ...(currentReply && { replyTo: currentReply })
         };
 
         await addDoc(collection(db, 'dm_conversations', conversationId, 'messages'), msgData);
@@ -147,6 +160,7 @@ const DMConversation = () => {
     } catch (err) {
       console.error('Error sending message:', err);
       setNewMessage(text);
+      setReplyingTo(currentReply);
     } finally {
       setSending(false);
       inputRef.current?.focus();
@@ -162,6 +176,59 @@ const DMConversation = () => {
       setActiveMsgId(null);
     } catch (err) {
       console.error('Error deleting message:', err);
+    }
+  };
+
+  const handleReact = async (msgId, emoji, currentReactions) => {
+    try {
+      const reactions = currentReactions || {};
+      const emojiUsers = reactions[emoji] || [];
+      
+      let newEmojiUsers;
+      if (emojiUsers.includes(currentUser.uid)) {
+        newEmojiUsers = emojiUsers.filter(id => id !== currentUser.uid);
+      } else {
+        newEmojiUsers = [...emojiUsers, currentUser.uid];
+      }
+
+      const newReactions = {
+        ...reactions,
+        [emoji]: newEmojiUsers
+      };
+
+      // Clean up empty emoji arrays
+      if (newEmojiUsers.length === 0) {
+        delete newReactions[emoji];
+      }
+
+      await updateDoc(doc(db, 'dm_conversations', conversationId, 'messages', msgId), {
+        reactions: newReactions
+      });
+      setActiveReactionMenu(null);
+    } catch (err) {
+      console.error('Error reacting to message:', err);
+    }
+  };
+
+  const handleTouchStart = (msgId) => {
+    pressTimer.current = setTimeout(() => {
+      setActiveMsgId(msgId);
+      setActiveReactionMenu(null);
+    }, 500); // 500ms for long press
+  };
+
+  const handleTouchEnd = () => {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+    }
+  };
+
+  const handleSingleTap = (msgId) => {
+    if (activeMsgId === msgId) {
+      setActiveMsgId(null);
+    } else {
+      setActiveReactionMenu(activeReactionMenu === msgId ? null : msgId);
+      setActiveMsgId(null);
     }
   };
 
