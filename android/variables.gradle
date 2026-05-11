@@ -13,4 +13,10 @@ ext {
     androidxJunitVersion = '1.3.0'
     androidxEspressoCoreVersion = '3.7.0'
     cordovaAndroidVersion = '14.0.1'
+
+    // ── Capacitor Firebase Authentication ──
+    // REQUIRED: enables Google Sign-In runtime dependencies in the plugin.
+    // Without this, Google auth classes are compileOnly and crash at runtime
+    // with "Attempt to invoke virtual method on a null object reference".
+    rgcfaIncludeGoogle = true
 }
