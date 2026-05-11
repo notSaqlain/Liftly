@@ -1,59 +1,325 @@
 <section id="download" class="section-content">
-    <div class="flex flex-col items-center justify-center min-h-[80vh] text-center gap-8">
+    <style>
+        .dl-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 88vh;
+            align-items: stretch;
+        }
+        @media (max-width: 900px) {
+            .dl-hero { grid-template-columns: 1fr; }
+            .dl-right { min-height: 420px; }
+        }
 
-        <!-- Header -->
-        <div>
-            <div class="inline-flex items-center gap-2 bg-pink-50 border border-pink-200 text-pink-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">
-                <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+        /* Left panel */
+        .dl-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 3.5rem;
+            background: #fff;
+        }
+        .dl-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.35rem 1rem;
+            border-radius: 999px;
+            width: fit-content;
+            margin-bottom: 1.75rem;
+        }
+        .dl-title {
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            color: #001540;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+        }
+        .dl-title span {
+            background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .dl-desc {
+            font-size: 1rem;
+            color: #64748b;
+            line-height: 1.7;
+            max-width: 440px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Steps */
+        .dl-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 2.5rem;
+        }
+        .dl-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .dl-step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #001540;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .dl-step-text strong { display: block; font-size: 0.875rem; font-weight: 700; color: #001540; }
+        .dl-step-text span { font-size: 0.8rem; color: #64748b; }
+
+        /* CTA button */
+        .dl-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #fff;
+            text-decoration: none;
+            background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);
+            box-shadow: 0 8px 30px rgba(131,58,180,0.35);
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            width: fit-content;
+            margin-bottom: 1.25rem;
+        }
+        .dl-cta:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 14px 40px rgba(131,58,180,0.45);
+            opacity: 0.95;
+        }
+
+        /* Warning note */
+        .dl-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 0.9rem 1.1rem;
+            max-width: 440px;
+        }
+        .dl-note p { font-size: 0.78rem; color: #92400e; line-height: 1.55; margin: 0; }
+        .dl-note p strong { font-weight: 700; }
+
+        /* Right panel */
+        .dl-right {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #001540 0%, #0a2a6e 60%, #1a0533 100%);
+            overflow: hidden;
+            padding: 3rem 2rem;
+        }
+        /* Decorative orbs */
+        .dl-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .dl-orb-1 { width: 320px; height: 320px; background: #833ab4; top: -80px; right: -80px; }
+        .dl-orb-2 { width: 280px; height: 280px; background: #fd1d1d; bottom: -60px; left: -60px; }
+        .dl-orb-3 { width: 200px; height: 200px; background: #fcb045; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.12; }
+
+        /* QR card */
+        .dl-qr-card {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+        .dl-qr-frame {
+            background: #fff;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .dl-qr-frame img {
+            display: block;
+            width: clamp(180px, 22vw, 280px);
+            height: clamp(180px, 22vw, 280px);
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .dl-scan-hint {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.55);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        .dl-platform-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .dl-pbadge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 0.45rem 0.85rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+    </style>
+
+    <div class="dl-hero">
+
+        <!-- ===== LEFT: Copy & CTA ===== -->
+        <div class="dl-left">
+
+            <div class="dl-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+                    <path d="M12 18h.01"/>
+                </svg>
                 Download APK
             </div>
-            <h1 class="text-4xl font-black text-[#001540] mb-3 tracking-tight">Scarica Liftly</h1>
-            <p class="text-slate-500 max-w-md mx-auto text-base leading-relaxed">
-                Inquadra il QR code con la fotocamera del tuo smartphone oppure clicca il link qui sotto per scaricare direttamente l'APK di Liftly dal profilo Instagram del progetto.
-            </p>
-        </div>
 
-        <!-- QR Code Card -->
-        <div class="relative group">
-            <!-- Glow effect -->
-            <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-pink-400 via-rose-400 to-[#001540] opacity-20 blur-2xl scale-110 group-hover:opacity-30 transition-opacity duration-500"></div>
-            <div class="relative bg-white border border-slate-200 rounded-3xl p-8 shadow-xl flex flex-col items-center gap-5">
-                <img
-                    src="qr-code.png"
-                    alt="QR Code – Link diretto all'APK Liftly su Instagram"
-                    class="w-56 h-56 rounded-xl object-contain"
-                />
-                <div class="flex items-center gap-2 text-slate-400 text-xs font-medium">
-                    <i data-lucide="scan-line" class="w-4 h-4"></i>
-                    Inquadra con la fotocamera
+            <h1 class="dl-title">
+                Prova Liftly<br>
+                <span>adesso.</span>
+            </h1>
+            <p class="dl-desc">
+                Scarica l'APK direttamente dal profilo Instagram del progetto oppure inquadra il QR code con la fotocamera del tuo smartphone Android.
+            </p>
+
+            <!-- Steps -->
+            <div class="dl-steps">
+                <div class="dl-step">
+                    <div class="dl-step-num">1</div>
+                    <div class="dl-step-text">
+                        <strong>Inquadra o apri il link</strong>
+                        <span>Usa la fotocamera o clicca il pulsante qui sotto.</span>
+                    </div>
                 </div>
+                <div class="dl-step">
+                    <div class="dl-step-num">2</div>
+                    <div class="dl-step-text">
+                        <strong>Scarica l'APK</strong>
+                        <span>Trovi il file .apk direttamente nel post Instagram.</span>
+                    </div>
+                </div>
+                <div class="dl-step">
+                    <div class="dl-step-num">3</div>
+                    <div class="dl-step-text">
+                        <strong>Installa e accedi</strong>
+                        <span>Abilita "Sorgenti sconosciute" nelle impostazioni Android.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <a
+                id="instagram-apk-link"
+                href="https://www.instagram.com/liftly.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="dl-cta"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+                Apri su Instagram → APK Liftly
+            </a>
+
+            <!-- Warning note -->
+            <div class="dl-note">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="flex-shrink:0;margin-top:1px">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p><strong>Nota:</strong> per installare l'APK su Android, abilita <em>"Installa app da fonti sconosciute"</em> nelle impostazioni del dispositivo prima di aprire il file.</p>
             </div>
         </div>
 
-        <!-- Instagram CTA Button -->
-        <a
-            id="instagram-apk-link"
-            href="https://www.instagram.com/liftly.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-white text-sm shadow-lg
-                   bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045]
-                   hover:opacity-90 hover:scale-105 active:scale-100 transition-all duration-200"
-        >
-            <!-- Instagram icon (inline SVG) -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-            </svg>
-            Apri su Instagram → APK Liftly
-        </a>
+        <!-- ===== RIGHT: QR Code Panel ===== -->
+        <div class="dl-right">
+            <div class="dl-orb dl-orb-1"></div>
+            <div class="dl-orb dl-orb-2"></div>
+            <div class="dl-orb dl-orb-3"></div>
 
-        <!-- Info note -->
-        <div class="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 max-w-sm text-left flex items-start gap-3">
-            <i data-lucide="info" class="w-4 h-4 text-amber-500 mt-0.5 shrink-0"></i>
-            <p class="text-xs text-amber-800 leading-relaxed">
-                <span class="font-bold">Nota:</span> per installare l'APK su Android, assicurati di abilitare
-                <em>"Installa app da fonti sconosciute"</em> nelle impostazioni del dispositivo.
-            </p>
+            <div class="dl-qr-card">
+                <div class="dl-qr-frame">
+                    <img
+                        src="qr-code.png"
+                        alt="QR Code – Link diretto all'APK Liftly su Instagram"
+                    />
+                </div>
+
+                <div class="dl-scan-hint">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                        <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                        <line x1="7" y1="12" x2="17" y2="12"/>
+                    </svg>
+                    Inquadra con la fotocamera
+                </div>
+
+                <div class="dl-platform-badges">
+                    <div class="dl-pbadge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.39.06 2.31.74 3.08.75.81-.04 1.58-.73 3.02-.83 1.68-.12 2.97.54 3.8 1.74-3.45 2.05-2.88 6.9.87 8.19-.64 1.45-1.16 2.21-2.77 3.03zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                        Android
+                    </div>
+                    <div class="dl-pbadge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
+                            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Free
+                    </div>
+                    <div class="dl-pbadge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Beta
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
