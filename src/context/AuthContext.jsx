@@ -220,9 +220,12 @@ export const AuthProvider = ({ children }) => {
               await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
             }
           }
+          // onAuthStateChanged will fire and set currentUser, then ProtectedRoute
+          // will allow navigation to '/' automatically. No explicit navigate needed.
         }
       } catch (error) {
-        console.error("Error handling Google redirect result:", error);
+        // Log full details so we can see the REAL error (not silently swallow it)
+        console.error("❌ Google redirect result error:", error?.code, error?.message, error);
       }
     };
     handleRedirectResult();

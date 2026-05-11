@@ -54,15 +54,23 @@ const Login = () => {
     setIsGoogleAccount(false);
     setLoading(true);
     try {
-      await loginWithGoogle();
-      navigate('/');
+      const result = await loginWithGoogle();
+      // On native (APK): loginWithGoogle() returns a result — navigate immediately.
+      // On web: loginWithGoogle() triggers signInWithRedirect and returns undefined.
+      //   The browser will redirect to Google and come back; handleRedirectResult
+      //   in AuthContext processes the result on reload. DO NOT call navigate('/') here
+      //   because currentUser is still null and ProtectedRoute will bounce back to /login.
+      if (result) {
+        navigate('/');
+      }
+      // If result is undefined (web redirect), keep loading=true so the UI shows
+      // a "Redirecting to Google…" state while the browser navigates away.
     } catch (err) {
-      if (err.code === 'auth/popup-closed-by-user') {
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         setError('Sign-in cancelled.');
       } else {
         setError(`Google sign-in failed: ${err.message || err.code || 'Please try again.'}`);
       }
-    } finally {
       setLoading(false);
     }
   };
