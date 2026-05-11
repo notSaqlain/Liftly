@@ -191,16 +191,17 @@ const Workout = () => {
     { key: 'favorites', icon: <Heart size={15} />, label: 'Favorites' },
   ];
 
+  /* FEATURE: Dark Mode Muscle Colors */
   const getMuscleColor = (group = '') => {
     const g = group.toLowerCase();
-    if (g.includes('chest')) return 'bg-red-50 text-red-600';
-    if (g.includes('back') || g.includes('lat')) return 'bg-blue-50 text-blue-600';
-    if (g.includes('leg') || g.includes('quad') || g.includes('glute') || g.includes('hamstr') || g.includes('calf')) return 'bg-green-50 text-green-600';
-    if (g.includes('shoulder')) return 'bg-purple-50 text-purple-600';
-    if (g.includes('arm') || g.includes('bicep') || g.includes('tricep') || g.includes('forearm')) return 'bg-orange-50 text-orange-600';
-    if (g.includes('core') || g.includes('abs') || g.includes('waist')) return 'bg-yellow-50 text-yellow-600';
-    if (g.includes('cardio')) return 'bg-pink-50 text-pink-600';
-    return 'bg-slate-100 text-slate-500';
+    if (g.includes('chest')) return 'bg-red-500/10 text-red-400 border border-red-500/20';
+    if (g.includes('back') || g.includes('lat')) return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+    if (g.includes('leg') || g.includes('quad') || g.includes('glute') || g.includes('hamstr') || g.includes('calf')) return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+    if (g.includes('shoulder')) return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
+    if (g.includes('arm') || g.includes('bicep') || g.includes('tricep') || g.includes('forearm')) return 'bg-orange-500/10 text-orange-400 border border-orange-500/20';
+    if (g.includes('core') || g.includes('abs') || g.includes('waist')) return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+    if (g.includes('cardio')) return 'bg-pink-500/10 text-pink-400 border border-pink-500/20';
+    return 'bg-white/10 text-white/70 border border-white/10';
   };
 
   return (
@@ -219,20 +220,23 @@ const Workout = () => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#00d4aa]/10 rounded-full blur-3xl -mr-8 -mt-8" />
           <h1 className="text-2xl font-black text-white mb-4 tracking-tight relative z-10">Workout Hub</h1>
 
-          {/* Tabs */}
-          <div className="flex bg-white/5 p-1 rounded-2xl gap-1 relative z-10">
+          {/* Tabs - Segmented Control */}
+          <div className="flex bg-black/40 p-1.5 rounded-2xl gap-1 relative z-10 border border-white/5 shadow-inner">
             {TABS.map(({ key, icon, label }) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
                 className={clsx(
-                  'flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all duration-200',
+                  'flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all duration-300 relative',
                   activeTab === key
-                    ? 'bg-white/10 text-[#00d4aa] shadow-sm'
-                    : 'text-white/30 hover:text-white/60'
+                    ? 'text-[#00d4aa] shadow-md'
+                    : 'text-white/40 hover:text-white/70'
                 )}
               >
-                {icon} {label}
+                {activeTab === key && (
+                  <span className="absolute inset-0 bg-white/10 border border-white/10 rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.05)] animate-scale-in" />
+                )}
+                <span className="relative z-10 flex items-center gap-1.5">{icon} {label}</span>
               </button>
             ))}
           </div>
@@ -319,7 +323,7 @@ const Workout = () => {
                 {activeSplit.map((dayName, idx) => {
                   const dayExercises = customRoutines[dayName] || [];
                   return (
-                    <div key={idx} className="bg-[#0D1526] rounded-3xl border border-white/5 overflow-hidden">
+                    <div key={idx} className="surface rounded-3xl overflow-hidden mb-4 interactive-card">
                       <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center">
                         <div>
                           <h3 className="font-black text-white">{dayName}</h3>
@@ -341,7 +345,7 @@ const Workout = () => {
                             const ex = exercisesData.find(e => e.id === exId);
                             if (!ex) return null;
                             return (
-                              <div key={exId} className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5">
+                              <div key={exId} className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 interactive-card">
                                 <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                                   <Dumbbell size={15} className="text-white/30" />
                                 </div>
@@ -396,7 +400,7 @@ const Workout = () => {
                   const isFav = favorites.includes(exercise.id);
                   const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
                   return (
-                    <div key={exercise.id} className="bg-[#0D1526] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                    <div key={exercise.id} className="surface p-4 rounded-2xl flex items-center gap-4 interactive-card">
                       <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
                         <Dumbbell size={18} className="text-white/20" />
                       </div>
@@ -468,7 +472,7 @@ const Workout = () => {
               favoriteExercises.map(exercise => {
                 const isInRoutine = targetRoutineForAdd && customRoutines[targetRoutineForAdd]?.includes(exercise.id);
                 return (
-                  <div key={exercise.id} className="bg-[#0D1526] p-4 rounded-2xl border border-white/5 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                  <div key={exercise.id} className="surface p-4 rounded-2xl flex items-center gap-4 interactive-card">
                     <div className="w-11 h-11 rounded-2xl bg-red-500/10 flex items-center justify-center shrink-0 border border-red-500/20">
                       <Heart size={18} className="text-red-400 fill-red-400" />
                     </div>

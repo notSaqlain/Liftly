@@ -136,9 +136,9 @@ const Stats = () => {
     <div className="bg-[#040810] min-h-full animate-fade-in">
 
       {/* Header */}
-      <div className="bg-liftly-navy px-6 pt-12 pb-8 relative overflow-hidden">
+      <div className="px-6 pt-12 pb-6 relative overflow-hidden border-b border-white/5 bg-transparent">
         <div className="absolute top-0 right-0 w-40 h-40 bg-purple-500/15 rounded-full blur-3xl -mr-10 -mt-10" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-liftly-teal/10 rounded-full blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#00d4aa]/10 rounded-full blur-2xl" />
         <div className="relative z-10">
           <h1 className="text-2xl font-black text-white tracking-tight mb-1">Your Progress</h1>
           <p className="text-white/40 text-sm font-medium">Tracking every gain you make</p>
@@ -151,7 +151,7 @@ const Stats = () => {
         <div className="grid grid-cols-2 gap-4">
           <StatCard icon={<Target size={20} />} value={hasData ? totalWorkouts : '—'} label="Total Workouts" color="bg-blue-500/10 text-blue-400 border border-blue-500/20" />
           <StatCard icon={<Dumbbell size={20} />} value={hasData ? fmtVol(totalVolume) : '—'} label="Volume (kg)" color="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" />
-          <div className="bg-gradient-to-br from-orange-400 to-red-500 p-4 rounded-3xl shadow-lg flex flex-col items-center justify-center text-center relative overflow-hidden group">
+          <div className="interactive-card bg-gradient-to-br from-orange-400 to-red-500 p-4 rounded-3xl shadow-[0_4px_20px_rgba(249,115,22,0.3)] flex flex-col items-center justify-center text-center relative overflow-hidden group border border-white/10">
             <div className="absolute top-0 right-0 w-16 h-16 bg-white/20 rounded-full blur-xl -mr-4 -mt-4 transition-transform group-hover:scale-150" />
             <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center mb-2 z-10 backdrop-blur-sm">
               <Flame size={20} className="text-white fill-white" />
@@ -164,9 +164,9 @@ const Stats = () => {
 
         {!hasData ? (
           /* Empty state */
-          <div className="bg-[#0D1526] rounded-3xl p-10 shadow-card border border-white/5 text-center">
-            <div className="w-16 h-16 rounded-3xl bg-liftly-teal/10 flex items-center justify-center mx-auto mb-4 border border-white/5">
-              <Dumbbell size={32} className="text-liftly-teal" />
+          <div className="surface interactive-card rounded-3xl p-10 text-center">
+            <div className="w-16 h-16 rounded-3xl bg-[#00d4aa]/10 flex items-center justify-center mx-auto mb-4 border border-white/5 shadow-[0_0_15px_rgba(0,212,170,0.2)]">
+              <Dumbbell size={32} className="text-[#00d4aa]" />
             </div>
             <h3 className="font-black text-white text-lg mb-2">No workouts yet</h3>
             <p className="text-white/40 text-sm">Complete your first workout to start seeing your progress graphs here.</p>
@@ -174,15 +174,15 @@ const Stats = () => {
         ) : (
           <>
             {/* Weekly Volume Bar Chart */}
-            <div className="bg-[#0D1526] rounded-3xl p-5 shadow-card border border-white/5">
+            <div className="surface rounded-3xl p-5 interactive-card">
               <div className="flex justify-between items-center mb-5">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-liftly-teal/10 flex items-center justify-center border border-white/5">
-                    <CalendarDays size={14} className="text-liftly-teal" />
+                  <div className="w-7 h-7 rounded-lg bg-[#00d4aa]/10 flex items-center justify-center border border-[#00d4aa]/20 shadow-[0_0_10px_rgba(0,212,170,0.1)]">
+                    <CalendarDays size={14} className="text-[#00d4aa]" />
                   </div>
                   <h3 className="font-black text-white">Weekly Volume</h3>
                 </div>
-                <span className="text-[10px] font-bold bg-liftly-teal/10 border border-white/5 text-liftly-teal px-2.5 py-1 rounded-lg">This Week</span>
+                <span className="text-[10px] font-bold bg-[#00d4aa]/10 border border-[#00d4aa]/20 text-[#00d4aa] px-2.5 py-1 rounded-lg">This Week</span>
               </div>
               <div className="h-48 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -191,8 +191,8 @@ const Stats = () => {
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} tickFormatter={v => v >= 1000 ? `${v/1000}k` : v} />
                     <Tooltip
                       cursor={{ fill: 'rgba(255,255,255,0.05)', radius: 8 }}
-                      contentStyle={{ backgroundColor: '#040810', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)', fontFamily: 'Plus Jakarta Sans', color: 'white' }}
-                      itemStyle={{ color: '#00ADB5', fontWeight: 800 }}
+                      contentStyle={{ backgroundColor: 'rgba(13, 21, 38, 0.95)', backdropFilter: 'blur(10px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)', fontFamily: 'Plus Jakarta Sans', color: 'white' }}
+                      itemStyle={{ color: '#00d4aa', fontWeight: 800 }}
                       formatter={v => [`${v} kg`, 'Volume']}
                     />
                     <Bar dataKey="volume" fill="url(#tealGradient)" radius={[8, 8, 4, 4]} barSize={28} />
@@ -208,15 +208,15 @@ const Stats = () => {
             </div>
 
             {/* Muscle Radar */}
-            <div className="bg-[#0D1526] rounded-3xl p-5 shadow-card border border-white/5">
+            <div className="surface rounded-3xl p-5 interactive-card">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center border border-white/5">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 shadow-[0_0_10px_rgba(168,85,247,0.1)]">
                     <RadarIcon size={14} className="text-purple-400" />
                   </div>
                   <h3 className="font-black text-white">Muscle Focus</h3>
                 </div>
-                <span className="text-[10px] font-bold bg-purple-500/10 border border-white/5 text-purple-400 px-2.5 py-1 rounded-lg">All Time</span>
+                <span className="text-[10px] font-bold bg-purple-500/10 border border-purple-500/20 text-purple-400 px-2.5 py-1 rounded-lg">All Time</span>
               </div>
               {!showMuscleDetails ? (
                 <div className="h-60 w-full animate-fade-in">
@@ -250,10 +250,10 @@ const Stats = () => {
 
             {/* Progress Line Chart */}
             {availableExercises.length > 0 && (
-              <div className="bg-[#0D1526] rounded-3xl p-5 shadow-card border border-white/5">
+              <div className="surface rounded-3xl p-5 interactive-card">
                 <div className="flex justify-between items-center mb-5">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-white/5">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 shadow-[0_0_10px_rgba(99,102,241,0.1)]">
                       <TrendingUp size={14} className="text-indigo-400" />
                     </div>
                     <h3 className="font-black text-white">Best Weight</h3>
@@ -292,8 +292,8 @@ const Stats = () => {
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                         <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 700 }} dy={8} />
                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                        <Tooltip contentStyle={{ backgroundColor: '#040810', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)', fontFamily: 'Plus Jakarta Sans', color: 'white' }} itemStyle={{ color: '#818cf8', fontWeight: 800 }} formatter={v => [`${v} kg`, 'Best Set']} />
-                        <Line type="monotone" dataKey="weight" stroke="#818cf8" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#0D1526', stroke: '#818cf8' }} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }} />
+                        <Tooltip contentStyle={{ backgroundColor: 'rgba(13, 21, 38, 0.95)', backdropFilter: 'blur(10px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)', fontFamily: 'Plus Jakarta Sans', color: 'white' }} itemStyle={{ color: '#818cf8', fontWeight: 800 }} formatter={v => [`${v} kg`, 'Best Set']} />
+                        <Line type="monotone" dataKey="weight" stroke="#818cf8" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: '#0D1526', stroke: '#818cf8' }} activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1', stroke: 'rgba(99,102,241,0.5)', strokeWidth: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -306,9 +306,9 @@ const Stats = () => {
             )}
 
             {/* Workout History */}
-            <div className="bg-[#0D1526] rounded-3xl p-5 shadow-card border border-white/5">
+            <div className="surface rounded-3xl p-5 interactive-card">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center border border-white/5">
+                <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 shadow-inner">
                   <Clock size={14} className="text-white/50" />
                 </div>
                 <h3 className="font-black text-white">Workout History</h3>
@@ -403,7 +403,7 @@ const Stats = () => {
 };
 
 const StatCard = ({ icon, value, label, color }) => (
-  <div className="bg-[#0D1526] p-4 rounded-3xl border border-white/5 shadow-card flex flex-col items-center justify-center text-center">
+  <div className="surface interactive-card p-4 rounded-3xl flex flex-col items-center justify-center text-center">
     <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${color}`}>
       {icon}
     </div>

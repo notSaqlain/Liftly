@@ -94,57 +94,97 @@ const Dashboard = () => {
     <div className="bg-[#040810] min-h-full animate-fade-in">
 
       {/* ── Header ── */}
-      <div className="bg-liftly-navy px-6 pt-12 pb-8 relative overflow-hidden">
-        {/* Decorative glows */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-liftly-teal/15 rounded-full blur-3xl -mr-16 -mt-16" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -ml-10 -mb-10" />
+      <div className="relative overflow-hidden px-5 pt-12 pb-6">
+        {/* Background gradient layer */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0D1F38] via-[#060D1A] to-[#040810]" />
+        <div className="absolute top-0 right-0 w-56 h-56 bg-[#00d4aa]/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[120px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex justify-between items-start">
-          <div className="flex items-center gap-3">
+        {/* Top row: Avatar + Name | Streak + Bell */}
+        <div className="relative z-10 flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3.5">
+            {/* Avatar with glow ring */}
             {photoURL ? (
-              <div className="relative">
-                <img src={photoURL} alt="Profile" className="w-12 h-12 rounded-2xl object-cover ring-2 ring-liftly-teal/40 shrink-0" referrerPolicy="no-referrer" />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-liftly-navy" />
+              <div className="relative shrink-0">
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00d4aa] to-blue-500 opacity-40 blur-[6px] scale-110" />
+                <img
+                  src={photoURL}
+                  alt="Profile"
+                  className="relative w-12 h-12 rounded-2xl object-cover ring-2 ring-[#00d4aa]/50"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-[#060D1A] shadow-sm" />
               </div>
             ) : (
-              <div className="w-12 h-12 rounded-2xl bg-liftly-teal/20 border border-liftly-teal/30 flex items-center justify-center text-white font-black text-lg shrink-0">
+              <div className="relative shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00d4aa]/30 to-blue-500/20 border border-[#00d4aa]/30 flex items-center justify-center text-white font-black text-lg shadow-[0_0_16px_rgba(0,212,170,0.2)]">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
             <div>
-              <p className="text-white/50 text-xs font-semibold">{getGreeting()},</p>
-              <h1 className="text-white text-xl font-black tracking-tight capitalize">{displayName} 👋</h1>
+              <p className="text-white/40 text-[11px] font-semibold tracking-wide">{getGreeting()},</p>
+              <h1 className="text-white text-[20px] font-black tracking-tight leading-tight capitalize">
+                {displayName} <span className="text-xl">👋</span>
+              </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-white/10 border border-white/15 px-3 py-2 rounded-2xl flex flex-col items-center">
-              <div className="flex items-center space-x-1">
-                <Flame className="text-orange-400 fill-orange-400" size={18} />
-                <span className="text-xl font-black text-white">{userData?.currentStreak || 0}</span>
+          {/* Right: Streak pill + Bell */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                borderColor: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              <Flame className="text-orange-400 fill-orange-400 shrink-0" size={16} />
+              <div className="text-left">
+                <p className="text-white font-black text-base leading-none">{userData?.currentStreak || 0}</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-white/35 leading-none mt-0.5">Streak</p>
               </div>
-              <span className="text-[9px] uppercase tracking-widest font-bold text-white/40">Wk Streak</span>
             </div>
-            <button onClick={() => navigate('/notifications')} className="w-11 h-11 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-all relative">
-              <Bell size={20} />
+            <button
+              onClick={() => navigate('/notifications')}
+              className="relative w-11 h-11 rounded-2xl flex items-center justify-center text-white/60 active:scale-95 transition-all border"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                borderColor: 'rgba(255,255,255,0.1)',
+              }}
+            >
+              <Bell size={18} />
               {pendingRequestsCount > 0 && (
-                <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-liftly-navy" />
+                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_6px_rgba(239,68,68,0.8)]" />
               )}
             </button>
           </div>
         </div>
 
         {/* Quick stats strip */}
-        <div className="relative z-10 grid grid-cols-3 gap-3 mt-6">
+        <div className="relative z-10 grid grid-cols-3 gap-2.5">
           {[
-            { label: 'This Week', value: weekStats.count, unit: 'workouts', icon: Calendar, color: 'text-liftly-teal' },
-            { label: 'Volume', value: weekStats.volume > 999 ? `${(weekStats.volume / 1000).toFixed(1)}k` : weekStats.volume, unit: 'kg', icon: TrendingUp, color: 'text-blue-400' },
-            { label: 'Split', value: activeSplit ? `${activeSplit.length}d` : '—', unit: activeSplit ? 'active' : 'setup', icon: Dumbbell, color: 'text-purple-400' },
-          ].map(({ label, value, unit, icon: Icon, color }) => (
-            <div key={label} className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
-              <Icon size={14} className={`${color} mx-auto mb-1`} />
+            { label: 'Workouts', value: weekStats.count, unit: 'this week', icon: Calendar, from: '#00d4aa', to: '#0891b2' },
+            { label: 'Volume', value: weekStats.volume > 999 ? `${(weekStats.volume / 1000).toFixed(1)}k` : weekStats.volume, unit: 'kg lifted', icon: TrendingUp, from: '#818cf8', to: '#6366f1' },
+            { label: 'Split', value: activeSplit ? `${activeSplit.length}d` : '—', unit: activeSplit.length > 0 ? 'active' : 'setup', icon: Dumbbell, from: '#c084fc', to: '#a855f7' },
+          ].map(({ label, value, unit, icon: Icon, from, to }) => (
+            <div
+              key={label}
+              className="rounded-2xl p-3 text-center border"
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                borderColor: 'rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              <div
+                className="w-7 h-7 rounded-xl flex items-center justify-center mx-auto mb-2"
+                style={{ background: `linear-gradient(135deg, ${from}20, ${to}15)`, border: `1px solid ${from}30` }}
+              >
+                <Icon size={13} style={{ color: from }} />
+              </div>
               <p className="text-white font-black text-lg leading-none">{value}</p>
-              <p className="text-white/40 text-[9px] font-bold uppercase tracking-wider mt-0.5">{unit}</p>
+              <p className="text-white/35 text-[9px] font-bold uppercase tracking-wider mt-1 leading-tight">{unit}</p>
             </div>
           ))}
         </div>

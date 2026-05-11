@@ -37,27 +37,29 @@ const MainLayout = () => {
 
     return () => unsubscribe();
   }, [currentUser]);
+
   return (
-    <div className="flex justify-center min-h-screen" style={{ background: '#040810' }}>
-      <div className="w-full max-w-[480px] min-h-screen relative shadow-2xl flex flex-col" style={{ background: '#070B14' }}>
+    <div className="flex justify-center h-[100dvh] overflow-hidden bg-mesh-glow">
+      <div className="w-full max-w-[480px] h-full relative shadow-2xl flex flex-col bg-[#040810]/60 backdrop-blur-3xl border-x border-white/5">
         {/* Main Content Area */}
         <main className={`flex-1 flex flex-col overflow-y-auto no-scrollbar`}>
           <Outlet />
         </main>
 
-        {/* Bottom Navigation Bar */}
+        {/* FEATURE: Floating Pill Nav */}
         {!isChatPage && (
-          <nav className="w-full max-w-[480px] shrink-0 z-50">
+          <nav className="w-full shrink-0 z-50 px-4 pb-3 pt-1">
           <div
-            className="border-t"
+            className="rounded-[28px] border shadow-2xl"
             style={{
-              background: 'rgba(7, 11, 20, 0.95)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              borderColor: 'rgba(255,255,255,0.06)',
+              background: 'rgba(13, 21, 38, 0.75)',
+              backdropFilter: 'blur(40px) saturate(150%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(150%)',
+              borderColor: 'rgba(255,255,255,0.1)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
             }}
           >
-            <div className="flex justify-around items-center h-[72px] px-2 safe-area-bottom">
+            <div className="flex justify-around items-center h-[68px] px-2">
               {NAV_ITEMS.map(({ to, icon: Icon, label, end }) => (
                 <NavLink
                   key={to}
@@ -72,21 +74,18 @@ const MainLayout = () => {
                 >
                   {({ isActive }) => (
                     <>
-                      {/* Active pill */}
+                      {/* Active pill glow */}
                       {isActive && (
                         <span
-                          className="absolute inset-x-1 inset-y-1.5 rounded-xl animate-scale-in"
-                          style={{ background: 'rgba(0,229,209,0.1)' }}
+                          className="absolute inset-x-1 inset-y-1.5 rounded-2xl animate-scale-in"
+                          style={{ 
+                            background: 'rgba(0,229,209,0.15)',
+                            boxShadow: 'inset 0 1px 0 rgba(0,229,209,0.2)'
+                          }}
                         />
                       )}
 
-                      {/* Active top accent line */}
-                      {isActive && (
-                        <div
-                          className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-b-full"
-                          style={{ background: '#00E5D1', boxShadow: '0 0 8px rgba(0,229,209,0.8)' }}
-                        />
-                      )}
+                      {/* Active indicator removed per design update */}
 
                       <div className="relative">
                         <Icon
