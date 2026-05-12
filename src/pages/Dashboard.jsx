@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { createPortal } from 'react-dom';
-import { Flame, Users, UserPlus, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare, Bell } from 'lucide-react';
+import { Flame, Star, Users, UserPlus, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare, Bell } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -149,10 +149,10 @@ const Dashboard = () => {
                 backdropFilter: 'blur(10px)',
               }}
             >
-              <Flame className="text-orange-400 fill-orange-400 shrink-0" size={16} />
+              <Star className="text-yellow-400 fill-yellow-400 shrink-0" size={16} />
               <div className="text-left">
-                <p className="text-white font-black text-base leading-none">{userData?.currentStreak || 0}</p>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-white/35 leading-none mt-0.5">Streak</p>
+                <p className="text-white font-black text-base leading-none">{userData?.points || 0}</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-white/35 leading-none mt-0.5">Score</p>
               </div>
             </div>
             <button
@@ -416,9 +416,9 @@ const Dashboard = () => {
                           </div>
                         )}
                       </div>
-                      {(friend.currentStreak > 0) && (
-                        <div className="absolute -bottom-1 -right-1 bg-orange-500 text-white text-[9px] font-black px-1 rounded-md leading-tight py-0.5 shadow-sm">
-                          🔥{friend.currentStreak}
+                      {(friend.points > 0) && (
+                        <div className="absolute -bottom-1 -right-1 bg-yellow-500 text-white text-[9px] font-black px-1 rounded-md leading-tight py-0.5 shadow-sm">
+                          ⭐ {friend.points}
                         </div>
                       )}
                     </div>

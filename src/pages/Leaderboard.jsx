@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, query, orderBy, limit, getDocs, where, doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import { Trophy, Flame, Dumbbell, TrendingUp, ChevronLeft, Medal, Crown, Globe, Building2, Users } from 'lucide-react';
+import { Trophy, Star, Dumbbell, TrendingUp, ChevronLeft, Medal, Crown, Globe, Building2, Users } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'streak', label: '🔥 Streak', field: 'currentStreak', unit: 'wks', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+  { id: 'points', label: '⭐ Points', field: 'points', unit: 'pts', icon: Star, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
   { id: 'volume', label: '📈 Volume', field: 'totalVolumeLifted', unit: 'kg', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-500/10' },
   { id: 'bench_press', label: '🏋️ Bench Press', field: 'best1RM_bench_press', unit: 'kg', icon: Dumbbell, color: 'text-purple-500', bg: 'bg-purple-500/10' },
   { id: 'deadlift', label: '🏋️ Deadlift', field: 'best1RM_deadlift', unit: 'kg', icon: Dumbbell, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },

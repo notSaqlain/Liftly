@@ -12,28 +12,7 @@ const REST_PRESETS = [
   { sec: 120, label: '2m', sub: 'Long' },
   { sec: 180, label: '3m', sub: 'Max' },
 ];
-
-// Returns a string like "2026-W17" for the ISO week of a given date
-const getISOWeekKey = (date = new Date()) => {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
-};
-
-// Returns the ISO week key of the week preceding the given key (e.g. "2026-W16" → "2026-W17")
-const getPrevWeekKey = (weekKey) => {
-  const [year, week] = weekKey.split('-W').map(Number);
-  if (week === 1) {
-    // Go back to last week of previous year (52 or 53)
-    const dec28 = new Date(Date.UTC(year - 1, 11, 28));
-    return getISOWeekKey(dec28);
-  }
-  return `${year}-W${String(week - 1).padStart(2, '0')}`;
-};
-
+import { getPointsUpdate } from '../utils/points';
 const ActiveWorkout = () => {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
@@ -144,9 +123,6 @@ const ActiveWorkout = () => {
     if (!currentUser) return;
     setSaving(true);
     const durationMinutes = Math.round((Date.now() - startTime) / 60000);
-    const now = new Date();
-    const currentWeekKey = getISOWeekKey(now);
-    const lastWeekKey = userData?.lastWorkoutWeek || '';
 
     const workoutData = {
       userId: currentUser.uid,
@@ -167,6 +143,7 @@ const ActiveWorkout = () => {
       durationMinutes,
       completedAt: serverTimestamp()
     };
+    const pointsUpdate = getPointsUpdate(userData, 'WORKOUT_COMPLETED', true);
 
     try {
       await addDoc(collection(db, 'users', currentUser.uid, 'user_workouts'), workoutData);
@@ -175,36 +152,8 @@ const ActiveWorkout = () => {
         totalVolumeLifted: increment(Math.round(totalVolume)),
         totalWorkoutsCompleted: increment(1),
         lastWorkoutDate: serverTimestamp(),
-        lastWorkoutWeek: currentWeekKey,
+        ...pointsUpdate,
       };
-
-      // ── Weekly Streak Logic ──
-      // Streak = number of consecutive calendar weeks with ≥1 workout.
-      // This is more realistic than daily streaks since rest days between sessions
-      // are normal and encouraged. The streak only breaks if an entire week passes
-      // without any workout.
-      if (currentWeekKey !== lastWeekKey) {
-        // First workout of this week
-        const prevWeekKey = getPrevWeekKey(currentWeekKey);
-        if (lastWeekKey === prevWeekKey) {
-          // Trained last week too → extend the streak
-          userUpdates.currentStreak = increment(1);
-        } else if (!lastWeekKey) {
-          // Very first workout ever
-          userUpdates.currentStreak = 1;
-        } else {
-          // Missed at least one full week → reset streak to 1
-          userUpdates.currentStreak = 1;
-        }
-
-        // Update longestStreak if we just set a new record
-        const projectedStreak = (userData?.currentStreak || 0) +
-          (lastWeekKey === prevWeekKey ? 1 : 0);
-        if (projectedStreak > (userData?.longestStreak || 0)) {
-          userUpdates.longestStreak = projectedStreak;
-        }
-      }
-      // If currentWeekKey === lastWeekKey: already counted this week, no streak change.
 
       // ── Track best 1RM for big lifts ──
       const BIG_LIFTS_MAP = {
@@ -240,48 +189,94 @@ const ActiveWorkout = () => {
   // ── Completion Screen ──
   if (finished) {
     const durationMins = Math.round((Date.now() - startTime) / 60000);
+    const pointsUpdate = getPointsUpdate(userData, 'WORKOUT_COMPLETED', true);
+    const pointsEarned = pointsUpdate?.pointsEarned || 10;
+    const newTotal = (userData?.points || 0) + pointsEarned;
+
     return (
-      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center animate-fade-in relative overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #001540 0%, #002070 60%, #001540 100%)' }}>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-liftly-teal/15 rounded-full blur-3xl -mr-20 -mt-20" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="min-h-full flex flex-col animate-fade-in relative overflow-hidden bg-[#040810]">
+        {/* Background glows */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0D1F38] via-[#040810] to-[#040810]" />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-[#00d4aa]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-1/4 left-0 w-56 h-56 bg-indigo-500/8 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Trophy */}
-        <div className="relative mb-8 z-10">
-          <div className="w-24 h-24 rounded-3xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center animate-scale-in">
-            <Trophy size={48} className="text-yellow-400" />
-          </div>
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center animate-float">
-            <Flame size={16} className="text-white fill-white" />
-          </div>
-        </div>
+        <div className="relative z-10 flex flex-col items-center justify-center flex-1 p-6 text-center">
 
-        <div className="z-10">
-          <h1 className="text-3xl font-black text-white mb-1">Workout Complete!</h1>
-          <p className="text-white/50 mb-8 font-medium">{dayName} · Great work 💪</p>
-        </div>
-
-        {/* Stats */}
-        <div className="flex gap-4 mb-10 z-10">
-          {[
-            { label: 'Sets', value: totalSets },
-            { label: 'Volume', value: `${Math.round(totalVolume).toLocaleString()}kg` },
-            { label: 'Duration', value: `${durationMins}m` },
-          ].map(({ label, value }) => (
-            <div key={label} className="bg-white/8 border border-white/10 rounded-3xl p-4 text-center min-w-[80px]">
-              <p className="text-2xl font-black text-white mb-0.5">{value}</p>
-              <p className="text-[9px] uppercase tracking-widest font-bold text-white/40">{label}</p>
+          {/* Trophy icon */}
+          <div className="relative mb-6">
+            <div
+              className="w-28 h-28 rounded-3xl flex items-center justify-center animate-scale-in"
+              style={{
+                background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05))',
+                border: '1px solid rgba(251,191,36,0.25)',
+                boxShadow: '0 0 40px rgba(251,191,36,0.15)',
+              }}
+            >
+              <Trophy size={52} className="text-yellow-400" />
             </div>
-          ))}
-        </div>
+            {/* Pulsing ring */}
+            <div className="absolute inset-0 rounded-3xl animate-ping opacity-20" style={{ border: '2px solid rgba(251,191,36,0.5)' }} />
+          </div>
 
-        <button
-          onClick={() => navigate('/')}
-          className="w-full max-w-xs h-14 text-liftly-navy font-black rounded-3xl shadow-teal-lg active:scale-95 transition-all z-10 text-lg"
-          style={{ background: 'linear-gradient(135deg, #00ADB5 0%, #33c4cb 100%)' }}
-        >
-          Back to Home 🏠
-        </button>
+          <h1 className="text-4xl font-black text-white tracking-tight mb-1">Workout Complete!</h1>
+          <p className="text-white/40 font-medium mb-8 text-sm">
+            {dayName} · Great work 💪
+          </p>
+
+          {/* Points earned badge */}
+          <div
+            className="flex items-center gap-3 px-5 py-3 rounded-2xl mb-8"
+            style={{
+              background: 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(251,191,36,0.05))',
+              border: '1px solid rgba(251,191,36,0.2)',
+            }}
+          >
+            <div className="w-9 h-9 rounded-xl bg-yellow-400/15 border border-yellow-400/20 flex items-center justify-center">
+              <Trophy size={18} className="text-yellow-400" />
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-black uppercase tracking-widest text-yellow-400/60">Points Earned</p>
+              <p className="text-white font-black text-lg leading-none">
+                +{pointsEarned}
+                <span className="text-white/30 text-sm font-bold ml-2">→ {newTotal} total</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-3 w-full mb-10">
+            {[
+              { label: 'Sets',     value: totalSets,                                 color: '#00d4aa' },
+              { label: 'Volume',   value: `${Math.round(totalVolume).toLocaleString()}kg`, color: '#818cf8' },
+              { label: 'Duration', value: `${durationMins}m`,                        color: '#f97316' },
+            ].map(({ label, value, color }) => (
+              <div
+                key={label}
+                className="rounded-2xl p-4 text-center"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                }}
+              >
+                <p className="text-2xl font-black mb-0.5" style={{ color }}>{value}</p>
+                <p className="text-[9px] uppercase tracking-widest font-bold text-white/30">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={() => navigate('/')}
+            className="w-full max-w-xs h-14 font-black rounded-3xl active:scale-95 transition-all text-[#040810] text-lg shadow-lg"
+            style={{
+              background: 'linear-gradient(135deg, #00d4aa, #00b894)',
+              boxShadow: '0 8px 32px rgba(0,212,170,0.35)',
+            }}
+          >
+            Back to Home
+          </button>
+
+        </div>
       </div>
     );
   }

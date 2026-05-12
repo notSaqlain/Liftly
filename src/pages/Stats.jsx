@@ -7,7 +7,7 @@ import {
   LineChart, Line, CartesianGrid,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
-import { Dumbbell, Trophy, TrendingUp, CalendarDays, Radar as RadarIcon, Target, Flame, Clock, ChevronDown } from 'lucide-react';
+import { Dumbbell, Trophy, TrendingUp, CalendarDays, Radar as RadarIcon, Target, Star, Clock, ChevronDown } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import exercisesData from '../data/exercises.json';
 
@@ -114,7 +114,7 @@ const Stats = () => {
   }, [selectedExercise, allWorkouts]);
 
   const fmtVol = (v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toString();
-  const streak = userData?.currentStreak || 0;
+  const points = userData?.points || 0;
 
   const availableExercises = [...new Set(
     allWorkouts.flatMap(w => w.exercises?.map(e => e.name) || [])
@@ -151,13 +151,13 @@ const Stats = () => {
         <div className="grid grid-cols-2 gap-4">
           <StatCard icon={<Target size={20} />} value={hasData ? totalWorkouts : '—'} label="Total Workouts" color="bg-blue-500/10 text-blue-400 border border-blue-500/20" />
           <StatCard icon={<Dumbbell size={20} />} value={hasData ? fmtVol(totalVolume) : '—'} label="Volume (kg)" color="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" />
-          <div className="interactive-card bg-gradient-to-br from-orange-400 to-red-500 p-4 rounded-3xl shadow-[0_4px_20px_rgba(249,115,22,0.3)] flex flex-col items-center justify-center text-center relative overflow-hidden group border border-white/10">
+          <div className="interactive-card bg-gradient-to-br from-yellow-400 to-orange-500 p-4 rounded-3xl shadow-[0_4px_20px_rgba(250,204,21,0.3)] flex flex-col items-center justify-center text-center relative overflow-hidden group border border-white/10">
             <div className="absolute top-0 right-0 w-16 h-16 bg-white/20 rounded-full blur-xl -mr-4 -mt-4 transition-transform group-hover:scale-150" />
             <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center mb-2 z-10 backdrop-blur-sm">
-              <Flame size={20} className="text-white fill-white" />
+              <Star size={20} className="text-white fill-white" />
             </div>
-            <span className="text-2xl font-black text-white tracking-tight z-10">{streak}</span>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mt-1 z-10">Day Streak</span>
+            <span className="text-2xl font-black text-white tracking-tight z-10">{points}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mt-1 z-10">Total Points</span>
           </div>
           <StatCard icon={<Trophy size={20} />} value={hasData ? workoutHistory[0]?.durationMinutes ? `${workoutHistory[0].durationMinutes}m` : '—' : '—'} label="Last Session" color="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20" />
         </div>

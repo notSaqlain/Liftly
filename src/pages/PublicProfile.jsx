@@ -3,14 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, getDocs, addDoc } from 'firebase/firestore';
-import { ChevronLeft, MessageCircle, UserPlus, Clock, Check, X, Flame, TrendingUp, Dumbbell, Trophy } from 'lucide-react';
+import { ChevronLeft, MessageCircle, UserPlus, Clock, Check, X, Star, TrendingUp, Dumbbell, Trophy } from 'lucide-react';
 
 const ACHIEVEMENTS = [
   { id: 'first', label: 'First Workout', icon: '🏋️', threshold: 1, stat: 'workouts' },
   { id: 'ten', label: '10 Workouts', icon: '💪', threshold: 10, stat: 'workouts' },
   { id: 'fifty', label: '50 Workouts', icon: '🔥', threshold: 50, stat: 'workouts' },
-  { id: 'streak7', label: '7-Day Streak', icon: '⚡', threshold: 7, stat: 'streak' },
-  { id: 'streak30', label: '30-Day Streak', icon: '🌟', threshold: 30, stat: 'streak' },
+  { id: 'points500', label: 'Bronze Lifter', icon: '🥉', threshold: 500, stat: 'points' },
+  { id: 'points1000', label: 'Silver Lifter', icon: '🥈', threshold: 1000, stat: 'points' },
   { id: 'volume100k', label: '100k kg Lifted', icon: '🏆', threshold: 100000, stat: 'volume' },
 ];
 
@@ -191,7 +191,7 @@ const PublicProfile = () => {
 
   const unlockedAchievements = ACHIEVEMENTS.filter(a => {
     if (a.stat === 'workouts') return totalWorkouts >= a.threshold;
-    if (a.stat === 'streak') return (user.currentStreak || 0) >= a.threshold;
+    if (a.stat === 'points') return (user.points || 0) >= a.threshold;
     if (a.stat === 'volume') return (user.totalVolumeLifted || 0) >= a.threshold;
     return false;
   });
@@ -304,12 +304,12 @@ const PublicProfile = () => {
           <h3 className="text-xs font-black text-white/40 uppercase tracking-widest mb-3">Core Stats</h3>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-[#0D1526] p-4 rounded-3xl border border-white/5 flex flex-col justify-between aspect-square">
-              <div className="w-10 h-10 rounded-2xl bg-orange-500/10 flex items-center justify-center mb-2">
-                <Flame size={20} className="text-orange-500" />
+              <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-2">
+                <Star size={20} className="text-yellow-500 fill-yellow-500" />
               </div>
               <div>
-                <p className="text-3xl font-black text-white">{user.currentStreak || 0}</p>
-                <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Week Streak</p>
+                <p className="text-3xl font-black text-white">{user.points || 0}</p>
+                <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Total Points</p>
               </div>
             </div>
             

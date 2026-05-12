@@ -9,8 +9,8 @@ const ACHIEVEMENTS = [
   { id: 'first', label: 'First Workout', icon: '🏋️', threshold: 1, stat: 'workouts' },
   { id: 'ten', label: '10 Workouts', icon: '💪', threshold: 10, stat: 'workouts' },
   { id: 'fifty', label: '50 Workouts', icon: '🔥', threshold: 50, stat: 'workouts' },
-  { id: 'streak7', label: '7-Day Streak', icon: '⚡', threshold: 7, stat: 'streak' },
-  { id: 'streak30', label: '30-Day Streak', icon: '🌟', threshold: 30, stat: 'streak' },
+  { id: 'points500', label: 'Bronze Lifter', icon: '🥉', threshold: 500, stat: 'points' },
+  { id: 'points1000', label: 'Silver Lifter', icon: '🥈', threshold: 1000, stat: 'points' },
   { id: 'volume100k', label: '100k kg Lifted', icon: '🏆', threshold: 100000, stat: 'volume' },
 ];
 
@@ -31,8 +31,8 @@ const Profile = () => {
   const [totalVolume, setTotalVolume] = useState(0);
   const [memberSince, setMemberSince] = useState('');
 
-  // Read streak from live userData (fixes hardcoded 0 bug)
-  const streak = userData?.currentStreak || 0;
+  // Read points from live userData
+  const points = userData?.points || 0;
 
   const fileInputRef = { current: null };
 
@@ -131,7 +131,7 @@ const Profile = () => {
 
   const unlockedAchievements = ACHIEVEMENTS.filter(a => {
     if (a.stat === 'workouts') return totalWorkouts >= a.threshold;
-    if (a.stat === 'streak') return streak >= a.threshold;
+    if (a.stat === 'points') return points >= a.threshold;
     if (a.stat === 'volume') return totalVolume >= a.threshold;
     return false;
   });
@@ -203,10 +203,10 @@ const Profile = () => {
           </div>
           <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
             <div className="flex items-center justify-center gap-1 mb-0.5">
-              <Flame size={12} className="text-orange-400" />
-              <span className="text-white font-black text-xl">{streak}</span>
+              <Star size={12} className="text-yellow-400 fill-yellow-400" />
+              <span className="text-white font-black text-xl">{points}</span>
             </div>
-            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Streak</span>
+            <span className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Points</span>
           </div>
           <div className="bg-white/[0.08] border border-white/10 rounded-2xl p-3 text-center">
             <div className="flex items-center justify-center gap-1 mb-0.5">

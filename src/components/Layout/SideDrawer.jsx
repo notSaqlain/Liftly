@@ -91,8 +91,8 @@ const SideDrawer = ({ isOpen, onClose }) => {
           {/* Stats strip */}
           <div className="flex gap-3">
             <div className="flex-1 rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="text-white font-black text-lg">{userData?.currentStreak || 0}</p>
-              <p className="text-white/30 text-[9px] font-bold uppercase tracking-wider">Streak</p>
+              <p className="text-white font-black text-lg">{userData?.points || 0}</p>
+              <p className="text-white/30 text-[9px] font-bold uppercase tracking-wider">Points</p>
             </div>
             <div className="flex-1 rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <p className="text-white font-black text-lg">{memberSince}</p>

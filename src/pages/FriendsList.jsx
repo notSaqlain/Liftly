@@ -170,8 +170,8 @@ const FriendsList = () => {
                     </div>
                   </div>
                   <div className="shrink-0 bg-white/5 px-3 py-1.5 rounded-xl flex items-center gap-1">
-                    <span className="text-orange-500 font-black text-sm">{friend.currentStreak || 0}</span>
-                    <span className="text-orange-500/50 text-[10px] font-bold uppercase">WKS</span>
+                    <span className="text-yellow-500 font-black text-sm">{friend.points || 0}</span>
+                    <span className="text-yellow-500/50 text-[10px] font-bold uppercase">PTS</span>
                   </div>
                 </button>
               ))}
