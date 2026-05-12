@@ -12,7 +12,7 @@ const REST_PRESETS = [
   { sec: 120, label: '2m', sub: 'Long' },
   { sec: 180, label: '3m', sub: 'Max' },
 ];
-import { getPointsUpdate } from '../utils/points';
+import { getPointsUpdate, POINTS_MAP } from '../utils/points';
 const ActiveWorkout = () => {
   const { currentUser, userData } = useAuth();
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ const ActiveWorkout = () => {
 
   const [saving, setSaving] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [finalStats, setFinalStats] = useState(null);
   const [startTime] = useState(Date.now());
 
   // Rest Timer
@@ -124,6 +125,12 @@ const ActiveWorkout = () => {
     setSaving(true);
     const durationMinutes = Math.round((Date.now() - startTime) / 60000);
 
+    setFinalStats({
+      sets: totalSets,
+      volume: Math.round(totalVolume),
+      duration: durationMinutes
+    });
+
     const workoutData = {
       userId: currentUser.uid,
       day: dayName,
@@ -187,10 +194,9 @@ const ActiveWorkout = () => {
   };
 
   // ── Completion Screen ──
-  if (finished) {
-    const durationMins = Math.round((Date.now() - startTime) / 60000);
+  if (finished && finalStats) {
     const pointsUpdate = getPointsUpdate(userData, 'WORKOUT_COMPLETED', true);
-    const pointsEarned = pointsUpdate?.pointsEarned || 10;
+    const pointsEarned = Object.keys(pointsUpdate).length > 0 ? POINTS_MAP.WORKOUT_COMPLETED : 0;
     const newTotal = (userData?.points || 0) + pointsEarned;
 
     return (
@@ -246,9 +252,9 @@ const ActiveWorkout = () => {
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-3 w-full mb-10">
             {[
-              { label: 'Sets',     value: totalSets,                                 color: '#00d4aa' },
-              { label: 'Volume',   value: `${Math.round(totalVolume).toLocaleString()}kg`, color: '#818cf8' },
-              { label: 'Duration', value: `${durationMins}m`,                        color: '#f97316' },
+              { label: 'Sets',     value: finalStats.sets,                                 color: '#00d4aa' },
+              { label: 'Volume',   value: `${finalStats.volume.toLocaleString()}kg`, color: '#818cf8' },
+              { label: 'Duration', value: `${finalStats.duration}m`,                        color: '#f97316' },
             ].map(({ label, value, color }) => (
               <div
                 key={label}
