@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, doc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
-import { ChevronLeft, Plus, Minus, Check, Dumbbell, Trophy, Timer, Pause, Play, RotateCcw, Flame } from 'lucide-react';
+import { ChevronLeft, Plus, Minus, Check, Dumbbell, Trophy, Timer, Pause, Play, RotateCcw, Flame, Star } from 'lucide-react';
 import { getAllExercises } from '../services/exerciseApi';
 
 const REST_PRESETS = [
@@ -200,87 +200,93 @@ const ActiveWorkout = () => {
     const newTotal = (userData?.points || 0) + pointsEarned;
 
     return (
-      <div className="min-h-full flex flex-col animate-fade-in relative overflow-hidden bg-[#040810]">
-        {/* Background glows */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0D1F38] via-[#040810] to-[#040810]" />
-        <div className="absolute top-0 right-0 w-72 h-72 bg-[#00d4aa]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="absolute bottom-1/4 left-0 w-56 h-56 bg-indigo-500/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in bg-black/80 backdrop-blur-sm">
+        
+        {/* Modal Card */}
+        <div className="w-full max-w-sm rounded-[2.5rem] bg-[#040810] border border-white/10 relative overflow-hidden flex flex-col items-center px-6 py-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+          
+          {/* Premium Background Layer (inside card) */}
+          <div className="absolute inset-0 bg-mesh-glow opacity-40 pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-[50%] bg-gradient-to-b from-liftly-teal/10 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-liftly-navy to-transparent pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col items-center justify-center flex-1 p-6 text-center">
-
-          {/* Trophy icon */}
+          {/* Epic Trophy Avatar */}
           <div className="relative mb-6">
+            <div className="absolute inset-0 bg-yellow-400/30 blur-[30px] rounded-full animate-pulse" />
             <div
-              className="w-28 h-28 rounded-3xl flex items-center justify-center animate-scale-in"
+              className="w-24 h-24 rounded-3xl flex items-center justify-center animate-scale-in relative z-10"
               style={{
-                background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05))',
-                border: '1px solid rgba(251,191,36,0.25)',
-                boxShadow: '0 0 40px rgba(251,191,36,0.15)',
+                background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.02))',
+                border: '1px solid rgba(251,191,36,0.4)',
+                boxShadow: 'inset 0 0 15px rgba(251,191,36,0.2), 0 10px 30px rgba(251,191,36,0.15)',
+                backdropFilter: 'blur(16px)'
               }}
             >
-              <Trophy size={52} className="text-yellow-400" />
+              <Trophy size={48} className="text-yellow-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]" strokeWidth={1.5} />
             </div>
-            {/* Pulsing ring */}
-            <div className="absolute inset-0 rounded-3xl animate-ping opacity-20" style={{ border: '2px solid rgba(251,191,36,0.5)' }} />
-          </div>
-
-          <h1 className="text-4xl font-black text-white tracking-tight mb-1">Workout Complete!</h1>
-          <p className="text-white/40 font-medium mb-8 text-sm">
-            {dayName} · Great work 💪
-          </p>
-
-          {/* Points earned badge */}
-          <div
-            className="flex items-center gap-3 px-5 py-3 rounded-2xl mb-8"
-            style={{
-              background: 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(251,191,36,0.05))',
-              border: '1px solid rgba(251,191,36,0.2)',
-            }}
-          >
-            <div className="w-9 h-9 rounded-xl bg-yellow-400/15 border border-yellow-400/20 flex items-center justify-center">
-              <Trophy size={18} className="text-yellow-400" />
-            </div>
-            <div className="text-left">
-              <p className="text-[10px] font-black uppercase tracking-widest text-yellow-400/60">Points Earned</p>
-              <p className="text-white font-black text-lg leading-none">
-                +{pointsEarned}
-                <span className="text-white/30 text-sm font-bold ml-2">→ {newTotal} total</span>
-              </p>
+            {/* Tiny accent spark */}
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-orange-400/20 rounded-full flex items-center justify-center animate-float backdrop-blur-md border border-orange-400/30">
+              <Flame size={16} className="text-orange-400 fill-orange-400 drop-shadow-md" />
             </div>
           </div>
 
-          {/* Stats row */}
-          <div className="grid grid-cols-3 gap-3 w-full mb-10">
-            {[
-              { label: 'Sets',     value: finalStats.sets,                                 color: '#00d4aa' },
-              { label: 'Volume',   value: `${finalStats.volume.toLocaleString()}kg`, color: '#818cf8' },
-              { label: 'Duration', value: `${finalStats.duration}m`,                        color: '#f97316' },
-            ].map(({ label, value, color }) => (
-              <div
-                key={label}
-                className="rounded-2xl p-4 text-center"
-                style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                }}
-              >
-                <p className="text-2xl font-black mb-0.5" style={{ color }}>{value}</p>
-                <p className="text-[9px] uppercase tracking-widest font-bold text-white/30">{label}</p>
+          <div className="relative z-10 w-full">
+            <h1 className="text-3xl font-black text-white tracking-tight mb-1 drop-shadow-lg">Workout Complete!</h1>
+            <p className="text-white/40 font-black mb-8 text-[10px] tracking-widest uppercase">
+              {dayName} · Great work 💪
+            </p>
+
+            {/* Unified Stats Card */}
+            <div className="flex w-full mb-4 rounded-[1.5rem] p-1 shadow-lg relative overflow-hidden" 
+                 style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', backdropFilter: 'blur(20px)' }}>
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              {[
+                { label: 'Sets',     value: finalStats.sets,                                 color: '#00d4aa' },
+                { label: 'Volume',   value: `${finalStats.volume.toLocaleString()}kg`, color: '#818cf8' },
+                { label: 'Time',     value: `${finalStats.duration}m`,                        color: '#f97316' },
+              ].map(({ label, value, color }, i) => (
+                <div key={label} className={`flex-1 flex flex-col items-center justify-center py-3.5 ${i !== 2 ? 'border-r border-white/5' : ''}`}>
+                  <p className="text-xl font-black mb-0.5 drop-shadow-md" style={{ color }}>{value}</p>
+                  <p className="text-[9px] uppercase tracking-widest font-black text-white/30">{label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Points Card */}
+            <div className="w-full flex items-center justify-between px-5 py-4 rounded-[1.5rem] mb-8 shadow-lg relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, rgba(251,191,36,0.08), rgba(251,191,36,0.02))',
+                border: '1px solid rgba(251,191,36,0.15)',
+                backdropFilter: 'blur(20px)'
+              }}>
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-yellow-400/15 border border-yellow-400/30 flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                  <Star size={18} className="text-yellow-400 fill-yellow-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-yellow-400/60 mb-0.5">Points Earned</p>
+                  <p className="text-white font-black text-lg leading-none">+{pointsEarned}</p>
+                </div>
               </div>
-            ))}
-          </div>
+              <div className="text-right">
+                 <p className="text-[9px] font-black uppercase tracking-widest text-white/30 mb-0.5">Total Score</p>
+                 <p className="text-yellow-400 font-black text-lg leading-none">{newTotal}</p>
+              </div>
+            </div>
 
-          {/* CTA */}
-          <button
-            onClick={() => navigate('/')}
-            className="w-full max-w-xs h-14 font-black rounded-3xl active:scale-95 transition-all text-[#040810] text-lg shadow-lg"
-            style={{
-              background: 'linear-gradient(135deg, #00d4aa, #00b894)',
-              boxShadow: '0 8px 32px rgba(0,212,170,0.35)',
-            }}
-          >
-            Back to Home
-          </button>
+            {/* Epic CTA */}
+            <button
+              onClick={() => navigate('/')}
+              className="w-full h-14 rounded-full font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all text-[#040810]"
+              style={{
+                background: 'linear-gradient(135deg, #00d4aa, #008b74)',
+                boxShadow: '0 10px 25px rgba(0,212,170,0.3), inset 0 2px 0 rgba(255,255,255,0.3)',
+              }}
+            >
+              Continue to Dashboard
+            </button>
+          </div>
 
         </div>
       </div>
