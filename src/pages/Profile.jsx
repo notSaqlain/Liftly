@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import { Loader2, User, Users, ChevronRight, Camera, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star, CreditCard } from 'lucide-react';
+import { Loader2, User, Users, ChevronRight, Camera, Pencil, Settings, Dumbbell, Flame, TrendingUp, Trophy, Star, CreditCard, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ACHIEVEMENTS = [
@@ -21,6 +21,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showPhotoSheet, setShowPhotoSheet] = useState(false);
 
   const [photoURL, setPhotoURL] = useState('');
   const [googlePhotoURL, setGooglePhotoURL] = useState('');
@@ -168,11 +169,12 @@ const Profile = () => {
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
+            {/* Pen / Edit button */}
             <button
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-2 -right-2 w-9 h-9 bg-liftly-teal rounded-xl flex items-center justify-center text-white shadow-teal hover:bg-liftly-teal-dark transition-colors active:scale-90 border-2 border-liftly-navy"
+              onClick={() => setShowPhotoSheet(true)}
+              className="absolute -bottom-2 -right-2 w-9 h-9 bg-[#00d4aa] rounded-xl flex items-center justify-center text-[#040810] shadow-[0_0_12px_rgba(0,212,170,0.5)] active:scale-90 transition-all border-2 border-[#040810]"
             >
-              <Camera size={14} />
+              <Pencil size={13} strokeWidth={2.5} />
             </button>
           </div>
 
@@ -252,26 +254,7 @@ const Profile = () => {
           </div>
         )}
 
-        {/* Photo Options */}
-        {(googleLinked && googlePhotoURL) && (
-          <div className="bg-[#0D1526] rounded-2xl p-4 border border-white/5">
-            <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Photo Options</p>
-            <div className="space-y-2">
-              <button onClick={() => fileInputRef.current?.click()} className="w-full h-11 bg-liftly-teal/10 hover:bg-liftly-teal/20 text-liftly-teal font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95">
-                <Camera size={16} /> Upload Custom Photo
-              </button>
-              <button onClick={handleUseGooglePhoto} disabled={saving} className="w-full h-11 bg-white/5 hover:bg-white/10 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 border border-white/5 disabled:opacity-60">
-                <img src={googlePhotoURL} alt="Google" className="w-6 h-6 rounded-full object-cover" referrerPolicy="no-referrer" />
-                Use Google Photo
-              </button>
-              {photoURL && (
-                <button onClick={handleRemovePhoto} disabled={saving} className="w-full h-11 bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold text-sm rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-60">
-                  Remove Photo
-                </button>
-              )}
-            </div>
-          </div>
-        )}
+        {/* Photo Options section removed — now lives in the bottom sheet */}
 
         {/* Navigation Links */}
         {[
@@ -314,6 +297,106 @@ const Profile = () => {
 
         <p className="text-center text-slate-300 text-xs mt-8 pb-4">Liftly v1.0 · Built with ❤️</p>
       </div>
+      {/* Photo Options Bottom Sheet */}
+      {showPhotoSheet && (
+        <div
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
+          onClick={() => setShowPhotoSheet(false)}
+        >
+          <div
+            className="w-full max-w-[480px] rounded-t-3xl p-6 pb-8 animate-slide-up"
+            style={{
+              background: 'rgba(13, 21, 38, 0.98)',
+              backdropFilter: 'blur(30px)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderBottom: 'none',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Handle */}
+            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-5" />
+
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-lg font-black text-white">Change Photo</h3>
+                <p className="text-white/40 text-xs mt-0.5">Choose how to update your profile picture</p>
+              </div>
+              <button
+                onClick={() => setShowPhotoSheet(false)}
+                className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-2.5">
+              {/* Camera */}
+              <button
+                onClick={() => { setShowPhotoSheet(false); setTimeout(() => { /* trigger camera via accept */ const inp = fileInputRef.current; if (inp) { inp.setAttribute('capture', 'environment'); inp.click(); } }, 100); }}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl text-left active:scale-[0.98] transition-all border"
+                style={{ background: 'rgba(0,212,170,0.07)', borderColor: 'rgba(0,212,170,0.2)' }}
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#00d4aa]/15 flex items-center justify-center shrink-0">
+                  <Camera size={18} className="text-[#00d4aa]" />
+                </div>
+                <div>
+                  <p className="font-bold text-white text-sm">Take a Photo</p>
+                  <p className="text-white/40 text-xs">Use your camera</p>
+                </div>
+              </button>
+
+              {/* Device */}
+              <button
+                onClick={() => { setShowPhotoSheet(false); setTimeout(() => { const inp = fileInputRef.current; if (inp) { inp.removeAttribute('capture'); inp.click(); } }, 100); }}
+                className="w-full flex items-center gap-4 p-4 rounded-2xl text-left active:scale-[0.98] transition-all border"
+                style={{ background: 'rgba(99,102,241,0.07)', borderColor: 'rgba(99,102,241,0.2)' }}
+              >
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/15 flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+                </div>
+                <div>
+                  <p className="font-bold text-white text-sm">Upload from Device</p>
+                  <p className="text-white/40 text-xs">Pick from your gallery or files</p>
+                </div>
+              </button>
+
+              {/* Google Photo */}
+              {googleLinked && googlePhotoURL && (
+                <button
+                  onClick={() => { setShowPhotoSheet(false); handleUseGooglePhoto(); }}
+                  disabled={saving}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl text-left active:scale-[0.98] transition-all border disabled:opacity-60"
+                  style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)' }}
+                >
+                  <img src={googlePhotoURL} alt="Google" className="w-10 h-10 rounded-xl object-cover shrink-0" referrerPolicy="no-referrer" />
+                  <div>
+                    <p className="font-bold text-white text-sm">Use Google Photo</p>
+                    <p className="text-white/40 text-xs">Your Google account picture</p>
+                  </div>
+                </button>
+              )}
+
+              {/* Remove */}
+              {photoURL && (
+                <button
+                  onClick={() => { setShowPhotoSheet(false); handleRemovePhoto(); }}
+                  disabled={saving}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl text-left active:scale-[0.98] transition-all border border-red-500/20 disabled:opacity-60"
+                  style={{ background: 'rgba(239,68,68,0.07)' }}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-red-500/15 flex items-center justify-center shrink-0">
+                    <X size={18} className="text-red-400" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-red-400 text-sm">Remove Photo</p>
+                    <p className="text-white/30 text-xs">Revert to default avatar</p>
+                  </div>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
