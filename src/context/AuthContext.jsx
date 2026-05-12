@@ -1,12 +1,10 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   linkWithPopup,
   verifyBeforeUpdateEmail,
   updatePassword as firebaseUpdatePassword,
@@ -69,12 +67,16 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // Sign in with Google — popup shows native account picker on Android
+  // Sign in with Google
+  // Native (APK): uses Capacitor FirebaseAuthentication plugin → signInWithCredential
+  // Web (browser): uses signInWithPopup — signInWithRedirect is broken in Chrome 115+
+  //   due to third-party cookie blocking which prevents Firebase's cross-origin auth iframe.
   const loginWithGoogle = async () => {
     let result, user;
 
     if (Capacitor.isNativePlatform()) {
-      // Use native Capacitor plugin for Android/iOS
+      // Native Android/iOS: use the Capacitor plugin to get the native idToken
+      // then sign in with the Firebase web SDK so Firestore works normally.
       const nativeResult = await FirebaseAuthentication.signInWithGoogle();
       const idToken = nativeResult.credential?.idToken;
       if (!idToken) {
@@ -84,11 +86,12 @@ export const AuthProvider = ({ children }) => {
       result = await signInWithCredential(auth, credential);
       user = result.user;
     } else {
-      // Web: use redirect which is reliable on mobile browsers (PWA/Safari/Chrome)
-      await signInWithRedirect(auth, googleProvider);
-      return; // The app will redirect, handleRedirectResult will pick it up on reload
+      // Web browser: popup is reliable across all browsers and works on localhost
+      result = await signInWithPopup(auth, googleProvider);
+      user = result.user;
     }
 
+    // Create or update Firestore user document
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (!userDoc.exists()) {
       await setDoc(doc(db, 'users', user.uid), {
@@ -191,45 +194,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let unsubscribeUser = () => {};
 
-    // Check for standard redirect result from Google Login
-    const handleRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result && result.user) {
-          const user = result.user;
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (!userDoc.exists()) {
-            await setDoc(doc(db, 'users', user.uid), {
-              uid: user.uid,
-              email: user.email,
-              firstName: user.displayName?.split(' ')[0] || '',
-              lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-              photoURL: user.photoURL || '',
-              googlePhotoURL: user.photoURL || '',
-              currentStreak: 0,
-              longestStreak: 0,
-              lastWorkoutWeek: '',
-              totalVolumeLifted: 0,
-              totalWorkoutsCompleted: 0,
-              best1RM: {},
-              onboardingComplete: false,
-              createdAt: serverTimestamp()
-            });
-          } else {
-            if (user.photoURL) {
-              await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
-            }
-          }
-          // onAuthStateChanged will fire and set currentUser, then ProtectedRoute
-          // will allow navigation to '/' automatically. No explicit navigate needed.
-        }
-      } catch (error) {
-        // Log full details so we can see the REAL error (not silently swallow it)
-        console.error("❌ Google redirect result error:", error?.code, error?.message, error);
-      }
-    };
-    handleRedirectResult();
-
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       if (user) {
@@ -257,6 +221,7 @@ export const AuthProvider = ({ children }) => {
       clearTimeout(timeout);
     };
   }, []);
+
 
   const value = {
     currentUser,

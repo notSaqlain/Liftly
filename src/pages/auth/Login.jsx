@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
@@ -21,8 +21,17 @@ const Login = () => {
   const [forgotSent, setForgotSent] = useState(false);
   const [forgotError, setForgotError] = useState('');
 
-  const { login, loginWithGoogle, resetPassword } = useAuth();
+  const { login, loginWithGoogle, resetPassword, currentUser } = useAuth();
   const navigate = useNavigate();
+
+  // Navigate to dashboard the moment Firebase confirms the user is authenticated.
+  // This decouples navigation from the async login calls so we never navigate
+  // while currentUser is still null in React state (which bounced to /login).
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +40,7 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/');
+      // Navigation happens via the currentUser useEffect above
     } catch (err) {
       try {
         const methods = await fetchSignInMethodsForEmail(auth, email);
@@ -54,17 +63,10 @@ const Login = () => {
     setIsGoogleAccount(false);
     setLoading(true);
     try {
-      const result = await loginWithGoogle();
-      // On native (APK): loginWithGoogle() returns a result — navigate immediately.
-      // On web: loginWithGoogle() triggers signInWithRedirect and returns undefined.
-      //   The browser will redirect to Google and come back; handleRedirectResult
-      //   in AuthContext processes the result on reload. DO NOT call navigate('/') here
-      //   because currentUser is still null and ProtectedRoute will bounce back to /login.
-      if (result) {
-        navigate('/');
-      }
-      // If result is undefined (web redirect), keep loading=true so the UI shows
-      // a "Redirecting to Google…" state while the browser navigates away.
+      await loginWithGoogle();
+      // Don't navigate here — the currentUser useEffect handles it.
+      // onAuthStateChanged fires after signInWithPopup/signInWithCredential resolves,
+      // setting currentUser in React state, which triggers the useEffect above.
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         setError('Sign-in cancelled.');
