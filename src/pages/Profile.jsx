@@ -263,10 +263,6 @@ const Profile = () => {
             label: 'My Plan', sub: 'License, features & expiration', to: '/my-plan'
           },
           {
-            icon: <Users size={18} />, iconBg: 'bg-purple-500/10 text-purple-400',
-            label: 'My Friends', sub: 'Manage connections & requests', to: '/friends'
-          },
-          {
             icon: <User size={18} />, iconBg: 'bg-blue-500/10 text-blue-500',
             label: 'Personal Information', sub: 'Body metrics, training & goals', to: '/personal-info'
           },

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, where, serverTimestamp, Timestamp, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { createPortal } from 'react-dom';
-import { Flame, Users, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare, Bell } from 'lucide-react';
+import { Flame, Users, UserPlus, Activity, CheckCircle2, Play, ChevronRight, ChevronLeft, Calendar, Dumbbell, TrendingUp, Zap, Menu, X, Scale, Trophy, Building2, Target, ShieldAlert, MapPin, MessageSquare, Bell } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [showSplitPicker, setShowSplitPicker] = useState(false);
   const [weekStats, setWeekStats] = useState({ count: 0, volume: 0 });
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+  const [friends, setFriends] = useState([]);
 
 
   // Fetch recent workouts + weekly stats
@@ -45,6 +46,15 @@ const Dashboard = () => {
         const reqQ = query(collection(db, 'users', currentUser.uid, 'friendRequests'));
         const reqSnap = await getDocs(reqQ);
         setPendingRequestsCount(reqSnap.size);
+        // Friends list (up to 10 for the strip)
+        const friendsSnap = await getDocs(collection(db, 'users', currentUser.uid, 'friends'));
+        const friendsData = [];
+        for (const fDoc of friendsSnap.docs.slice(0, 10)) {
+          const { getDoc, doc: firestoreDoc } = await import('firebase/firestore');
+          const uDoc = await getDoc(firestoreDoc(db, 'users', fDoc.id));
+          if (uDoc.exists()) friendsData.push({ id: uDoc.id, ...uDoc.data() });
+        }
+        setFriends(friendsData);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
       }
@@ -351,6 +361,84 @@ const Dashboard = () => {
             </div>
           </div>
         )}
+
+        {/* ── Friends ── */}
+        <div className="surface rounded-3xl p-5 relative overflow-hidden interactive-card">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
+                  <Users size={14} className="text-purple-400" />
+                </div>
+                <h3 className="font-black text-white text-sm">Friends</h3>
+                {friends.length > 0 && (
+                  <span className="text-[10px] font-bold bg-purple-500/10 border border-purple-500/20 text-purple-400 px-2 py-0.5 rounded-lg">{friends.length}</span>
+                )}
+              </div>
+              <button
+                onClick={() => navigate('/friends')}
+                className="flex items-center gap-1 text-[11px] font-bold text-white/40 hover:text-white transition-colors"
+              >
+                See all <ChevronRight size={13} />
+              </button>
+            </div>
+
+            {friends.length === 0 ? (
+              <div className="flex flex-col items-center py-6 text-center">
+                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3 border border-white/5">
+                  <UserPlus size={20} className="text-white/20" />
+                </div>
+                <p className="text-white/50 text-sm font-bold">No friends yet</p>
+                <p className="text-white/25 text-xs mt-0.5">Find people on the Leaderboard</p>
+                <button
+                  onClick={() => navigate('/leaderboard')}
+                  className="mt-3 px-4 py-1.5 bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold rounded-xl active:scale-95 transition-all"
+                >
+                  Browse Leaderboard
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                {friends.map(friend => (
+                  <button
+                    key={friend.id}
+                    onClick={() => navigate(`/profile/${friend.id}`)}
+                    className="flex flex-col items-center gap-1.5 shrink-0 active:scale-95 transition-all"
+                  >
+                    <div className="relative">
+                      <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/10 bg-white/5">
+                        {friend.photoURL ? (
+                          <img src={friend.photoURL} alt={friend.firstName} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center font-black text-white/50 text-xl">
+                            {friend.firstName?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      {(friend.currentStreak > 0) && (
+                        <div className="absolute -bottom-1 -right-1 bg-orange-500 text-white text-[9px] font-black px-1 rounded-md leading-tight py-0.5 shadow-sm">
+                          🔥{friend.currentStreak}
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-white/70 text-[10px] font-bold truncate max-w-[56px]">{friend.firstName}</p>
+                  </button>
+                ))}
+                {/* Add friends CTA */}
+                <button
+                  onClick={() => navigate('/friends')}
+                  className="flex flex-col items-center gap-1.5 shrink-0 active:scale-95 transition-all"
+                >
+                  <div className="w-14 h-14 rounded-2xl border-2 border-dashed border-white/15 bg-white/3 flex items-center justify-center">
+                    <UserPlus size={18} className="text-white/25" />
+                  </div>
+                  <p className="text-white/30 text-[10px] font-bold">Add</p>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="h-4" />
       </div>
