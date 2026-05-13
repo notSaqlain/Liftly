@@ -71,47 +71,48 @@ export const AuthProvider = ({ children }) => {
   //   due to third-party cookie blocking which prevents Firebase's cross-origin auth iframe.
   const loginWithGoogle = async () => {
     let result, user;
-
-    if (Capacitor.isNativePlatform()) {
-      // Native Android/iOS: use the Capacitor plugin to get the native idToken
-      // then sign in with the Firebase web SDK so Firestore works normally.
-      const nativeResult = await FirebaseAuthentication.signInWithGoogle();
-      const idToken = nativeResult.credential?.idToken;
-      if (!idToken) {
-        throw new Error('Google Sign-In failed: No ID token returned.');
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const nativeResult = await FirebaseAuthentication.signInWithGoogle();
+        const idToken = nativeResult.credential?.idToken;
+        if (!idToken) {
+          throw new Error('Google Sign-In failed: No ID token returned.');
+        }
+        const credential = GoogleAuthProvider.credential(idToken);
+        result = await signInWithCredential(auth, credential);
+        user = result.user;
+      } else {
+        result = await signInWithPopup(auth, googleProvider);
+        user = result.user;
       }
-      const credential = GoogleAuthProvider.credential(idToken);
-      result = await signInWithCredential(auth, credential);
-      user = result.user;
-    } else {
-      // Web browser: popup is reliable across all browsers and works on localhost
-      result = await signInWithPopup(auth, googleProvider);
-      user = result.user;
-    }
 
-    // Create or update Firestore user document
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        firstName: user.displayName?.split(' ')[0] || '',
-        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-        photoURL: user.photoURL || '',
-        googlePhotoURL: user.photoURL || '',
-        points: 0,
-        totalVolumeLifted: 0,
-        totalWorkoutsCompleted: 0,
-        best1RM: {},
-        onboardingComplete: false,
-        createdAt: serverTimestamp()
-      });
-    } else {
-      if (user.photoURL) {
-        await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (!userDoc.exists()) {
+        const displayNameParts = user.displayName ? user.displayName.split(' ') : [];
+        await setDoc(doc(db, 'users', user.uid), {
+          uid: user.uid,
+          email: user.email,
+          firstName: displayNameParts[0] || '',
+          lastName: displayNameParts.slice(1).join(' ') || '',
+          photoURL: user.photoURL || '',
+          googlePhotoURL: user.photoURL || '',
+          points: 0,
+          totalVolumeLifted: 0,
+          totalWorkoutsCompleted: 0,
+          best1RM: {},
+          onboardingComplete: false,
+          createdAt: serverTimestamp()
+        });
+      } else {
+        if (user.photoURL) {
+          await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });
+        }
       }
+      return result;
+    } catch (error) {
+      console.error('Error during Google Sign-In:', error);
+      throw error;
     }
-    return result;
   };
 
   // Link existing email/password account with Google
@@ -146,12 +147,22 @@ export const AuthProvider = ({ children }) => {
 
   // Update Firebase Auth email (sends verification to new email first)
   const updateUserEmail = async (newEmail) => {
-    await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
+    try {
+      await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
+    } catch (error) {
+      console.error('Error updating email:', error);
+      throw error;
+    }
   };
 
   // Update Firebase Auth password
   const updateUserPassword = async (newPassword) => {
-    await firebaseUpdatePassword(auth.currentUser, newPassword);
+    try {
+      await firebaseUpdatePassword(auth.currentUser, newPassword);
+    } catch (error) {
+      console.error('Error updating password:', error);
+      throw error;
+    }
   };
 
   // Send password reset email (works with Firebase free tier)
@@ -161,30 +172,40 @@ export const AuthProvider = ({ children }) => {
 
   // Update Firebase Auth display name
   const updateDisplayName = async (displayName) => {
-    await firebaseUpdateProfile(auth.currentUser, { displayName });
+    try {
+      await firebaseUpdateProfile(auth.currentUser, { displayName });
+    } catch (error) {
+      console.error('Error updating display name:', error);
+      throw error;
+    }
   };
 
   // Permanently delete account and ALL associated Firestore data (GDPR)
   const deleteAccount = async () => {
-    const uid = auth.currentUser.uid;
-    const batch = writeBatch(db);
-
-    // Delete all user_workouts subcollection documents
     try {
-      const workoutsSnap = await getDocs(collection(db, 'users', uid, 'user_workouts'));
-      workoutsSnap.forEach(d => batch.delete(d.ref));
-    } catch (e) {
-      console.warn('Could not delete user_workouts:', e);
+      const uid = auth.currentUser.uid;
+      const batch = writeBatch(db);
+
+      // Delete all user_workouts subcollection documents
+      try {
+        const workoutsSnap = await getDocs(collection(db, 'users', uid, 'user_workouts'));
+        workoutsSnap.forEach(d => batch.delete(d.ref));
+      } catch (e) {
+        console.warn('Could not delete user_workouts:', e);
+      }
+
+      // Delete gym presence doc
+      batch.delete(doc(db, 'gym_presence', uid));
+
+      // Delete user doc
+      batch.delete(doc(db, 'users', uid));
+
+      await batch.commit();
+      await deleteUser(auth.currentUser);
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      throw error;
     }
-
-    // Delete gym presence doc
-    batch.delete(doc(db, 'gym_presence', uid));
-
-    // Delete user doc
-    batch.delete(doc(db, 'users', uid));
-
-    await batch.commit();
-    await deleteUser(auth.currentUser);
   };
 
   useEffect(() => {

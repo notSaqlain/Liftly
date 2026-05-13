@@ -115,10 +115,15 @@ const ActiveWorkout = () => {
     if (!sets[setIdx]?.done) startRest(restTarget, true);
   };
 
-  const totalSets = Object.values(workoutLog).reduce((sum, sets) => sum + sets.filter(s => s.done).length, 0);
-  const totalVolume = Object.values(workoutLog).reduce((sum, sets) =>
-    sum + sets.filter(s => s.done).reduce((acc, set) => acc + ((parseFloat(set.weight) || 0) * (parseInt(set.reps) || 0)), 0), 0
-  );
+  const totalSets = useMemo(() => 
+    Object.values(workoutLog).reduce((sum, sets) => sum + sets.filter(s => s.done).length, 0)
+  , [workoutLog]);
+
+  const totalVolume = useMemo(() => 
+    Object.values(workoutLog).reduce((sum, sets) =>
+      sum + sets.filter(s => s.done).reduce((acc, set) => acc + ((parseFloat(set.weight) || 0) * (parseInt(set.reps) || 0)), 0), 0
+    )
+  , [workoutLog]);
 
   const handleFinishWorkout = async () => {
     if (!currentUser) return;
@@ -409,7 +414,7 @@ const ActiveWorkout = () => {
             </button>
           </div>
         ) : (
-          exercises.map(exercise => {
+          useMemo(() => exercises.map(exercise => {
             const sets = workoutLog[exercise.id] || [{ weight: '', reps: '', done: false }];
             const completedSets = sets.filter(s => s.done).length;
             const progress = completedSets / sets.length;
@@ -488,7 +493,7 @@ const ActiveWorkout = () => {
                 </div>
               </div>
             );
-          })
+          }), [exercises, workoutLog])
         )}
       </div>
 
