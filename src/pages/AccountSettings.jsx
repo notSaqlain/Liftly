@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { LogOut, Save, Loader2, Mail, Lock, ChevronLeft, ChevronRight, Link2, Trash2, ShieldAlert, Dumbbell, Settings, Ghost } from 'lucide-react';
+import { LogOut, Save, Loader2, Mail, Lock, ChevronLeft, ChevronRight, Link2, Trash2, ShieldAlert, AlertTriangle, Settings, Ghost } from 'lucide-react';
 
 const AccountSettings = () => {
   const { 
@@ -18,6 +18,8 @@ const AccountSettings = () => {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [activeSection, setActiveSection] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const [showGoogleWarning, setShowGoogleWarning] = useState(false);
 
   const [newEmail, setNewEmail] = useState('');
@@ -107,13 +109,14 @@ const AccountSettings = () => {
   };
 
   const handleDeleteAccount = async () => {
-    setSaving(true);
+    setDeleting(true);
     try {
       await deleteAccount();
     } catch (err) {
       showMessage(err.code === 'auth/requires-recent-login' ? 'Please sign out and sign back in first.' : err.message, 'error');
-      setSaving(false);
+      setDeleting(false);
       setShowDeleteConfirm(false);
+      setDeleteConfirmText('');
     }
   };
 
@@ -271,30 +274,15 @@ const AccountSettings = () => {
         )}
 
         {/* ─── Delete Account ─── */}
-        <AccordionItem
-          title="Delete Account"
-          subtitle="Permanently remove your account"
-          icon={<Trash2 size={18} />}
-          iconBg="bg-red-50 text-red-500"
-          isOpen={showDeleteConfirm}
-          onToggle={() => setShowDeleteConfirm(!showDeleteConfirm)}
-        >
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
-            <div className="flex items-start gap-3">
-              <ShieldAlert size={18} className="text-red-500 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-black text-red-600 text-sm mb-1">This action is permanent</p>
-                <p className="text-red-500/80 text-xs font-semibold">Your account, workouts, and all data will be permanently deleted. This cannot be undone.</p>
-              </div>
-            </div>
-          </div>
-          <button onClick={handleDeleteAccount} disabled={saving} className="w-full h-12 bg-red-500 hover:bg-red-600 text-white font-black text-sm rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-60 mb-2">
-            {saving ? <Loader2 size={16} className="animate-spin" /> : 'Yes, Delete My Account'}
+        <div className="pt-2">
+          <button
+            onClick={() => { setShowDeleteConfirm(true); setDeleteConfirmText(''); }}
+            className="w-full h-14 bg-red-500/8 hover:bg-red-500/15 text-red-400 font-black text-sm rounded-2xl flex items-center justify-center gap-2.5 transition-all active:scale-95 border border-red-500/20"
+          >
+            <Trash2 size={17} />
+            <span>Delete Account</span>
           </button>
-          <button onClick={() => setShowDeleteConfirm(false)} className="w-full h-11 bg-white/10 text-white/60 hover:bg-white/15 font-black text-sm rounded-xl flex items-center justify-center transition-all active:scale-95">
-            Cancel
-          </button>
-        </AccordionItem>
+        </div>
 
         {/* ─── Logout ─── */}
         <div className="pt-4">
@@ -304,6 +292,76 @@ const AccountSettings = () => {
         </div>
 
       </div>
+
+      {/* ─── Delete Account Modal ─── */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[200] flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
+          <div className="w-full max-w-[480px] bg-[#0D1526] rounded-t-3xl p-6 pb-10 animate-slide-up border-t border-white/10">
+            {deleting ? (
+              /* Loading state */
+              <div className="flex flex-col items-center py-8 gap-5">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                    <Trash2 size={28} className="text-red-400" />
+                  </div>
+                  <div className="absolute inset-0 rounded-2xl border-2 border-transparent border-t-red-500 animate-spin" />
+                </div>
+                <div className="text-center">
+                  <p className="text-white font-black text-lg">Deleting account…</p>
+                  <p className="text-white/40 text-sm font-medium mt-1">Permanently erasing all your data</p>
+                </div>
+              </div>
+            ) : (
+              /* Confirm state */
+              <>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-2xl bg-red-500/15 flex items-center justify-center shrink-0">
+                    <AlertTriangle size={20} className="text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-black text-base leading-tight">Delete your account?</p>
+                    <p className="text-white/40 text-xs font-medium mt-0.5">This action cannot be undone</p>
+                  </div>
+                </div>
+
+                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-5">
+                  <ul className="space-y-1.5">
+                    {['All your workouts and stats', 'Your profile and personal data', 'Your points and achievements', 'Your gym membership link'].map(item => (
+                      <li key={item} className="flex items-center gap-2 text-red-300 text-xs font-semibold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                        {item} will be <strong className="text-red-200">permanently deleted</strong>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <p className="text-white/50 text-xs font-bold mb-2 uppercase tracking-widest">Type <span className="text-red-400">DELETE</span> to confirm</p>
+                <input
+                  type="text"
+                  placeholder="DELETE"
+                  value={deleteConfirmText}
+                  onChange={e => setDeleteConfirmText(e.target.value)}
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white font-bold tracking-widest focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 mb-4 transition-all placeholder:text-white/20 placeholder:font-normal placeholder:tracking-normal"
+                />
+
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE'}
+                  className="w-full h-13 bg-red-500 hover:bg-red-600 text-white font-black text-sm rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed mb-3"
+                >
+                  <Trash2 size={16} /> Yes, permanently delete my account
+                </button>
+                <button
+                  onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
+                  className="w-full h-12 bg-white/8 text-white/60 hover:bg-white/12 font-black text-sm rounded-xl flex items-center justify-center transition-all active:scale-95"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

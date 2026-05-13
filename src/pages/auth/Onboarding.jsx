@@ -295,13 +295,25 @@ const Onboarding = () => {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setLicenseCode('')}
-                  className="text-xs text-white/30 hover:text-white/60 transition-colors font-semibold mt-1"
-                >
-                  {licenseCode ? 'Clear license' : 'Skip — I\'ll set this later in My Plan'}
-                </button>
+                {licenseCode ? (
+                  <button
+                    type="button"
+                    onClick={() => setLicenseCode('')}
+                    className="text-xs text-white/30 hover:text-white/60 transition-colors font-semibold mt-1"
+                  >
+                    Clear license
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={(e) => { setLicenseCode(''); handleSubmit(e); }}
+                    className="text-xs text-liftly-teal/70 hover:text-liftly-teal transition-colors font-bold mt-1 disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    {loading ? <Loader2 size={12} className="animate-spin" /> : null}
+                    Skip — I'll set this later in My Plan
+                  </button>
+                )}
               </div>
             )}
           </div>
