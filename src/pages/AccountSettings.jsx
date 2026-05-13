@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { LogOut, Save, Loader2, Mail, Lock, ChevronLeft, ChevronRight, Link2, Trash2, ShieldAlert, AlertTriangle, Settings, Ghost } from 'lucide-react';
+import { LogOut, Save, Loader2, Mail, Lock, ChevronLeft, ChevronRight, Link2, Trash2, ShieldAlert, AlertTriangle, Settings, Ghost, X } from 'lucide-react';
 
 const AccountSettings = () => {
   const { 
@@ -112,6 +112,8 @@ const AccountSettings = () => {
     setDeleting(true);
     try {
       await deleteAccount();
+      // Immediately redirect to login to avoid unmount crashes or blank screens
+      navigate('/login', { replace: true });
     } catch (err) {
       showMessage(err.code === 'auth/requires-recent-login' ? 'Please sign out and sign back in first.' : err.message, 'error');
       setDeleting(false);
@@ -273,92 +275,143 @@ const AccountSettings = () => {
           </AccordionItem>
         )}
 
-        {/* ─── Delete Account ─── */}
-        <div className="pt-2">
-          <button
-            onClick={() => { setShowDeleteConfirm(true); setDeleteConfirmText(''); }}
-            className="w-full h-14 bg-red-500/8 hover:bg-red-500/15 text-red-400 font-black text-sm rounded-2xl flex items-center justify-center gap-2.5 transition-all active:scale-95 border border-red-500/20"
-          >
-            <Trash2 size={17} />
-            <span>Delete Account</span>
-          </button>
-        </div>
+        {/* ─── Danger Zone / Account Actions ─── */}
+        <div className="mt-8 mb-4">
+          <p className="text-white/30 text-[10px] font-black uppercase tracking-widest px-4 mb-3">Account Actions</p>
+          <div className="bg-[#0D1526] rounded-[2rem] border border-white/5 overflow-hidden shadow-xl">
+            
+            <button onClick={handleLogout} className="w-full p-4 flex items-center justify-between border-b border-white/5 active:bg-white/5 transition-all group">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-[1.25rem] bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all">
+                  <LogOut size={20} className="text-white/70" />
+                </div>
+                <div className="text-left">
+                  <p className="font-black text-white/90 text-sm mb-0.5">Sign Out</p>
+                  <p className="text-white/40 text-[11px] font-medium">Log out of this device</p>
+                </div>
+              </div>
+              <ChevronRight size={18} className="text-white/20 group-hover:translate-x-1 transition-transform mr-1" />
+            </button>
 
-        {/* ─── Logout ─── */}
-        <div className="pt-4">
-          <button onClick={handleLogout} className="w-full h-14 bg-white/5 hover:bg-red-500/10 text-red-400 font-black rounded-2xl flex items-center justify-center space-x-2 transition-all active:scale-95 border border-red-500/20">
-            <LogOut size={18} /><span>Sign Out</span>
-          </button>
+            <button 
+              onClick={() => { setShowDeleteConfirm(true); setDeleteConfirmText(''); }}
+              className="w-full p-4 flex items-center justify-between active:bg-red-500/5 transition-all group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-[1.25rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center group-hover:bg-red-500/20 transition-all shadow-[0_0_15px_rgba(239,68,68,0.15)]">
+                  <Trash2 size={20} className="text-red-400" />
+                </div>
+                <div className="text-left">
+                  <p className="font-black text-red-400 text-sm mb-0.5">Delete Account</p>
+                  <p className="text-red-400/50 text-[11px] font-medium">Permanently erase your data</p>
+                </div>
+              </div>
+              <ChevronRight size={18} className="text-red-400/30 group-hover:translate-x-1 transition-transform mr-1" />
+            </button>
+
+          </div>
         </div>
 
       </div>
 
       {/* ─── Delete Account Modal ─── */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[200] flex items-end justify-center" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
-          <div className="w-full max-w-[480px] bg-[#0D1526] rounded-t-3xl p-6 pb-10 animate-slide-up border-t border-white/10">
-            {deleting ? (
-              /* Loading state */
-              <div className="flex flex-col items-center py-8 gap-5">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                    <Trash2 size={28} className="text-red-400" />
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 animate-fade-in bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-[2.5rem] bg-[#040810] border border-white/10 relative overflow-hidden flex flex-col p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+            
+            {/* Premium Background Layer (inside card) */}
+            <div className="absolute inset-0 bg-mesh-glow opacity-40 pointer-events-none" />
+            <div className="absolute top-0 inset-x-0 h-[50%] bg-gradient-to-b from-red-500/10 to-transparent pointer-events-none" />
+            
+            <div className="relative z-10 w-full flex flex-col items-center">
+              {deleting ? (
+                /* Loading state */
+                <div className="flex flex-col items-center py-8 gap-5">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                      <Trash2 size={28} className="text-red-400" />
+                    </div>
+                    <div className="absolute inset-0 rounded-3xl border-2 border-transparent border-t-red-500 animate-spin" />
                   </div>
-                  <div className="absolute inset-0 rounded-2xl border-2 border-transparent border-t-red-500 animate-spin" />
-                </div>
-                <div className="text-center">
-                  <p className="text-white font-black text-lg">Deleting account…</p>
-                  <p className="text-white/40 text-sm font-medium mt-1">Permanently erasing all your data</p>
-                </div>
-              </div>
-            ) : (
-              /* Confirm state */
-              <>
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-11 h-11 rounded-2xl bg-red-500/15 flex items-center justify-center shrink-0">
-                    <AlertTriangle size={20} className="text-red-400" />
-                  </div>
-                  <div>
-                    <p className="text-white font-black text-base leading-tight">Delete your account?</p>
-                    <p className="text-white/40 text-xs font-medium mt-0.5">This action cannot be undone</p>
+                  <div className="text-center">
+                    <p className="text-white font-black text-lg">Deleting account…</p>
+                    <p className="text-white/40 text-sm font-medium mt-1">Permanently erasing all your data</p>
                   </div>
                 </div>
+              ) : (
+                /* Confirm state */
+                <>
+                  <button
+                    onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
+                    className="absolute top-4 right-4 w-10 h-10 bg-white/5 hover:bg-white/10 text-white/50 hover:text-white rounded-full flex items-center justify-center transition-all active:scale-95 z-20"
+                  >
+                    <X size={20} />
+                  </button>
 
-                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mb-5">
-                  <ul className="space-y-1.5">
-                    {['All your workouts and stats', 'Your profile and personal data', 'Your points and achievements', 'Your gym membership link'].map(item => (
-                      <li key={item} className="flex items-center gap-2 text-red-300 text-xs font-semibold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
-                        {item} will be <strong className="text-red-200">permanently deleted</strong>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 bg-red-500/30 blur-[30px] rounded-full animate-pulse" />
+                    <div
+                      className="w-20 h-20 rounded-3xl flex items-center justify-center animate-scale-in relative z-10"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.02))',
+                        border: '1px solid rgba(239,68,68,0.4)',
+                        boxShadow: 'inset 0 0 15px rgba(239,68,68,0.2), 0 10px 30px rgba(239,68,68,0.15)',
+                        backdropFilter: 'blur(16px)'
+                      }}
+                    >
+                      <AlertTriangle size={36} className="text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                    </div>
+                  </div>
 
-                <p className="text-white/50 text-xs font-bold mb-2 uppercase tracking-widest">Type <span className="text-red-400">DELETE</span> to confirm</p>
-                <input
-                  type="text"
-                  placeholder="DELETE"
-                  value={deleteConfirmText}
-                  onChange={e => setDeleteConfirmText(e.target.value)}
-                  className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white font-bold tracking-widest focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 mb-4 transition-all placeholder:text-white/20 placeholder:font-normal placeholder:tracking-normal"
-                />
+                  <div className="text-center mb-6">
+                    <h2 className="text-2xl font-black text-white tracking-tight mb-1 drop-shadow-lg">Delete Account?</h2>
+                    <p className="text-white/40 font-black text-[10px] tracking-widest uppercase">This action cannot be undone</p>
+                  </div>
 
-                <button
-                  onClick={handleDeleteAccount}
-                  disabled={deleteConfirmText !== 'DELETE'}
-                  className="w-full h-13 bg-red-500 hover:bg-red-600 text-white font-black text-sm rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed mb-3"
-                >
-                  <Trash2 size={16} /> Yes, permanently delete my account
-                </button>
-                <button
-                  onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
-                  className="w-full h-12 bg-white/8 text-white/60 hover:bg-white/12 font-black text-sm rounded-xl flex items-center justify-center transition-all active:scale-95"
-                >
-                  Cancel
-                </button>
-              </>
-            )}
+                  <div className="w-full bg-red-500/5 border border-red-500/10 rounded-[1.5rem] p-4 mb-6 relative overflow-hidden backdrop-blur-md">
+                    <ul className="space-y-2 relative z-10">
+                      {['All your workouts and stats', 'Your profile and personal data', 'Your points and achievements', 'Your gym membership link'].map(item => (
+                        <li key={item} className="flex items-center gap-3 text-white/60 text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500/50 shadow-[0_0_5px_rgba(239,68,68,0.5)] shrink-0" />
+                          <span>{item.replace('will be', '')} will be <strong className="text-red-400">permanently deleted</strong></span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="w-full text-center mb-5">
+                    <p className="text-white/30 text-[9px] font-black uppercase tracking-widest mb-2">Type <span className="text-red-400">DELETE</span> to confirm</p>
+                    <input
+                      type="text"
+                      placeholder="DELETE"
+                      value={deleteConfirmText}
+                      onChange={e => setDeleteConfirmText(e.target.value)}
+                      className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-center text-sm text-white font-black tracking-widest focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20 transition-all placeholder:text-white/10 placeholder:font-normal placeholder:tracking-normal"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleteConfirmText !== 'DELETE'}
+                    className="w-full h-14 rounded-full font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-white disabled:opacity-30 disabled:cursor-not-allowed mb-3"
+                    style={deleteConfirmText === 'DELETE' ? {
+                      background: 'linear-gradient(135deg, #EF4444, #B91C1C)',
+                      boxShadow: '0 10px 25px rgba(239,68,68,0.3), inset 0 2px 0 rgba(255,255,255,0.2)',
+                    } : { background: 'rgba(239,68,68,0.1)' }}
+                  >
+                    <Trash2 size={16} /> Yes, permanently delete
+                  </button>
+
+                  <button
+                    onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
+                    className="w-full h-12 bg-white/5 text-white/60 hover:bg-white/10 font-black text-sm rounded-full flex items-center justify-center transition-all active:scale-95"
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+
           </div>
         </div>
       )}

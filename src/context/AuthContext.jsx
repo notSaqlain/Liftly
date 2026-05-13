@@ -227,7 +227,18 @@ export const AuthProvider = ({ children }) => {
           if (docS.exists()) {
             setUserData({ ...docS.data(), id: docS.id });
           } else {
-            setUserData(null);
+            // If the user document doesn't exist (e.g. failed account deletion), recreate it
+            // to prevent the app from bricking with a blank screen.
+            setDoc(doc(db, 'users', user.uid), {
+              uid: user.uid,
+              email: user.email || '',
+              points: 0,
+              totalVolumeLifted: 0,
+              totalWorkoutsCompleted: 0,
+              best1RM: {},
+              onboardingComplete: false,
+              createdAt: serverTimestamp()
+            }).catch(console.error);
           }
           setLoading(false);
         });
