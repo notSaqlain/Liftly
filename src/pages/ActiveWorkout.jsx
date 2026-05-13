@@ -125,6 +125,88 @@ const ActiveWorkout = () => {
     )
   , [workoutLog]);
 
+  // Computed at top level — useMemo cannot be called inside JSX conditionals (Rules of Hooks)
+  const exerciseCards = useMemo(() => exercises.map(exercise => {
+    const sets = workoutLog[exercise.id] || [{ weight: '', reps: '', done: false }];
+    const completedSets = sets.filter(s => s.done).length;
+    const progress = completedSets / sets.length;
+    return (
+      <div key={exercise.id} className="bg-[#0D1526] rounded-2xl border border-white/5 overflow-hidden">
+        <div className="px-4 py-3.5 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-liftly-teal/10 flex items-center justify-center shrink-0">
+            <Dumbbell size={17} className="text-liftly-teal" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-black text-sm text-white truncate">{exercise.name}</h3>
+            <p className="text-[10px] uppercase tracking-wider font-bold text-white/40">{exercise.muscleGroup || exercise.bodyPart}</p>
+          </div>
+          {completedSets > 0 && (
+            <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg shrink-0 border border-emerald-500/20">
+              {completedSets}/{sets.length}
+            </span>
+          )}
+        </div>
+
+        {/* Progress bar */}
+        {completedSets > 0 && (
+          <div className="h-1 bg-[#040810]">
+            <div className="h-full bg-liftly-teal transition-all duration-500 ease-out" style={{ width: `${progress * 100}%` }} />
+          </div>
+        )}
+
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-2 mb-2.5">
+            <div className="w-8 text-center"><span className="text-[9px] uppercase font-black text-white/30">Set</span></div>
+            <div className="flex-1"><span className="text-[9px] uppercase font-black text-white/30 pl-2">Kg</span></div>
+            <div className="flex-1"><span className="text-[9px] uppercase font-black text-white/30 pl-2">Reps</span></div>
+            <div className="w-10 text-center"><span className="text-[9px] uppercase font-black text-white/30">✓</span></div>
+          </div>
+
+          {sets.map((set, idx) => (
+            <div key={idx} className={`flex items-center gap-2 mb-2 transition-all ${set.done ? 'opacity-50' : ''}`}>
+              <div className="w-8 text-center">
+                <span className="text-xs font-black text-white/40">{idx + 1}</span>
+              </div>
+              <div className="flex-1">
+                <input
+                  type="number" inputMode="decimal" placeholder="—" value={set.weight}
+                  onChange={(e) => updateSet(exercise.id, idx, 'weight', e.target.value)}
+                  className="w-full h-11 bg-white/5 text-center font-black text-sm text-white rounded-xl border border-white/10 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-white/20 transition-all"
+                />
+              </div>
+              <div className="flex-1">
+                <input
+                  type="number" step="1" inputMode="numeric" placeholder="—" value={set.reps}
+                  onChange={(e) => updateSet(exercise.id, idx, 'reps', e.target.value.replace(/[^0-9]/g, ''))}
+                  className="w-full h-11 bg-white/5 text-center font-black text-sm text-white rounded-xl border border-white/10 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-white/20 transition-all"
+                />
+              </div>
+              <div className="w-10 flex justify-center">
+                <button
+                  onClick={() => toggleSetDone(exercise.id, idx)}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${set.done ? 'bg-emerald-500 text-[#040810]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
+                >
+                  <Check size={16} strokeWidth={3} />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="flex gap-2 mt-2">
+            <button onClick={() => addSet(exercise.id)} className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-dashed border-white/10 text-white/40 hover:text-white text-xs font-black flex items-center justify-center gap-1 transition-all active:scale-95">
+              <Plus size={13} /> Add Set
+            </button>
+            {sets.length > 1 && (
+              <button onClick={() => removeSet(exercise.id)} className="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-red-500/10 border border-dashed border-white/10 hover:border-red-500/30 text-white/40 hover:text-red-400 text-xs font-black flex items-center justify-center transition-all active:scale-95">
+                <Minus size={13} />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }), [exercises, workoutLog, addSet, removeSet, updateSet, toggleSetDone]);
+
   const handleFinishWorkout = async () => {
     if (!currentUser) return;
     setSaving(true);
@@ -416,86 +498,7 @@ const ActiveWorkout = () => {
             </button>
           </div>
         ) : (
-          useMemo(() => exercises.map(exercise => {
-            const sets = workoutLog[exercise.id] || [{ weight: '', reps: '', done: false }];
-            const completedSets = sets.filter(s => s.done).length;
-            const progress = completedSets / sets.length;
-            return (
-              <div key={exercise.id} className="bg-[#0D1526] rounded-2xl border border-white/5 overflow-hidden">
-                <div className="px-4 py-3.5 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-liftly-teal/10 flex items-center justify-center shrink-0">
-                    <Dumbbell size={17} className="text-liftly-teal" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-black text-sm text-white truncate">{exercise.name}</h3>
-                    <p className="text-[10px] uppercase tracking-wider font-bold text-white/40">{exercise.muscleGroup || exercise.bodyPart}</p>
-                  </div>
-                  {completedSets > 0 && (
-                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg shrink-0 border border-emerald-500/20">
-                      {completedSets}/{sets.length}
-                    </span>
-                  )}
-                </div>
-
-                {/* Progress bar */}
-                {completedSets > 0 && (
-                  <div className="h-1 bg-[#040810]">
-                    <div className="h-full bg-liftly-teal transition-all duration-500 ease-out" style={{ width: `${progress * 100}%` }} />
-                  </div>
-                )}
-
-                <div className="px-4 py-3">
-                  <div className="flex items-center gap-2 mb-2.5">
-                    <div className="w-8 text-center"><span className="text-[9px] uppercase font-black text-white/30">Set</span></div>
-                    <div className="flex-1"><span className="text-[9px] uppercase font-black text-white/30 pl-2">Kg</span></div>
-                    <div className="flex-1"><span className="text-[9px] uppercase font-black text-white/30 pl-2">Reps</span></div>
-                    <div className="w-10 text-center"><span className="text-[9px] uppercase font-black text-white/30">✓</span></div>
-                  </div>
-
-                  {sets.map((set, idx) => (
-                    <div key={idx} className={`flex items-center gap-2 mb-2 transition-all ${set.done ? 'opacity-50' : ''}`}>
-                      <div className="w-8 text-center">
-                        <span className="text-xs font-black text-white/40">{idx + 1}</span>
-                      </div>
-                      <div className="flex-1">
-                        <input
-                          type="number" inputMode="decimal" placeholder="—" value={set.weight}
-                          onChange={(e) => updateSet(exercise.id, idx, 'weight', e.target.value)}
-                          className="w-full h-11 bg-white/5 text-center font-black text-sm text-white rounded-xl border border-white/10 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-white/20 transition-all"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <input
-                          type="number" step="1" inputMode="numeric" placeholder="—" value={set.reps}
-                          onChange={(e) => updateSet(exercise.id, idx, 'reps', e.target.value.replace(/[^0-9]/g, ''))}
-                          className="w-full h-11 bg-white/5 text-center font-black text-sm text-white rounded-xl border border-white/10 focus:outline-none focus:border-liftly-teal focus:ring-1 focus:ring-liftly-teal placeholder:text-white/20 transition-all"
-                        />
-                      </div>
-                      <div className="w-10 flex justify-center">
-                        <button
-                          onClick={() => toggleSetDone(exercise.id, idx)}
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${set.done ? 'bg-emerald-500 text-[#040810]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
-                        >
-                          <Check size={16} strokeWidth={3} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="flex gap-2 mt-2">
-                    <button onClick={() => addSet(exercise.id)} className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-dashed border-white/10 text-white/40 hover:text-white text-xs font-black flex items-center justify-center gap-1 transition-all active:scale-95">
-                      <Plus size={13} /> Add Set
-                    </button>
-                    {sets.length > 1 && (
-                      <button onClick={() => removeSet(exercise.id)} className="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-red-500/10 border border-dashed border-white/10 hover:border-red-500/30 text-white/40 hover:text-red-400 text-xs font-black flex items-center justify-center transition-all active:scale-95">
-                        <Minus size={13} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          }), [exercises, workoutLog])
+          exerciseCards
         )}
       </div>
 
