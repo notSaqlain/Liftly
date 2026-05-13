@@ -31,7 +31,6 @@ const MyPlan = lazy(() => import('./pages/MyPlan'));
 const ChatHub = lazy(() => import('./pages/ChatHub'));
 const UserSearch = lazy(() => import('./pages/UserSearch'));
 const DMConversation = lazy(() => import('./pages/DMConversation'));
-const SeedFirestore = lazy(() => import('./pages/tools/SeedFirestore'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const FriendsList = lazy(() => import('./pages/FriendsList'));
 const Notifications = lazy(() => import('./pages/Notifications'));
@@ -111,7 +110,6 @@ function App() {
               <Route path="/my-plan" element={<MyPlan />} />
               <Route path="/messages/search" element={<UserSearch />} />
               <Route path="/messages/:conversationId" element={<DMConversation />} />
-              <Route path="/dev/seed" element={<SeedFirestore />} />
             </Route>
 
             {/* 404 */}

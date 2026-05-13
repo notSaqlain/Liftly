@@ -10,6 +10,7 @@ import {
   updatePassword as firebaseUpdatePassword,
   updateProfile as firebaseUpdateProfile,
   sendPasswordResetEmail,
+  sendEmailVerification,
   deleteUser,
   signInWithCredential,
   GoogleAuthProvider
@@ -53,6 +54,13 @@ export const AuthProvider = ({ children }) => {
       onboardingComplete: false,
       createdAt: serverTimestamp()
     });
+
+    // Send email verification (free Firebase feature)
+    try {
+      await sendEmailVerification(user);
+    } catch (e) {
+      console.warn('Could not send verification email:', e.message);
+    }
     
     return userCredential;
   };
@@ -103,6 +111,7 @@ export const AuthProvider = ({ children }) => {
           onboardingComplete: false,
           createdAt: serverTimestamp()
         });
+        // Google accounts are pre-verified — no email verification needed
       } else {
         if (user.photoURL) {
           await updateDoc(doc(db, 'users', user.uid), { googlePhotoURL: user.photoURL });

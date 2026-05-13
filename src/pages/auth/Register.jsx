@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Mail, CheckCircle2 } from 'lucide-react';
 import liftlyLogo from '../../assets/liftly_white.png';
 
 const Register = () => {
@@ -9,6 +9,7 @@ const Register = () => {
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
 
   const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -23,7 +24,8 @@ const Register = () => {
     setLoading(true);
     try {
       await register(formData.email, formData.password);
-      navigate('/onboarding');
+      // Show verification sent screen instead of navigating immediately
+      setVerificationSent(true);
     } catch (err) {
       setError(err.message.includes('email-already-in-use') ? 'An account with this email already exists.' : 'Failed to create account. Please try again.');
     } finally {
@@ -36,7 +38,7 @@ const Register = () => {
     setLoading(true);
     try {
       await loginWithGoogle();
-      navigate('/');
+      navigate('/onboarding');
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user') {
         setError('Sign-in cancelled.');
@@ -48,6 +50,48 @@ const Register = () => {
     }
   };
 
+  // ── Verification sent screen ──────────────────────────────────────────────
+  if (verificationSent) {
+    return (
+      <div className="flex justify-center bg-slate-900 min-h-screen">
+        <div className="w-full max-w-[480px] min-h-screen relative flex flex-col items-center p-6 overflow-y-auto overflow-x-hidden"
+          style={{ background: 'linear-gradient(160deg, #001540 0%, #001c5e 60%, #002280 100%)' }}>
+
+          <div className="fixed top-[-15%] right-[-15%] w-72 h-72 bg-liftly-teal/20 rounded-full blur-[80px] pointer-events-none" />
+          <div className="fixed bottom-[-10%] left-[-15%] w-60 h-60 bg-blue-600/20 rounded-full blur-[80px] pointer-events-none" />
+
+          <div className="z-10 w-full max-w-sm mt-24 mb-10 animate-slide-up text-center">
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-3xl bg-liftly-teal/15 border border-liftly-teal/30 flex items-center justify-center">
+                <Mail size={36} className="text-liftly-teal" />
+              </div>
+            </div>
+            <h1 className="text-2xl font-black text-white tracking-tight mb-3">Check your inbox</h1>
+            <p className="text-white/50 text-sm font-medium leading-relaxed mb-2">
+              We've sent a verification link to
+            </p>
+            <p className="text-liftly-teal font-black text-sm mb-6 break-all">{formData.email}</p>
+            <p className="text-white/40 text-xs font-medium leading-relaxed mb-8">
+              Click the link in the email to verify your account, then sign in to complete your profile setup.
+            </p>
+
+            <Link
+              to="/login"
+              className="w-full flex items-center justify-center h-14 font-black text-liftly-navy text-base rounded-2xl shadow-teal-lg transition-all active:scale-95 mb-4"
+              style={{ background: 'linear-gradient(135deg, #00ADB5 0%, #33c4cb 100%)' }}
+            >
+              Go to Sign In →
+            </Link>
+            <p className="text-white/30 text-xs font-medium">
+              Didn't receive it? Check your spam folder.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Main register form ────────────────────────────────────────────────────
   return (
     <div className="flex justify-center bg-slate-900 min-h-screen">
       <div className="w-full max-w-[480px] min-h-screen relative flex flex-col items-center p-6 overflow-y-auto overflow-x-hidden"

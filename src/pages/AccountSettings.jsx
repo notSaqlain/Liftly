@@ -21,7 +21,6 @@ const AccountSettings = () => {
   const [showGoogleWarning, setShowGoogleWarning] = useState(false);
 
   const [newEmail, setNewEmail] = useState('');
-  const [backupEmail, setBackupEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [hideOnlineStatus, setHideOnlineStatus] = useState(false);
@@ -36,7 +35,6 @@ const AccountSettings = () => {
       try {
         const data = await getUserData(currentUser.uid);
         if (data) {
-          setBackupEmail(data.backupEmail || '');
           if (data.hideOnlineStatus !== undefined) {
             setHideOnlineStatus(data.hideOnlineStatus);
           }
@@ -79,16 +77,6 @@ const AccountSettings = () => {
       }
       await updateUserEmail(newEmail);
       showMessage('Verification link sent to your new email!');
-      setActiveSection(null);
-    } catch (err) { showMessage(err.message, 'error'); }
-    finally { setSaving(false); }
-  };
-
-  const handleSaveBackupEmail = async () => {
-    setSaving(true);
-    try {
-      await updateUserProfile(currentUser.uid, { backupEmail });
-      showMessage('Backup email saved!');
       setActiveSection(null);
     } catch (err) { showMessage(err.message, 'error'); }
     finally { setSaving(false); }
@@ -207,13 +195,21 @@ const AccountSettings = () => {
 
         {/* ─── Email ─── */}
         {googleLinked && !passwordLinked ? (
-          <AccordionItem title="Backup Email" subtitle="Add a recovery email" icon={<Mail size={18} />} iconBg="bg-emerald-50 text-emerald-500" isOpen={activeSection === 'email'} onToggle={() => setActiveSection(activeSection === 'email' ? null : 'email')}>
-            <p className="text-slate-500 text-xs font-semibold mb-3">Your Google email ({currentUser?.email}) cannot be changed. Add a backup for recovery.</p>
-            <input type="email" placeholder="Backup email address" className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white font-semibold focus:outline-none focus:border-liftly-teal/50 focus:ring-1 focus:ring-liftly-teal/20 mb-4 transition-all" value={backupEmail} onChange={(e) => setBackupEmail(e.target.value)} />
-            <button onClick={handleSaveBackupEmail} disabled={saving} className="w-full h-12 bg-liftly-teal hover:bg-teal-400 text-white font-black text-sm rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 disabled:opacity-60">
-              {saving ? <Loader2 size={18} className="animate-spin" /> : <><Save size={16} /><span>Save Backup Email</span></>}
-            </button>
-          </AccordionItem>
+          <div className="bg-[#0D1526] rounded-2xl p-4 border border-white/5 mb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-500">
+                <Mail size={18} />
+              </div>
+              <div className="text-left flex-1 min-w-0">
+                <p className="font-black text-white text-sm">Email Address</p>
+                <p className="text-white/40 text-xs font-medium truncate">{currentUser?.email}</p>
+              </div>
+              <span className="px-2 py-1 bg-blue-500/15 text-blue-400 text-[9px] font-black rounded-lg uppercase tracking-wider border border-blue-500/20 shrink-0">Google</span>
+            </div>
+            <p className="text-white/30 text-[11px] font-medium mt-3 leading-relaxed pl-1">
+              Your email is managed by Google and cannot be changed here.
+            </p>
+          </div>
         ) : (
           <AccordionItem title="Email Address" subtitle={currentUser?.email} icon={<Mail size={18} />} iconBg="bg-emerald-50 text-emerald-500" isOpen={activeSection === 'email'} onToggle={() => setActiveSection(activeSection === 'email' ? null : 'email')}>
             <input type="email" placeholder="New email address" className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white font-semibold focus:outline-none focus:border-liftly-teal/50 focus:ring-1 focus:ring-liftly-teal/20 mb-4 transition-all" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
