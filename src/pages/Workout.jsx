@@ -230,7 +230,8 @@ const Workout = () => {
                   'flex-1 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all duration-300 relative',
                   activeTab === key
                     ? 'text-[#00d4aa] shadow-md'
-                    : 'text-white/40 hover:text-white/70'
+                    : 'text-white/40 hover:text-white/70',
+                  key === 'exercises' && 'tour-exercises-tab'
                 )}
               >
                 {activeTab === key && (
@@ -302,7 +303,7 @@ const Workout = () => {
           <div className="animate-fade-in space-y-4">
             <div className="flex justify-between items-center mt-2">
               <h2 className="font-black text-lg text-white">Your Routines</h2>
-              <button onClick={() => setShowNewRoutineModal(true)} className="bg-white/10 text-white px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 active:scale-95 transition-all border border-white/10">
+              <button onClick={() => setShowNewRoutineModal(true)} className="tour-new-routine bg-white/10 text-white px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 active:scale-95 transition-all border border-white/10">
                 <Plus size={14} /> New
               </button>
             </div>

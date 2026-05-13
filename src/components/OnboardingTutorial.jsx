@@ -3,26 +3,48 @@ import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 
-const TOUR_STEPS = [
-  {
-    selector: '.tour-start-workout',
-    title: 'Log Your Session',
-    content: 'Hit "Start Workout" to begin. Select your training day, track your weights and reps in real-time, and crush your records.',
-    placement: 'auto'
+const TOURS = {
+  '/': {
+    flag: 'hasSeenDashboardTour',
+    steps: [
+      {
+        selector: '.tour-start-workout',
+        title: 'Log Your Session',
+        content: 'Hit "Start Workout" to begin. Select your training day, track your weights and reps in real-time, and crush your records.',
+        placement: 'auto'
+      },
+      {
+        selector: '.tour-points',
+        title: 'Earn XP',
+        content: 'Complete daily workouts to earn points and climb the global leaderboard! Every workout counts towards your score.',
+        placement: 'auto'
+      },
+      {
+        selector: '.tour-nav-bar',
+        title: 'Explore Liftly',
+        content: 'Use this bar to switch between your Workout Split, personal Stats, and the Gym community features.',
+        placement: 'top' // forza in alto rispetto alla navbar
+      }
+    ]
   },
-  {
-    selector: '.tour-points',
-    title: 'Earn XP',
-    content: 'Complete daily workouts to earn points and climb the global leaderboard! Every workout counts towards your score.',
-    placement: 'auto'
-  },
-  {
-    selector: '.tour-nav-bar',
-    title: 'Explore Liftly',
-    content: 'Use this bar to switch between your Workout Split, personal Stats, and the Gym community features.',
-    placement: 'top' // forza in alto rispetto alla navbar
+  '/workout': {
+    flag: 'hasSeenWorkoutTour',
+    steps: [
+      {
+        selector: '.tour-new-routine',
+        title: 'Create a Split',
+        content: 'Start by clicking "New" to create a custom training day, like Push, Pull, or Legs.',
+        placement: 'auto'
+      },
+      {
+        selector: '.tour-exercises-tab',
+        title: 'Browse & Add Exercises',
+        content: 'Switch to the Exercises tab to search our library and add exercises to your new routine.',
+        placement: 'auto'
+      }
+    ]
   }
-];
+};
 
 const OnboardingTutorial = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,15 +52,23 @@ const OnboardingTutorial = () => {
   const [targetRect, setTargetRect] = useState(null);
   const location = useLocation();
 
-  // controllo se l'utente ha gia visto il tutorial
+  const activeTour = TOURS[location.pathname];
+
+  // controllo se l'utente ha gia visto il tutorial della pagina corrente
   useEffect(() => {
-    const hasSeen = localStorage.getItem('hasSeenTutorial');
-    // Mostra il tutorial solo se siamo nella Dashboard, cosi troviamo gli elementi
-    if (!hasSeen && location.pathname === '/') {
+    if (!activeTour) {
+      setIsVisible(false);
+      return;
+    }
+
+    const hasSeen = localStorage.getItem(activeTour.flag);
+    if (!hasSeen) {
+      // resetti lo step quando cambi pagina
+      setCurrentStep(0);
       
       // Aspettiamo che il primo elemento esista nel DOM prima di mostrare
       const checkExist = setInterval(() => {
-        const el = document.querySelector(TOUR_STEPS[0].selector);
+        const el = document.querySelector(activeTour.steps[0].selector);
         if (el) {
           clearInterval(checkExist);
           setIsVisible(true);
@@ -55,18 +85,23 @@ const OnboardingTutorial = () => {
         clearInterval(checkExist);
         clearTimeout(safetyTimeout);
       };
+    } else {
+      setIsVisible(false);
     }
-  }, [location.pathname]);
+  }, [location.pathname, activeTour]);
 
   // chiude il tutorial e salva lo stato nel browser
   const handleCompleteOrSkip = () => {
-    localStorage.setItem('hasSeenTutorial', 'true');
+    if (activeTour) {
+      localStorage.setItem(activeTour.flag, 'true');
+    }
     setIsVisible(false);
   };
 
   // passa al passo successivo
   const nextStep = () => {
-    if (currentStep < TOUR_STEPS.length - 1) {
+    if (!activeTour) return;
+    if (currentStep < activeTour.steps.length - 1) {
       setCurrentStep(prev => prev + 1);
     } else {
       handleCompleteOrSkip();
@@ -75,8 +110,9 @@ const OnboardingTutorial = () => {
 
   // funzione per calcolare le coordinate esatte dell'elemento da evidenziare
   const updateRect = useCallback(() => {
-    if (!isVisible) return;
-    const step = TOUR_STEPS[currentStep];
+    if (!isVisible || !activeTour) return;
+    const step = activeTour.steps[currentStep];
+    if (!step) return;
     const el = document.querySelector(step.selector);
     
     if (el) {
@@ -90,7 +126,7 @@ const OnboardingTutorial = () => {
     } else {
       setTargetRect(null);
     }
-  }, [currentStep, isVisible]);
+  }, [currentStep, isVisible, activeTour]);
 
   // ascoltiamo eventi di resize o scrolling per ricalcolare il buco
   useEffect(() => {
@@ -108,9 +144,9 @@ const OnboardingTutorial = () => {
     };
   }, [updateRect]);
 
-  if (!isVisible) return null;
+  if (!isVisible || !activeTour) return null;
 
-  const currentData = TOUR_STEPS[currentStep];
+  const currentData = activeTour.steps[currentStep];
   
   // calcoliamo lo stile del tooltip (sopra o sotto l'elemento)
   let tooltipStyle = {};
@@ -201,7 +237,7 @@ const OnboardingTutorial = () => {
         <div className="flex items-center justify-between mt-2">
           {/* pallini di progresso in basso a sinistra */}
           <div className="flex gap-1.5">
-            {TOUR_STEPS.map((_, i) => (
+            {activeTour.steps.map((_, i) => (
               <div 
                 key={i} 
                 className={`w-1.5 h-1.5 rounded-full transition-colors ${i === currentStep ? 'bg-liftly-teal' : 'bg-white/10'}`} 
@@ -213,7 +249,7 @@ const OnboardingTutorial = () => {
             onClick={nextStep}
             className="px-4 py-2 bg-liftly-teal text-[#040810] font-black text-xs rounded-xl active:scale-95 transition-transform"
           >
-            {currentStep === TOUR_STEPS.length - 1 ? 'Got it' : 'Next'}
+            {currentStep === activeTour.steps.length - 1 ? 'Got it' : 'Next'}
           </button>
         </div>
       </div>
