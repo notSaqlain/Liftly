@@ -1,299 +1,190 @@
-<section id="manuale" class="section-content relative h-full bg-[#040810] min-h-screen">
-    <!-- Premium Global Background Effects -->
-    <div class="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-teal-500/10 via-blue-500/5 to-transparent pointer-events-none"></div>
-    <div class="absolute -top-40 -right-40 w-96 h-96 bg-teal-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="absolute top-40 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="section-content">
+  <!-- HEADER -->
+  <section id="manuale-header" class="srs-section pt-4 mb-16">
+    <h1 class="text-5xl font-black text-[#001540] mb-4 uppercase italic tracking-tighter">Manuale d'Uso</h1>
+    <p class="text-xl text-slate-500 mb-12">La guida definitiva per sbloccare tutto il potenziale del tuo allenamento con l'ecosistema Liftly.</p>
+  </section>
 
-    <style>
-        /* Shared animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        
-        /* Glass Card Utility */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
-        }
-        
-        /* Icon wrapper */
-        .icon-wrap {
-            position: relative;
-            z-index: 1;
-        }
-        .icon-wrap::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: inherit;
-            filter: blur(10px);
-            z-index: -1;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
-        .glass-card:hover .icon-wrap::before {
-            opacity: 0.8;
-            filter: blur(15px);
-        }
-
-        /* Download Section Specifics */
-        .dl-qr-wrap {
-            position: relative;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            transition: transform 0.4s ease;
-        }
-        .dl-qr-wrap:hover { transform: translateY(-5px) scale(1.02); }
-        
-        .dl-float {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0.75rem 1.25rem;
-            border-radius: 16px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .dl-float-1 { top: -20px; left: -40px; animation: float 6s ease-in-out infinite 0s; }
-        .dl-float-2 { bottom: 20px; right: -60px; animation: float 6s ease-in-out infinite 2s; }
-        @media (max-width: 640px) { .dl-float { display: none; } }
-    </style>
-
-    <div class="py-16 max-w-5xl mx-auto px-4 lg:px-8 relative z-10">
-        
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-16">
-            <div class="w-20 h-20 bg-gradient-to-br from-teal-400/20 to-emerald-600/20 text-teal-400 rounded-3xl flex items-center justify-center border border-teal-500/30 shadow-[0_0_30px_rgba(45,212,191,0.2)] icon-wrap">
-                <i data-lucide="book-open" class="w-10 h-10"></i>
-            </div>
-            <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-white/60 uppercase tracking-widest mb-3">
-                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
-                    Liftly OS
-                </div>
-                <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-tight mb-2">Manuale d'Uso</h1>
-                <p class="text-lg text-slate-400 font-medium max-w-2xl">La guida definitiva per sbloccare tutto il potenziale del tuo allenamento con l'ecosistema Liftly.</p>
-            </div>
+  <!-- FEATURES GRID -->
+  <section id="manuale-features" class="srs-section mb-24">
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      
+      <!-- 1. Autenticazione -->
+      <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-blue-600 transition-transform group-hover:scale-110">
+            <i data-lucide="user" class="w-8 h-8"></i>
         </div>
+        <h3 class="text-2xl font-bold text-[#001540] mb-4">Registrazione & Accesso</h3>
+        <p class="text-slate-600 leading-relaxed mb-6">
+            Accesso rapido e sicuro garantito dall'infrastruttura cloud Firebase Auth.
+        </p>
+        <ul class="space-y-3">
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-500 shrink-0"></i>
+                <span><strong>SSO Google:</strong> Entra in un tap senza ricordare password.</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-500 shrink-0"></i>
+                <span><strong>Onboarding:</strong> Configura obiettivi e livello di esperienza al primo accesso.</span>
+            </li>
+        </ul>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-            
-            <!-- 1. Autenticazione -->
-            <div class="glass-card rounded-[2rem] p-8 group overflow-hidden relative">
-                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="user" class="w-32 h-32"></i>
-                </div>
-                <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center border border-blue-500/20 mb-6 icon-wrap">
-                    <i data-lucide="user" class="w-6 h-6"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-4">Registrazione & Accesso</h2>
-                <p class="text-slate-400 mb-6 line-height-relaxed">
-                    Accesso rapido e sicuro garantito dall'infrastruttura cloud Firebase Auth.
-                </p>
-                <ul class="space-y-3">
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-400 shrink-0"></i>
-                        <span><strong>SSO Google:</strong> Entra in un tap senza ricordare password.</span>
-                    </li>
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-400 shrink-0"></i>
-                        <span><strong>Onboarding:</strong> Configura obiettivi (massa, dimagrimento) ed esperienza al primo accesso.</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 2. Palestra -->
-            <div class="glass-card rounded-[2rem] p-8 group overflow-hidden relative">
-                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="map-pin" class="w-32 h-32"></i>
-                </div>
-                <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center border border-indigo-500/20 mb-6 icon-wrap">
-                    <i data-lucide="map-pin" class="w-6 h-6"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-4">Associazione Palestra</h2>
-                <p class="text-slate-400 mb-6 line-height-relaxed">
-                    Entra a far parte della tua community locale attivando le funzionalità Gym-Scoped.
-                </p>
-                <ul class="space-y-3">
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 shrink-0"></i>
-                        <span><strong>Gym Chat & Sfide:</strong> Interagisci con chi si allena nel tuo stesso centro.</span>
-                    </li>
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400 shrink-0"></i>
-                        <span><strong>Equipment Check:</strong> Controlla i macchinari disponibili e contatta lo staff.</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 3. Allenamento (Full Width) -->
-            <div class="glass-card rounded-[2rem] p-8 md:col-span-2 group overflow-hidden relative">
-                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="dumbbell" class="w-48 h-48"></i>
-                </div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/20 icon-wrap">
-                        <i data-lucide="dumbbell" class="w-6 h-6"></i>
-                    </div>
-                    <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-black uppercase tracking-wider rounded-lg border border-emerald-500/20">Core Feature</span>
-                </div>
-                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Workout Engine</h2>
-                <p class="text-slate-400 mb-8 max-w-3xl line-height-relaxed">
-                    Il cuore pulsante di Liftly. Pianifica e traccia i tuoi allenamenti con una precisione assoluta per massimizzare i risultati e la progressione.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white/5 border border-white/5 rounded-2xl p-5">
-                        <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400 mb-3"></i>
-                        <h3 class="text-white font-bold mb-2">My Plan</h3>
-                        <p class="text-xs text-slate-400">Crea routine scegliendo da un database di oltre 100+ esercizi categorizzati per gruppo muscolare.</p>
-                    </div>
-                    <div class="bg-white/5 border border-white/5 rounded-2xl p-5">
-                        <i data-lucide="timer" class="w-5 h-5 text-emerald-400 mb-3"></i>
-                        <h3 class="text-white font-bold mb-2">Active Tracker & Timer</h3>
-                        <p class="text-xs text-slate-400">Registra set, rep e peso. Utilizza il timer di recupero integrato (1m, 1.5m, 2m o custom).</p>
-                    </div>
-                    <div class="bg-white/5 border border-white/5 rounded-2xl p-5">
-                        <i data-lucide="flame" class="w-5 h-5 text-emerald-400 mb-3"></i>
-                        <h3 class="text-white font-bold mb-2">Tracciamento 1RM</h3>
-                        <p class="text-xs text-slate-400">Rilevamento automatico dei record personali e dei massimali per Panca Piana, Stacco e Squat.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. Gamification -->
-            <div class="glass-card rounded-[2rem] p-8 group overflow-hidden relative">
-                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="trophy" class="w-32 h-32"></i>
-                </div>
-                <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center border border-amber-500/20 mb-6 icon-wrap">
-                    <i data-lucide="trophy" class="w-6 h-6"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-4">Gamification (XP)</h2>
-                <p class="text-slate-400 mb-6 line-height-relaxed">
-                    L'allenamento diventa un gioco. Rimani costante e scala la classifica.
-                </p>
-                <ul class="space-y-3">
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0"></i>
-                        <span><strong>Daily XP:</strong> Ottieni punti XP completando workout validi.</span>
-                    </li>
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-amber-400 shrink-0"></i>
-                        <span><strong>Leaderboard:</strong> Confronta i tuoi XP e PR con i compagni della tua palestra.</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 5. Extra Tools -->
-            <div class="glass-card rounded-[2rem] p-8 group overflow-hidden relative">
-                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="activity" class="w-32 h-32"></i>
-                </div>
-                <div class="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 mb-6 icon-wrap">
-                    <i data-lucide="activity" class="w-6 h-6"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-4">Advanced Tools</h2>
-                <p class="text-slate-400 mb-6 line-height-relaxed">
-                    Strumenti analitici per tenere sotto controllo ogni metrica del tuo corpo.
-                </p>
-                <ul class="space-y-3">
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-400 shrink-0"></i>
-                        <span><strong>Calorie & BMI:</strong> Calcola TDEE, fabbisogno calorico e massa corporea.</span>
-                    </li>
-                    <li class="flex items-start gap-3 text-sm text-slate-300">
-                        <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-400 shrink-0"></i>
-                        <span><strong>Stats & Weight:</strong> Grafici interattivi su peso corporeo e volume sollevato mensilmente.</span>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- 6. Social -->
-            <div class="glass-card rounded-[2rem] p-8 md:col-span-2 group overflow-hidden relative">
-                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="message-circle" class="w-48 h-48"></i>
-                </div>
-                <div class="w-12 h-12 bg-pink-500/10 text-pink-400 rounded-2xl flex items-center justify-center border border-pink-500/20 mb-6 icon-wrap">
-                    <i data-lucide="message-circle" class="w-6 h-6"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-4">ChatHub & Social</h2>
-                <p class="text-slate-400 mb-6 max-w-2xl line-height-relaxed">
-                    L'ecosistema non è completo senza la community. Connettiti, discuti e ispirati.
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 flex items-center gap-2"><i data-lucide="hash" class="w-4 h-4 text-pink-400"></i> Global Chat</span>
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4 text-pink-400"></i> Direct Messages (DM)</span>
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-pink-400"></i> Friends List</span>
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 flex items-center gap-2"><i data-lucide="search" class="w-4 h-4 text-pink-400"></i> Public Profiles</span>
-                </div>
-            </div>
+      <!-- 2. Palestra -->
+      <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 text-indigo-600 transition-transform group-hover:scale-110">
+            <i data-lucide="map-pin" class="w-8 h-8"></i>
         </div>
-
-        <!-- Download Section Premium Integration -->
-        <div class="mt-8 relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#0f172a] to-[#040810] border border-white/10 shadow-2xl p-10 md:p-16 flex flex-col items-center text-center">
-            <!-- Download BG Mesh -->
-            <div class="absolute inset-0 z-0 opacity-40">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/20 rounded-full blur-[80px]"></div>
-                <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
-            </div>
-
-            <div class="relative z-10 w-full max-w-lg flex flex-col items-center">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-white uppercase tracking-widest mb-6 backdrop-blur-md">
-                    <i data-lucide="smartphone" class="w-4 h-4 text-amber-400"></i>
-                    App Mobile
-                </div>
-
-                <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-4 tracking-tight">
-                    Scarica <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">Liftly.</span>
-                </h2>
-                <p class="text-slate-400 text-lg mb-10 max-w-sm">
-                    Inquadra il QR Code con il tuo smartphone per scaricare l'APK nativo su Android.
-                </p>
-
-                <div class="dl-qr-wrap bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 relative">
-                    <!-- Floating Badges -->
-                    <div class="dl-float dl-float-1 bg-slate-800/80 backdrop-blur-md border border-white/10">
-                        <i data-lucide="bot" class="w-4 h-4 text-emerald-400"></i> Android
-                    </div>
-                    <div class="dl-float dl-float-2 bg-slate-800/80 backdrop-blur-md border border-white/10">
-                        <i data-lucide="download" class="w-4 h-4 text-blue-400"></i> Free
-                    </div>
-                    
-                    <img src="qr-code.png" alt="Liftly QR Code" class="w-48 h-48 rounded-xl bg-white p-3 object-contain" />
-                </div>
-
-                <div class="mt-8 flex items-center justify-center gap-2 text-sm text-slate-500 bg-white/5 px-4 py-2 rounded-full border border-white/5">
-                    <i data-lucide="info" class="w-4 h-4 text-amber-400"></i>
-                    <span>Ricorda di abilitare <strong>"Sorgenti Sconosciute"</strong> per installare.</span>
-                </div>
-            </div>
-        </div>
-
+        <h3 class="text-2xl font-bold text-[#001540] mb-4">Associazione Palestra</h3>
+        <p class="text-slate-600 leading-relaxed mb-6">
+            Entra a far parte della tua community locale attivando le funzionalità Gym-Scoped.
+        </p>
+        <ul class="space-y-3">
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-500 shrink-0"></i>
+                <span><strong>Gym Chat & Sfide:</strong> Interagisci con chi si allena nel tuo stesso centro.</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-500 shrink-0"></i>
+                <span><strong>Equipment Check:</strong> Controlla i macchinari disponibili e contatta lo staff.</span>
+            </li>
+        </ul>
+      </div>
     </div>
-</section>
+
+    <!-- 3. Allenamento (Full Width) -->
+    <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow mb-8 group">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+            <div class="flex items-center gap-6">
+                <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 transition-transform group-hover:scale-110">
+                    <i data-lucide="dumbbell" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-[#001540]">Workout Engine</h3>
+            </div>
+            <span class="mt-4 md:mt-0 px-4 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-black uppercase tracking-wider rounded-lg border border-emerald-100">Core Feature</span>
+        </div>
+        <p class="text-slate-600 leading-relaxed max-w-3xl mb-8">
+            Il cuore pulsante di Liftly. Pianifica e traccia i tuoi allenamenti con una precisione assoluta per massimizzare i risultati e la progressione.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6">
+                <i data-lucide="clipboard-list" class="w-6 h-6 text-emerald-500 mb-4"></i>
+                <h4 class="font-bold text-[#001540] mb-2">My Plan</h4>
+                <p class="text-sm text-slate-500 leading-relaxed">Crea routine scegliendo da un database di oltre 100+ esercizi categorizzati per gruppo muscolare.</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6">
+                <i data-lucide="timer" class="w-6 h-6 text-emerald-500 mb-4"></i>
+                <h4 class="font-bold text-[#001540] mb-2">Active Tracker & Timer</h4>
+                <p class="text-sm text-slate-500 leading-relaxed">Registra set, rep e peso. Utilizza il timer di recupero integrato (1m, 1.5m, 2m o custom).</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6">
+                <i data-lucide="flame" class="w-6 h-6 text-emerald-500 mb-4"></i>
+                <h4 class="font-bold text-[#001540] mb-2">Tracciamento 1RM</h4>
+                <p class="text-sm text-slate-500 leading-relaxed">Rilevamento automatico dei record personali e dei massimali per Panca Piana, Stacco e Squat.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <!-- 4. Gamification -->
+      <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 text-amber-500 transition-transform group-hover:scale-110">
+            <i data-lucide="trophy" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-[#001540] mb-4">Gamification (XP)</h3>
+        <p class="text-slate-600 leading-relaxed mb-6">
+            L'allenamento diventa un gioco. Rimani costante e scala la classifica.
+        </p>
+        <ul class="space-y-3">
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-amber-500 shrink-0"></i>
+                <span><strong>Daily XP:</strong> Ottieni punti XP completando workout validi.</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-amber-500 shrink-0"></i>
+                <span><strong>Leaderboard:</strong> Confronta i tuoi XP e PR con i compagni della tua palestra.</span>
+            </li>
+        </ul>
+      </div>
+
+      <!-- 5. Extra Tools -->
+      <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 text-purple-600 transition-transform group-hover:scale-110">
+            <i data-lucide="activity" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-[#001540] mb-4">Advanced Tools</h3>
+        <p class="text-slate-600 leading-relaxed mb-6">
+            Strumenti analitici per tenere sotto controllo ogni metrica del tuo corpo.
+        </p>
+        <ul class="space-y-3">
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-500 shrink-0"></i>
+                <span><strong>Calorie & BMI:</strong> Calcola TDEE, fabbisogno calorico e massa corporea.</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-600">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-500 shrink-0"></i>
+                <span><strong>Stats & Weight:</strong> Grafici interattivi su peso corporeo e volume mensile.</span>
+            </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- 6. Social -->
+    <div class="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow mb-8 group">
+        <div class="w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center mb-6 text-pink-500 transition-transform group-hover:scale-110">
+            <i data-lucide="message-circle" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-[#001540] mb-4">ChatHub & Social</h3>
+        <p class="text-slate-600 leading-relaxed max-w-3xl mb-8">
+            L'ecosistema non è completo senza la community. Connettiti, discuti e ispirati interagendo con gli altri atleti.
+        </p>
+        <div class="flex flex-wrap gap-4">
+            <span class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 flex items-center gap-2 hover:bg-slate-100 transition-colors cursor-default"><i data-lucide="hash" class="w-4 h-4 text-pink-500"></i> Global Chat</span>
+            <span class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 flex items-center gap-2 hover:bg-slate-100 transition-colors cursor-default"><i data-lucide="message-square" class="w-4 h-4 text-pink-500"></i> Direct Messages (DM)</span>
+            <span class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 flex items-center gap-2 hover:bg-slate-100 transition-colors cursor-default"><i data-lucide="users" class="w-4 h-4 text-pink-500"></i> Friends List</span>
+            <span class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 flex items-center gap-2 hover:bg-slate-100 transition-colors cursor-default"><i data-lucide="search" class="w-4 h-4 text-pink-500"></i> Public Profiles</span>
+        </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD SECTION -->
+  <section id="manuale-download" class="srs-section mb-24">
+    <div class="bg-[#001540] text-white p-10 md:p-16 rounded-[2.5rem] relative overflow-hidden flex flex-col md:flex-row items-center gap-12">
+      <!-- Glow effect -->
+      <div class="absolute -left-20 -top-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex-1">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 text-xs font-bold text-white uppercase tracking-widest mb-6 backdrop-blur-md">
+            <i data-lucide="smartphone" class="w-4 h-4 text-emerald-400"></i>
+            App Mobile
+        </div>
+        <h3 class="text-4xl font-bold mb-6 uppercase italic tracking-tighter">Scarica Liftly</h3>
+        <p class="text-lg opacity-80 max-w-xl leading-relaxed mb-8">
+            Inquadra il QR Code con il tuo smartphone Android per scaricare direttamente l'APK nativo.
+        </p>
+        <div class="flex items-center gap-4 text-sm text-blue-200 bg-white/5 border border-white/10 p-4 rounded-2xl w-fit">
+            <i data-lucide="info" class="w-5 h-5 shrink-0 text-amber-400"></i>
+            <span>Ricorda di abilitare <strong>"Sorgenti Sconosciute"</strong> sul tuo dispositivo per installare l'APK con successo.</span>
+        </div>
+      </div>
+      
+      <!-- QR Code Card -->
+      <div class="relative z-10 shrink-0">
+          <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-[2rem] shadow-2xl relative transition-transform hover:-translate-y-2 duration-300">
+              <!-- Floating Badges -->
+              <div class="absolute -top-4 -left-4 bg-[#001540] border border-blue-400/30 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1.5">
+                  <i data-lucide="bot" class="w-3.5 h-3.5"></i> Android
+              </div>
+              <div class="absolute -bottom-4 -right-4 bg-[#001540] border border-blue-400/30 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1.5">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> Free
+              </div>
+              
+              <div class="bg-white p-3 rounded-2xl">
+                  <img src="qr-code.png" alt="Liftly QR Code" class="w-48 h-48 object-contain rounded-xl" />
+              </div>
+          </div>
+      </div>
+    </div>
+  </section>
+</div>
