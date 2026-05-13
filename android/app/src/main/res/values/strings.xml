@@ -4,4 +4,5 @@
     <string name="title_activity_main">Liftly</string>
     <string name="package_name">com.ddks.liftly</string>
     <string name="custom_url_scheme">com.ddks.liftly</string>
+    <string name="default_web_client_id">785818446640-9qhgtmpss7stp9ftkrnpo19pjskah8a0.apps.googleusercontent.com</string>
 </resources>
