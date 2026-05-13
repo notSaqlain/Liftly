@@ -3,6 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/Layout/MainLayout';
+import { useHardwareBackButton } from './hooks/useHardwareBackButton';
+
+// Intercepts Android hardware back button — must be inside <BrowserRouter>
+const BackButtonHandler = () => { useHardwareBackButton(); return null; };
 
 // Lazy load Pages
 const Login = lazy(() => import('./pages/auth/Login'));
@@ -72,6 +76,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <BackButtonHandler />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Public Routes */}
