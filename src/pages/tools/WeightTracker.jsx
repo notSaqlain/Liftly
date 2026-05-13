@@ -21,10 +21,13 @@ const WeightTracker = () => {
     weight: entry.weight,
   }));
 
+  // For users who onboarded before weight seeding was added,
+  // fall back to showing their onboarding weight as the starting point
   if (chartData.length === 0 && userData?.weight) {
     chartData = [{
       date: new Date(userData.createdAt?.toDate() || Date.now()).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
       weight: userData.weight,
+      label: 'Starting weight',
     }];
   }
 

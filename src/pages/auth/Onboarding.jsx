@@ -113,7 +113,9 @@ const Onboarding = () => {
         experienceLevel,
         fitnessGoal: goal,
         ...licenseDataToSave,
-        onboardingComplete: true
+        onboardingComplete: true,
+        // Seed the weight tracker with the starting weight so it shows from day 1
+        weightHistory: [{ date: new Date().toISOString(), weight: parseFloat(weight) }],
       });
       navigate('/');
     } catch (err) {
