@@ -74,6 +74,18 @@
                     <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 shrink-0"></i>
                     <span class="truncate font-bold text-[#001540]">B2B Strategy</span>
                 </button>
+                <button onclick="openFile('codice', 'Descrizione Codice')"
+                    class="file-link w-full text-left flex items-center gap-2 px-6 py-1.5 hover:bg-slate-100 hover:text-[#001540] focus:outline-none transition-colors"
+                    data-path="codice">
+                    <i data-lucide="code" class="w-4 h-4 text-pink-500 shrink-0"></i>
+                    <span class="truncate font-bold text-[#001540]">Descrizione Codice</span>
+                </button>
+                <button onclick="openFile('manuale', 'Manuale d\'Uso')"
+                    class="file-link w-full text-left flex items-center gap-2 px-6 py-1.5 hover:bg-slate-100 hover:text-[#001540] focus:outline-none transition-colors"
+                    data-path="manuale">
+                    <i data-lucide="book-open" class="w-4 h-4 text-teal-500 shrink-0"></i>
+                    <span class="truncate font-bold text-[#001540]">Manuale d'Uso</span>
+                </button>
 
                 <!-- V2 Folder -->
                 <div class="mt-2">
@@ -114,18 +126,6 @@
                             data-path="v2/obs">
                             <i data-lucide="users" class="w-4 h-4 text-indigo-500 shrink-0"></i>
                             <span class="truncate">OBS</span>
-                        </button>
-                        <button onclick="openFile('v2/codice', 'Descrizione Codice')"
-                            class="file-link w-full text-left flex items-center gap-2 pl-10 pr-4 py-1.5 hover:bg-slate-100 hover:text-[#001540] focus:outline-none transition-colors"
-                            data-path="v2/codice">
-                            <i data-lucide="code" class="w-4 h-4 text-pink-500 shrink-0"></i>
-                            <span class="truncate">Descrizione Codice</span>
-                        </button>
-                        <button onclick="openFile('v2/manuale', 'Manuale d\'Uso')"
-                            class="file-link w-full text-left flex items-center gap-2 pl-10 pr-4 py-1.5 hover:bg-slate-100 hover:text-[#001540] focus:outline-none transition-colors"
-                            data-path="v2/manuale">
-                            <i data-lucide="book-open" class="w-4 h-4 text-teal-500 shrink-0"></i>
-                            <span class="truncate">Manuale d'Uso</span>
                         </button>
                     </div>
                 </div>

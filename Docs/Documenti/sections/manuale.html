@@ -1,9 +1,106 @@
 <section id="manuale" class="section-content">
-    <div class="flex flex-col items-center justify-center py-20 text-center">
-        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
-            <i data-lucide="book-open" class="w-12 h-12"></i>
+    <div class="py-10 max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-16 h-16 bg-teal-100 text-teal-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <i data-lucide="book-open" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-black text-[#001540]">Manuale d'Uso</h1>
+                <p class="text-slate-500">Guida completa all'utilizzo dell'applicazione Liftly</p>
+            </div>
         </div>
-        <h1 class="text-3xl font-black text-[#001540] mb-2">Manuale d'Uso</h1>
-        <p class="text-slate-500">Sarà redatto al termine dello sviluppo dell'app mobile.</p>
+
+        <div class="space-y-8">
+            <!-- 1. Autenticazione -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#001540]">1. Registrazione e Accesso</h2>
+                </div>
+                <p class="text-slate-600 mb-3">
+                    Per iniziare a utilizzare Liftly, è necessario creare un account. Puoi registrarti utilizzando il tuo indirizzo email o tramite l'autenticazione rapida con Google.
+                </p>
+                <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                    <li>Seleziona <strong>Inizia</strong> dalla schermata di benvenuto.</li>
+                    <li>Inserisci i tuoi dati personali, l'obiettivo di peso e il tuo livello di esperienza.</li>
+                    <li>Una volta completato, avrai accesso immediato alla tua dashboard personale.</li>
+                </ul>
+            </div>
+
+            <!-- 2. Palestra -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#001540]">2. Selezione della Palestra</h2>
+                </div>
+                <p class="text-slate-600 mb-3">
+                    Liftly ti permette di connetterti con altri utenti della tua stessa palestra. Questo è essenziale per la classifica locale e il feed della community.
+                </p>
+                <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                    <li>Vai alla sezione <strong>Impostazioni Palestra</strong> nel tuo profilo.</li>
+                    <li>Cerca e seleziona la tua palestra dall'elenco o aggiungine una nuova.</li>
+                    <li>Ora i tuoi punteggi contribuiranno alla classifica di quella specifica palestra.</li>
+                </ul>
+            </div>
+
+            <!-- 3. Allenamento -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded flex items-center justify-center">
+                        <i data-lucide="dumbbell" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#001540]">3. Registrazione dell'Allenamento</h2>
+                </div>
+                <p class="text-slate-600 mb-3">
+                    Il cuore dell'applicazione è la registrazione dei tuoi allenamenti (Active Workout).
+                </p>
+                <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                    <li>Tocca il pulsante <strong>Inizia Allenamento</strong> (+).</li>
+                    <li>Aggiungi gli esercizi che hai completato selezionandoli dal database.</li>
+                    <li>Per ogni esercizio, inserisci i set, le ripetizioni e il peso utilizzato.</li>
+                    <li>Puoi utilizzare il timer integrato per il recupero tra un set e l'altro.</li>
+                    <li>Al termine, tocca <strong>Termina Allenamento</strong> per salvare i dati.</li>
+                </ul>
+            </div>
+
+            <!-- 4. Punteggio -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-amber-100 text-amber-600 rounded flex items-center justify-center">
+                        <i data-lucide="star" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#001540]">4. Sistema di Punteggio (XP)</h2>
+                </div>
+                <p class="text-slate-600 mb-3">
+                    L'app utilizza un sistema di gamification per mantenerti motivato. Ogni volta che ti alleni, guadagni punti (XP).
+                </p>
+                <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                    <li>Guadagni <strong>100 XP</strong> per il primo allenamento della giornata.</li>
+                    <li>I punti ti permettono di scalare la classifica della tua palestra.</li>
+                    <li>Puoi visualizzare i tuoi punti totali e il tuo livello nel SideDrawer (menu laterale).</li>
+                </ul>
+            </div>
+
+            <!-- 5. Community -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-pink-100 text-pink-600 rounded flex items-center justify-center">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#001540]">5. Community e Social</h2>
+                </div>
+                <p class="text-slate-600 mb-3">
+                    Liftly non è solo per tracciare i pesi, ma anche per connettersi con la community.
+                </p>
+                <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                    <li>Utilizza il <strong>Feed</strong> per vedere gli allenamenti completati dagli altri utenti della tua palestra.</li>
+                    <li>Accedi alla <strong>Leaderboard</strong> per confrontare i tuoi XP con gli altri iscritti alla tua stessa palestra.</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </section>

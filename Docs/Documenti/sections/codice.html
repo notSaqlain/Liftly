@@ -1,9 +1,107 @@
 <section id="codice" class="section-content">
-    <div class="flex flex-col items-center justify-center py-20 text-center">
-        <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
-            <i data-lucide="code" class="w-12 h-12"></i>
+    <div class="py-10 max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-16 h-16 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center shadow-sm">
+                <i data-lucide="code" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-black text-[#001540]">Descrizione del Codice</h1>
+                <p class="text-slate-500">Analisi e spiegazione dei frammenti di codice più importanti di Liftly</p>
+            </div>
         </div>
-        <h1 class="text-3xl font-black text-[#001540] mb-2">Descrizione del Codice</h1>
-        <p class="text-slate-500">Saqlain sta scrivendo questa parte...</p>
+
+        <div class="space-y-8">
+            <!-- Snippet 1: Salvataggio Allenamento -->
+            <div class="bg-[#0f172a] rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                <div class="px-4 py-3 bg-[#1e293b] border-b border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="database" class="w-4 h-4 text-pink-400"></i>
+                        <span class="text-sm font-bold text-slate-200">Salvataggio dell'Allenamento su Firebase</span>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono">ActiveWorkout.jsx</span>
+                </div>
+                <div class="p-4 overflow-x-auto">
+<pre class="text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-purple-400">const</span> <span class="text-blue-400">handleFinishWorkout</span> = <span class="text-purple-400">async</span> () => {
+  <span class="text-slate-500">// 1. Calcolo Punti (Gamification)</span>
+  <span class="text-purple-400">const</span> pointsUpdate = <span class="text-yellow-200">getPointsUpdate</span>(userData, <span class="text-green-300">'WORKOUT_COMPLETED'</span>, <span class="text-orange-300">true</span>);
+  <span class="text-purple-400">const</span> pointsEarned = Object.<span class="text-yellow-200">keys</span>(pointsUpdate).length > <span class="text-orange-300">0</span> ? POINTS_MAP.WORKOUT_COMPLETED : <span class="text-orange-300">0</span>;
+
+  <span class="text-purple-400">const</span> workoutData = {
+    userId: currentUser.uid,
+    day: dayName,
+    exercises: <span class="text-slate-500">/* ... dati esercizi ... */</span>,
+    totalVolume: Math.<span class="text-yellow-200">round</span>(totalVolume),
+    completedAt: <span class="text-yellow-200">serverTimestamp</span>()
+  };
+
+  <span class="text-purple-400">try</span> {
+    <span class="text-slate-500">// 2. Salvataggio nella sub-collection dell'utente</span>
+    <span class="text-purple-400">await</span> <span class="text-yellow-200">addDoc</span>(<span class="text-yellow-200">collection</span>(db, <span class="text-green-300">'users'</span>, currentUser.uid, <span class="text-green-300">'user_workouts'</span>), workoutData);
+
+    <span class="text-purple-400">const</span> userUpdates = {
+      totalVolumeLifted: <span class="text-yellow-200">increment</span>(Math.<span class="text-yellow-200">round</span>(totalVolume)),
+      totalWorkoutsCompleted: <span class="text-yellow-200">increment</span>(<span class="text-orange-300">1</span>),
+      ...pointsUpdate,
+    };
+
+    <span class="text-slate-500">// 3. Aggiornamento statistiche globali utente</span>
+    <span class="text-purple-400">await</span> <span class="text-yellow-200">updateDoc</span>(<span class="text-yellow-200">doc</span>(db, <span class="text-green-300">'users'</span>, currentUser.uid), userUpdates);
+    <span class="text-yellow-200">setFinished</span>(<span class="text-orange-300">true</span>);
+  } <span class="text-purple-400">catch</span> (error) { ... }
+};</code></pre>
+                </div>
+                <div class="bg-white p-5 border-t border-slate-200">
+                    <h3 class="text-lg font-bold text-[#001540] mb-2">Cosa fa questo codice?</h3>
+                    <p class="text-slate-600 mb-2">Questo snippet gestisce il completamento di un allenamento:</p>
+                    <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                        <li><strong>Gamification:</strong> Utilizza <code class="text-pink-600 bg-pink-50 px-1 rounded">getPointsUpdate</code> per verificare se l'utente ha diritto a punti esperienza (XP) per l'allenamento di oggi.</li>
+                        <li><strong>Scrittura Firebase:</strong> Salva i dettagli dell'allenamento in una sotto-collezione <code class="text-slate-800 bg-slate-100 px-1 rounded">user_workouts</code> dedicata.</li>
+                        <li><strong>Aggiornamento Profilo:</strong> Aggiorna in modo atomico (tramite <code class="text-slate-800 bg-slate-100 px-1 rounded">increment</code>) le statistiche globali dell'utente, come il volume totale sollevato e i punti XP, usando un singolo documento.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Snippet 2: Firebase Auth -->
+            <div class="bg-[#0f172a] rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                <div class="px-4 py-3 bg-[#1e293b] border-b border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                        <span class="text-sm font-bold text-slate-200">Autenticazione Sicura con Google</span>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono">AuthContext.jsx</span>
+                </div>
+                <div class="p-4 overflow-x-auto">
+<pre class="text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-purple-400">const</span> <span class="text-blue-400">loginWithGoogle</span> = <span class="text-purple-400">async</span> () => {
+  <span class="text-purple-400">const</span> provider = <span class="text-purple-400">new</span> <span class="text-yellow-200">GoogleAuthProvider</span>();
+  <span class="text-purple-400">try</span> {
+    <span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> <span class="text-yellow-200">signInWithPopup</span>(auth, provider);
+    <span class="text-slate-500">// Verifica se l'utente esiste già nel database</span>
+    <span class="text-purple-400">const</span> userDoc = <span class="text-purple-400">await</span> <span class="text-yellow-200">getDoc</span>(<span class="text-yellow-200">doc</span>(db, <span class="text-green-300">'users'</span>, result.user.uid));
+    
+    <span class="text-purple-400">if</span> (!userDoc.<span class="text-yellow-200">exists</span>()) {
+      <span class="text-slate-500">// Se è un nuovo utente, inizializza il documento</span>
+      <span class="text-purple-400">await</span> <span class="text-yellow-200">setDoc</span>(<span class="text-yellow-200">doc</span>(db, <span class="text-green-300">'users'</span>, result.user.uid), {
+        email: result.user.email,
+        name: result.user.displayName,
+        createdAt: <span class="text-yellow-200">serverTimestamp</span>(),
+        points: <span class="text-orange-300">0</span>
+      });
+    }
+  } <span class="text-purple-400">catch</span> (error) {
+    <span class="text-yellow-200">console</span>.<span class="text-blue-400">error</span>(<span class="text-green-300">'Login failed:'</span>, error);
+  }
+};</code></pre>
+                </div>
+                <div class="bg-white p-5 border-t border-slate-200">
+                    <h3 class="text-lg font-bold text-[#001540] mb-2">Gestione Utenti (SSO)</h3>
+                    <p class="text-slate-600 mb-2">Questo blocco mostra come Liftly gestisce l'accesso tramite Google:</p>
+                    <ul class="list-disc pl-5 text-slate-600 space-y-1">
+                        <li>Utilizza <strong>Firebase Auth</strong> con il metodo del popup per un'esperienza fluida.</li>
+                        <li>Verifica l'esistenza dell'utente per differenziare tra <strong>Login</strong> e <strong>Registrazione</strong>.</li>
+                        <li>Se l'utente è nuovo, crea automaticamente il profilo associato nel database Firestore con i dati di base.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
