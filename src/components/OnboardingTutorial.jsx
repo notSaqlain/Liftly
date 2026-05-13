@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 const TOUR_STEPS = [
@@ -27,15 +28,35 @@ const OnboardingTutorial = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
+  const location = useLocation();
 
   // controllo se l'utente ha gia visto il tutorial
   useEffect(() => {
     const hasSeen = localStorage.getItem('hasSeenTutorial');
-    if (!hasSeen) {
-      // piccolo ritardo per permettere al DOM di caricarsi e posizionare tutto correttamente
-      setTimeout(() => setIsVisible(true), 800);
+    // Mostra il tutorial solo se siamo nella Dashboard, cosi troviamo gli elementi
+    if (!hasSeen && location.pathname === '/') {
+      
+      // Aspettiamo che il primo elemento esista nel DOM prima di mostrare
+      const checkExist = setInterval(() => {
+        const el = document.querySelector(TOUR_STEPS[0].selector);
+        if (el) {
+          clearInterval(checkExist);
+          setIsVisible(true);
+        }
+      }, 300);
+
+      const safetyTimeout = setTimeout(() => {
+        clearInterval(checkExist);
+        // se non lo trova entro 3 secondi, lo mostriamo lo stesso per evitare blocchi
+        if (!hasSeen) setIsVisible(true);
+      }, 3000);
+
+      return () => {
+        clearInterval(checkExist);
+        clearTimeout(safetyTimeout);
+      };
     }
-  }, []);
+  }, [location.pathname]);
 
   // chiude il tutorial e salva lo stato nel browser
   const handleCompleteOrSkip = () => {
