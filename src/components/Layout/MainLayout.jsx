@@ -5,6 +5,7 @@ import { db } from '../../firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Home, Dumbbell, BarChart3, MessageCircle, User } from 'lucide-react';
 import clsx from 'clsx';
+import OnboardingTutorial from '../OnboardingTutorial';
 
 const NAV_ITEMS = [
   { to: '/',        icon: Home,          label: 'Home',    end: true },
@@ -40,6 +41,7 @@ const MainLayout = () => {
 
   return (
     <div className="flex justify-center h-[100dvh] overflow-hidden bg-mesh-glow">
+      <OnboardingTutorial />
       <div className="w-full max-w-[480px] h-full relative shadow-2xl flex flex-col bg-[#040810]/60 backdrop-blur-3xl border-x border-white/5">
         {/* Main Content Area */}
         <main className={`flex-1 flex flex-col overflow-y-auto no-scrollbar`}>
@@ -48,7 +50,7 @@ const MainLayout = () => {
 
         {/* FEATURE: Floating Pill Nav */}
         {!isChatPage && (
-          <nav className="w-full shrink-0 z-50 px-4 pb-3 pt-1">
+          <nav className="tour-nav-bar w-full shrink-0 z-50 px-4 pb-3 pt-1">
           <div
             className="rounded-[28px] border shadow-2xl"
             style={{

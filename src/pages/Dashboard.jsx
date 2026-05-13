@@ -144,7 +144,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-2.5 shrink-0">
             <button
               onClick={() => setShowPointsInfo(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border active:scale-95 transition-all"
+              className="tour-points flex items-center gap-1.5 px-3 py-2 rounded-2xl border active:scale-95 transition-all"
               style={{
                 background: 'rgba(255,255,255,0.06)',
                 borderColor: 'rgba(255,255,255,0.1)',
@@ -207,7 +207,7 @@ const Dashboard = () => {
         {/* ── Start Workout CTA ── */}
         <button
           onClick={handleStartWorkout}
-          className="w-full relative overflow-hidden group rounded-3xl p-6 bg-[#0D1526] border border-white/5 hover:border-liftly-teal/30 active:scale-[0.98] transition-all duration-300 shadow-xl"
+          className="tour-start-workout w-full relative overflow-hidden group rounded-3xl p-6 bg-[#0D1526] border border-white/5 hover:border-liftly-teal/30 active:scale-[0.98] transition-all duration-300 shadow-xl"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-liftly-teal/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-liftly-teal/20 transition-colors duration-500" />
           
