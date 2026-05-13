@@ -130,10 +130,15 @@ const ActiveWorkout = () => {
     setSaving(true);
     const durationMinutes = Math.round((Date.now() - startTime) / 60000);
 
+    // Calculate points BEFORE saving — userData is fresh here, not yet written
+    const pointsUpdate = getPointsUpdate(userData, 'WORKOUT_COMPLETED', true);
+    const pointsEarned = Object.keys(pointsUpdate).length > 0 ? POINTS_MAP.WORKOUT_COMPLETED : 0;
+
     setFinalStats({
       sets: totalSets,
       volume: Math.round(totalVolume),
-      duration: durationMinutes
+      duration: durationMinutes,
+      pointsEarned,
     });
 
     const workoutData = {
@@ -155,8 +160,6 @@ const ActiveWorkout = () => {
       durationMinutes,
       completedAt: serverTimestamp()
     };
-    const pointsUpdate = getPointsUpdate(userData, 'WORKOUT_COMPLETED', true);
-
     try {
       await addDoc(collection(db, 'users', currentUser.uid, 'user_workouts'), workoutData);
 
@@ -200,9 +203,8 @@ const ActiveWorkout = () => {
 
   // ── Completion Screen ──
   if (finished && finalStats) {
-    const pointsUpdate = getPointsUpdate(userData, 'WORKOUT_COMPLETED', true);
-    const pointsEarned = Object.keys(pointsUpdate).length > 0 ? POINTS_MAP.WORKOUT_COMPLETED : 0;
-    const newTotal = (userData?.points || 0) + pointsEarned;
+    const pointsEarned = finalStats.pointsEarned ?? 0;
+    const newTotal = userData?.points || 0;
 
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in bg-black/80 backdrop-blur-sm">

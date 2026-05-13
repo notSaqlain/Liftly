@@ -20,6 +20,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [reportedStatus, setReportedStatus] = useState(false);
   const [showSplitPicker, setShowSplitPicker] = useState(false);
+  const [showPointsInfo, setShowPointsInfo] = useState(false);
   const [weekStats, setWeekStats] = useState({ count: 0, volume: 0 });
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
   const [friends, setFriends] = useState([]);
@@ -141,8 +142,9 @@ const Dashboard = () => {
 
           {/* Right: Streak pill + Bell */}
           <div className="flex items-center gap-2.5 shrink-0">
-            <div
-              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border"
+            <button
+              onClick={() => setShowPointsInfo(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border active:scale-95 transition-all"
               style={{
                 background: 'rgba(255,255,255,0.06)',
                 borderColor: 'rgba(255,255,255,0.1)',
@@ -154,7 +156,7 @@ const Dashboard = () => {
                 <p className="text-white font-black text-base leading-none">{userData?.points || 0}</p>
                 <p className="text-[9px] font-bold uppercase tracking-widest text-white/35 leading-none mt-0.5">Score</p>
               </div>
-            </div>
+            </button>
             <button
               onClick={() => navigate('/notifications')}
               className="relative w-11 h-11 rounded-2xl flex items-center justify-center text-white/60 active:scale-95 transition-all border"
@@ -484,6 +486,87 @@ const Dashboard = () => {
         document.body
       )}
 
+
+      {/* Points Info Modal */}
+      {showPointsInfo && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
+          onClick={() => setShowPointsInfo(false)}
+        >
+          <div
+            className="bg-[#0D1526] border border-white/10 w-full max-w-[480px] rounded-t-3xl p-6 pb-10 shadow-2xl animate-slide-up"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6" />
+
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-yellow-400/15 border border-yellow-400/20 flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+                <Star size={22} className="text-yellow-400 fill-yellow-400" />
+              </div>
+              <div>
+                <h3 className="text-white font-black text-lg leading-tight">Your Score</h3>
+                <p className="text-white/40 text-xs font-medium">How points work in Liftly</p>
+              </div>
+              <div className="ml-auto text-right">
+                <p className="text-yellow-400 font-black text-2xl leading-none">{userData?.points || 0}</p>
+                <p className="text-white/30 text-[10px] font-bold uppercase tracking-wider mt-0.5">Total XP</p>
+              </div>
+            </div>
+
+            {/* How to earn */}
+            <p className="text-white/50 text-[10px] font-black uppercase tracking-widest mb-3">How to earn points</p>
+            <div className="space-y-2 mb-6">
+              {[
+                { icon: '🏋️', action: 'Complete a workout', pts: '+50 XP', note: 'Once per day' },
+                { icon: '🏆', action: 'Complete a gym challenge', pts: '+100 XP', note: 'Per challenge' },
+              ].map(({ icon, action, pts, note }) => (
+                <div key={action} className="flex items-center justify-between bg-white/5 border border-white/8 rounded-2xl px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{icon}</span>
+                    <div>
+                      <p className="text-white font-bold text-sm">{action}</p>
+                      <p className="text-white/35 text-[11px] font-medium">{note}</p>
+                    </div>
+                  </div>
+                  <span className="text-yellow-400 font-black text-sm">{pts}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Daily cap note */}
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl px-4 py-3 mb-6">
+              <p className="text-blue-300 text-xs font-semibold leading-relaxed">
+                💡 <strong>Daily cap:</strong> Workout points are awarded once per day. Come back tomorrow to earn more!
+              </p>
+            </div>
+
+            {/* What points are for */}
+            <p className="text-white/50 text-[10px] font-black uppercase tracking-widest mb-3">What points are used for</p>
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              {[
+                { icon: '🥇', label: 'Leaderboard ranking' },
+                { icon: '👥', label: 'Show off to friends' },
+                { icon: '🏅', label: 'Gym challenges' },
+                { icon: '📈', label: 'Track your progress' },
+              ].map(({ icon, label }) => (
+                <div key={label} className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-xl px-3 py-2.5">
+                  <span className="text-base">{icon}</span>
+                  <p className="text-white/70 text-xs font-semibold">{label}</p>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowPointsInfo(false)}
+              className="w-full h-13 bg-white/8 text-white/60 font-black text-sm rounded-xl flex items-center justify-center transition-all active:scale-95"
+            >
+              Got it
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
 
     </div>
   );
