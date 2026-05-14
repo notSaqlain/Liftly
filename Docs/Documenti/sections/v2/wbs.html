@@ -3,7 +3,6 @@
         <div
             class="col-span-2 bg-[#001540] p-8 rounded-3xl text-white flex flex-col justify-center relative overflow-hidden">
             <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
-                <!-- Logo Liftly -->
                 <div class="shrink-0 flex items-center opacity-90">
                     <img src="liftly_white.png" alt="LIFTLY" class="h-10 md:h-12 object-contain">
                 </div>
@@ -12,12 +11,11 @@
                     </h3>
                     <div class="flex items-center gap-3">
                         <span class="w-8 h-1 bg-blue-500 rounded-full shadow-sm"></span>
-                        <p class="text-blue-200 text-base font-medium tracking-wide">Progetto Industrie dello Sport</p>
+                        <p class="text-blue-200 text-base font-medium tracking-wide">Ecosistema Liftly & B2B</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Graphic Decorations -->
             <div class="absolute -right-16 -bottom-16 w-60 h-60 bg-blue-500/20 rounded-full blur-3xl"></div>
             <div class="absolute right-10 top-0 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
         </div>
@@ -27,10 +25,10 @@
                 <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Data
                         Inizio</span> <span class="font-bold text-[#001540]">13/02/2026</span></div>
                 <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Data
-                        Fine</span> <span class="font-bold text-[#001540]">08/05/2026</span></div>
+                        Fine</span> <span class="font-bold text-[#001540]">15/05/2026</span></div>
                 <div class="flex justify-between border-b pb-2"><span
-                        class="text-slate-500 font-semibold">Sponsor</span> <span
-                        class="font-bold text-[#001540]">RedBull</span></div>
+                        class="text-slate-500 font-semibold">Team</span> <span
+                        class="font-bold text-[#001540]">DDKS</span></div>
                 <div class="flex justify-between pt-1"><span class="text-slate-500 font-semibold">PM</span> <span
                         class="font-bold text-[#001540]">Davide Dolce</span></div>
             </div>
@@ -175,35 +173,12 @@
             line-height: 1;
         }
 
-        .raci-r {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .raci-a {
-            background: #dbeafe;
-            color: #2563eb;
-        }
-
-        .raci-c {
-            background: #ffedd5;
-            color: #ea580c;
-        }
-
-        .raci-i {
-            background: #f3e8ff;
-            color: #9333ea;
-        }
-
-        .raci-ar {
-            background: linear-gradient(135deg, #dbeafe, #dcfce7);
-            color: #0369a1;
-        }
-
-        .raci-ra {
-            background: linear-gradient(135deg, #dcfce7, #dbeafe);
-            color: #15803d;
-        }
+        .raci-r { background: #dcfce7; color: #16a34a; }
+        .raci-a { background: #dbeafe; color: #2563eb; }
+        .raci-c { background: #ffedd5; color: #ea580c; }
+        .raci-i { background: #f3e8ff; color: #9333ea; }
+        .raci-ar { background: linear-gradient(135deg, #dbeafe, #dcfce7); color: #0369a1; }
+        .raci-ra { background: linear-gradient(135deg, #dcfce7, #dbeafe); color: #15803d; }
 
         td.raci-cell {
             text-align: center;
@@ -236,57 +211,35 @@
 
                     <tr class="act-row">
                         <td>1.1</td>
-                        <td class="act-name">Raccolta requisiti</td>
+                        <td class="act-name">Raccolta requisiti e Concept</td>
                         <td class="act-date">13/02/2026</td>
-                        <td class="act-date">14/02/2026</td>
-                        <td class="act-ore">2</td>
+                        <td class="act-date">16/02/2026</td>
+                        <td class="act-ore">8</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Raccolta richieste (diario, storico, affollamento)</td>
+                        <td class="act-desc">Identificazione di funzionalità (Workout, Tools, B2B Gym Hub)</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>1.2</td>
-                        <td class="act-name">Analisi funzionale</td>
+                        <td class="act-name">Analisi di fattibilità tecnologica</td>
                         <td class="act-date">17/02/2026</td>
-                        <td class="act-date">18/02/2026</td>
-                        <td class="act-ore">2</td>
+                        <td class="act-date">19/02/2026</td>
+                        <td class="act-ore">6</td>
                         <td class="raci-cell"><span class="raci raci-ar">A,R</span></td>
                         <td class="raci-cell"><span class="raci raci-i">I</span></td>
-                        <td class="act-desc">Definizione timer, salvataggio e grafici</td>
+                        <td class="act-desc">Scelta di React, Firebase, Tailwind, e Capacitor</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>1.3</td>
-                        <td class="act-name">Definizione architettura base</td>
-                        <td class="act-date">19/02/2026</td>
+                        <td class="act-name">Struttura iniziale DB e Auth</td>
                         <td class="act-date">20/02/2026</td>
-                        <td class="act-ore">2</td>
-                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Organizzazione db, auth e struttura generale</td>
-                    </tr>
-
-                    <tr class="act-row">
-                        <td>1.4</td>
-                        <td class="act-name">Struttura pagine e flusso utente</td>
-                        <td class="act-date">21/02/2026</td>
-                        <td class="act-date">23/02/2026</td>
-                        <td class="act-ore">2</td>
-                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Definizione schermate (login, diario, statistiche)</td>
-                    </tr>
-
-                    <tr class="act-row">
-                        <td>1.5</td>
-                        <td class="act-name">Pianificazione attività</td>
-                        <td class="act-date">24/02/2026</td>
                         <td class="act-date">25/02/2026</td>
-                        <td class="act-ore">2</td>
+                        <td class="act-ore">8</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="raci-cell"><span class="raci raci-i">I</span></td>
-                        <td class="act-desc">Creazione WBS, RACI e diagramma di Gantt</td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Setup Firebase Auth e architettura multi-tenant Firestore</td>
                     </tr>
 
                     <!-- ═══════════════════  2.0 – PIANIFICAZIONE  ═══════════════════ -->
@@ -297,46 +250,35 @@
 
                     <tr class="act-row">
                         <td>2.1</td>
-                        <td class="act-name">Specifiche tecniche complete</td>
-                        <td class="act-date">27/02/2026</td>
-                        <td class="act-date">06/03/2026</td>
-                        <td class="act-ore">4</td>
+                        <td class="act-name">Stesura Specifiche (SRS)</td>
+                        <td class="act-date">26/02/2026</td>
+                        <td class="act-date">02/03/2026</td>
+                        <td class="act-ore">8</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-c">C</span></td>
-                        <td class="act-desc">Dettaglio moduli account, stat e crowdsourcing</td>
+                        <td class="act-desc">Documentazione requisiti completi app e B2B</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>2.2</td>
-                        <td class="act-name">Progettazione UI / UX</td>
-                        <td class="act-date">09/03/2026</td>
-                        <td class="act-date">16/03/2026</td>
-                        <td class="act-ore">3</td>
+                        <td class="act-name">UX/UI Design e Prototipazione</td>
+                        <td class="act-date">03/03/2026</td>
+                        <td class="act-date">10/03/2026</td>
+                        <td class="act-ore">12</td>
                         <td class="raci-cell"><span class="raci raci-ar">R/A</span></td>
                         <td class="raci-cell"><span class="raci raci-c">C</span></td>
-                        <td class="act-desc">Progettazione interfaccia, ottimizzata mobile</td>
+                        <td class="act-desc">Progettazione UI stile Glassmorphism</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>2.3</td>
-                        <td class="act-name">Scelta stack tecnico</td>
-                        <td class="act-date">17/03/2026</td>
-                        <td class="act-date">20/03/2026</td>
-                        <td class="act-ore">1</td>
+                        <td class="act-name">Piano di progetto</td>
+                        <td class="act-date">11/03/2026</td>
+                        <td class="act-date">15/03/2026</td>
+                        <td class="act-ore">6</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Conferma tecnologie web, GitHub, Supabase</td>
-                    </tr>
-
-                    <tr class="act-row">
-                        <td>2.4</td>
-                        <td class="act-name">Prototipo grafico semplice</td>
-                        <td class="act-date">23/03/2026</td>
-                        <td class="act-date">27/03/2026</td>
-                        <td class="act-ore">2</td>
-                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="raci-cell"><span class="raci raci-i">I</span></td>
-                        <td class="act-desc">Bozza visiva dell'app LIFTLY</td>
+                        <td class="act-desc">WBS, Gantt e OBS</td>
                     </tr>
 
                     <!-- ═══════════════════  3.0 – REALIZZAZIONE  ═══════════════════ -->
@@ -347,140 +289,118 @@
 
                     <tr class="act-row">
                         <td>3.1</td>
-                        <td class="act-name">Sviluppo gestione account</td>
-                        <td class="act-date">01/04/2026</td>
-                        <td class="act-date">04/04/2026</td>
-                        <td class="act-ore">4</td>
-                        <td class="raci-cell"><span class="raci raci-ar">A/R</span></td>
-                        <td class="raci-cell"><span class="raci raci-c">C</span></td>
-                        <td class="act-desc">Registrazione, login e dati biometrici</td>
+                        <td class="act-name">Sviluppo Base & Auth</td>
+                        <td class="act-date">16/03/2026</td>
+                        <td class="act-date">19/03/2026</td>
+                        <td class="act-ore">12</td>
+                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
+                        <td class="act-desc">Registrazione, Login, Dashboard Base</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>3.2</td>
-                        <td class="act-name">Sviluppo diario di allenamento</td>
-                        <td class="act-date">07/04/2026</td>
-                        <td class="act-date">11/04/2026</td>
-                        <td class="act-ore">6</td>
+                        <td class="act-name">Core Workout Tracker</td>
+                        <td class="act-date">20/03/2026</td>
+                        <td class="act-date">25/03/2026</td>
+                        <td class="act-ore">16</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Registrazione set, rep, peso e timer</td>
+                        <td class="act-desc">Gestione split, log esercizi e statistiche volumi</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>3.3</td>
-                        <td class="act-name">Sviluppo modulo statistiche</td>
-                        <td class="act-date">14/04/2026</td>
-                        <td class="act-date">18/04/2026</td>
-                        <td class="act-ore">5</td>
-                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
+                        <td class="act-name">Sviluppo Health Tools</td>
+                        <td class="act-date">26/03/2026</td>
+                        <td class="act-date">04/04/2026</td>
+                        <td class="act-ore">18</td>
+                        <td class="raci-cell"><span class="raci raci-i">I</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Grafici progresso e sistema streak</td>
+                        <td class="act-desc">Calcolatore BMI, Tracker Calorie (Macro) e Peso</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>3.4</td>
-                        <td class="act-name">Modulo Social (Crowdsourcing &amp; LiftChat)</td>
-                        <td class="act-date">21/04/2026</td>
-                        <td class="act-date">25/04/2026</td>
-                        <td class="act-ore">6</td>
+                        <td class="act-name">LiftChat & Sistema Social</td>
+                        <td class="act-date">05/04/2026</td>
+                        <td class="act-date">15/04/2026</td>
+                        <td class="act-ore">20</td>
                         <td class="raci-cell"><span class="raci raci-i">I</span></td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="act-desc">Crowdsourcing stato palestra e chat telegram-style</td>
+                        <td class="act-desc">Messaggi Diretti (DM), Gruppi e Lista Amici</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>3.5</td>
-                        <td class="act-name">Gestione routine (Premium)</td>
-                        <td class="act-date">28/04/2026</td>
-                        <td class="act-date">29/04/2026</td>
-                        <td class="act-ore">2</td>
+                        <td class="act-name">Sistema Progressione (Punti/XP)</td>
+                        <td class="act-date">16/04/2026</td>
+                        <td class="act-date">22/04/2026</td>
+                        <td class="act-ore">12</td>
                         <td class="raci-cell"><span class="raci raci-i">I</span></td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="act-desc">Simulazione flag db per routine illimitate</td>
+                        <td class="act-desc">Rimpiazzo streaks con Punti, Daily Cap e Leaderboard</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>3.6</td>
-                        <td class="act-name">Integrazione componenti</td>
-                        <td class="act-date">30/04/2026</td>
-                        <td class="act-date">05/05/2026</td>
-                        <td class="act-ore">4</td>
+                        <td class="act-name">Gym Environment (B2B Hub)</td>
+                        <td class="act-date">23/04/2026</td>
+                        <td class="act-date">02/05/2026</td>
+                        <td class="act-ore">16</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Unione db, logica di business e UI</td>
+                        <td class="act-desc">Stato Macchinari, PT Hub, Supporto Reception, Affluenza</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>3.7</td>
-                        <td class="act-name">Versione beta</td>
-                        <td class="act-date">06/05/2026</td>
+                        <td class="act-name">Integrazione e Ottimizzazione UI</td>
+                        <td class="act-date">03/05/2026</td>
                         <td class="act-date">08/05/2026</td>
-                        <td class="act-ore">2</td>
+                        <td class="act-ore">10</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Pubblicazione di una versione funzionante</td>
+                        <td class="act-desc">Refining interfacce, linkaggio Firebase e animazioni</td>
                     </tr>
 
                     <!-- ═══════════════════  4.0 – CHIUSURA  ═══════════════════ -->
                     <tr class="phase-row phase-chiusura">
                         <td class="phase-code">4.0</td>
-                        <td colspan="7">Chiusura</td>
+                        <td colspan="7">Chiusura e Rilascio</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>4.1</td>
-                        <td class="act-name">Testing funzionalità</td>
-                        <td class="act-date">29/04/2026</td>
-                        <td class="act-date">01/05/2026</td>
-                        <td class="act-ore">4</td>
+                        <td class="act-name">Fase di Testing Generale</td>
+                        <td class="act-date">09/05/2026</td>
+                        <td class="act-date">11/05/2026</td>
+                        <td class="act-ore">8</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Verifica funzionamento generale dell'app</td>
+                        <td class="act-desc">Validazione funzioni su device reali</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>4.2</td>
-                        <td class="act-name">Debug</td>
-                        <td class="act-date">06/05/2026</td>
-                        <td class="act-date">08/05/2026</td>
-                        <td class="act-ore">4</td>
+                        <td class="act-name">Bug Fixing & Ottimizzazione</td>
+                        <td class="act-date">12/05/2026</td>
+                        <td class="act-date">13/05/2026</td>
+                        <td class="act-ore">6</td>
                         <td class="raci-cell"><span class="raci raci-a">A</span></td>
                         <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Correzione errori e bug</td>
+                        <td class="act-desc">Correzione difetti e miglioramento performance</td>
                     </tr>
 
                     <tr class="act-row">
                         <td>4.3</td>
-                        <td class="act-name">Ottimizzazione</td>
-                        <td class="act-date">04/05/2026</td>
-                        <td class="act-date">08/05/2026</td>
-                        <td class="act-ore">4</td>
-                        <td class="raci-cell"><span class="raci raci-a">A</span></td>
-                        <td class="raci-cell"><span class="raci raci-r">R</span></td>
-                        <td class="act-desc">Miglioramento prestazioni e UX</td>
-                    </tr>
-
-                    <tr class="act-row">
-                        <td>4.4</td>
-                        <td class="act-name">Documentazione finale</td>
-                        <td class="act-date">08/05/2026</td>
-                        <td class="act-date">08/05/2026</td>
+                        <td class="act-name">Rilascio e Documentazione Finale</td>
+                        <td class="act-date">14/05/2026</td>
+                        <td class="act-date">15/05/2026</td>
                         <td class="act-ore">4</td>
                         <td class="raci-cell"><span class="raci raci-ar">A/R</span></td>
                         <td class="raci-cell"><span class="raci raci-c">C</span></td>
-                        <td class="act-desc">Creazione documenti finali e manuale d'uso</td>
-                    </tr>
-
-                    <tr class="act-row">
-                        <td>4.5</td>
-                        <td class="act-name">Consegna e chiusura progetto</td>
-                        <td class="act-date">08/05/2026</td>
-                        <td class="act-date">08/05/2026</td>
-                        <td class="act-ore">1</td>
-                        <td class="raci-cell"><span class="raci raci-ar">A/R</span></td>
-                        <td class="raci-cell"><span class="raci raci-c">I</span></td>
-                        <td class="act-desc">Preparazione e consegna progetto finale</td>
+                        <td class="act-desc">Stesura finale manuali, OBS, e compilazione APK Capacitor</td>
                     </tr>
 
                 </tbody>
@@ -526,17 +446,17 @@
                 <div class="flex items-center gap-3">
                     <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"></span>
                     <span class="text-sm text-slate-600"><strong class="text-slate-800">2.0</strong> Pianificazione
-                        &mdash; <span class="text-slate-400">27/02 → 27/03</span></span>
+                        &mdash; <span class="text-slate-400">26/02 → 15/03</span></span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#22c55e,#4ade80)"></span>
                     <span class="text-sm text-slate-600"><strong class="text-slate-800">3.0</strong> Sviluppo Core
-                        &mdash; <span class="text-slate-400">01/04 → 08/05</span></span>
+                        &mdash; <span class="text-slate-400">16/03 → 08/05</span></span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="w-4 h-4 rounded" style="background:linear-gradient(135deg,#ef4444,#f87171)"></span>
                     <span class="text-sm text-slate-600"><strong class="text-slate-800">4.0</strong> Chiusura &mdash;
-                        <span class="text-slate-400">29/04 → 08/05</span></span>
+                        <span class="text-slate-400">09/05 → 15/05</span></span>
                 </div>
             </div>
         </div>

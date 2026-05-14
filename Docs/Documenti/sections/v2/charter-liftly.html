@@ -5,13 +5,12 @@
             <div class="relative z-10 flex flex-col justify-between h-full space-y-4">
                 <div class="shrink-0 flex items-center gap-3">
                     <img src="liftly_white.png" alt="LIFTLY" class="h-10 md:h-12 object-contain">
-                    <span class="bg-yellow-400 text-yellow-900 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">V2 · B2B</span>
                 </div>
                 <div>
                     <h3 class="text-2xl md:text-3xl font-black mb-2 uppercase tracking-tight">Project Charter</h3>
                     <div class="flex items-center gap-3">
                         <span class="w-8 h-1 bg-yellow-400 rounded-full shadow-sm"></span>
-                        <p class="text-blue-200 text-base font-medium tracking-wide">Pivot B2B SaaS — Licenze per Centri Sportivi</p>
+                        <p class="text-blue-200 text-base font-medium tracking-wide">Ecosistema Fitness Globale & B2B</p>
                     </div>
                 </div>
             </div>
@@ -21,11 +20,11 @@
 
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center space-y-4">
             <div class="space-y-3 text-sm">
-                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Versione</span> <span class="font-bold text-[#001540]">V2.0 — B2B Pivot</span></div>
-                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Start Date</span> <span class="font-bold text-[#001540]">28/04/2026</span></div>
-                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Clienti</span> <span class="font-bold text-[#001540]">Centri Sportivi (B2B)</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Versione</span> <span class="font-bold text-[#001540]">V1.0</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Inizio Progetto</span> <span class="font-bold text-[#001540]">13/02/2026</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-500 font-semibold">Fine Progetto</span> <span class="font-bold text-[#001540]">15/05/2026</span></div>
                 <div class="flex justify-between pt-1"><span class="text-slate-500 font-semibold">Unità org.</span>
-                    <span class="font-bold text-[#001540] text-right ml-4">Field Engineering &amp; PM</span>
+                    <span class="font-bold text-[#001540] text-right ml-4">Team DDKS</span>
                 </div>
             </div>
         </div>
@@ -62,83 +61,60 @@
             <h4 class="text-xl font-black text-[#001540] border-b-2 border-slate-100 pb-2">Panoramica del Progetto</h4>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-yellow-400 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-yellow-900 text-sm uppercase tracking-wide">Problemi o Questioni</span>
+                <div class="w-32 bg-blue-500 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">Problemi e Questioni</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    Il modello Freemium B2C si è rivelato insufficiente per garantire una retention stabile: gli utenti non percepiscono abbastanza valore da passare a un piano premium. Le palestre, invece, necessitano di strumenti digitali per fidelizzare i propri iscritti e differenziarsi dalla concorrenza.
+                    Il mercato del fitness è frammentato: gli atleti utilizzano un'app per segnare le schede d'allenamento, un'altra per calcolare le calorie e spesso non hanno modo di comunicare digitalmente con la loro palestra. Le palestre, d'altro canto, faticano a fidelizzare i propri iscritti per mancanza di un ecosistema digitale integrato.
                 </div>
             </div>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-yellow-400 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-yellow-900 text-sm uppercase tracking-wide">Scopo del Progetto</span>
+                <div class="w-32 bg-blue-500 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">Scopo del Progetto</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    Pivotare Liftly a un modello B2B SaaS. Le palestre acquistano una licenza software e offrono Liftly PRO ai propri iscritti come benefit incluso nell'abbonamento. Il sistema include:
+                    Sviluppare Liftly, un'applicazione all-in-one PWA (ottimizzata mobile con Capacitor) in React + Firebase che funge da:
                     <ul class="list-disc ml-5 mt-2 space-y-1">
-                        <li>Crowdsourcing affluenza via badge/tornelli (simulato).</li>
-                        <li>Mappatura e stato macchinari per palestra.</li>
-                        <li>Hub Personal Trainer con chat diretta.</li>
-                        <li>Supporto reception via ticket-chat.</li>
-                        <li>Gamification locale (leaderboard e sfide per palestra).</li>
+                        <li><b>Workout Tracker:</b> Gestione split e tracking volumi di allenamento.</li>
+                        <li><b>Health Hub:</b> Strumenti integrati come Calcolatore BMI, Macro e Peso.</li>
+                        <li><b>Social Platform:</b> Punti (XP), Leaderboard globale, Chat DM e di gruppo.</li>
+                        <li><b>B2B Gym SaaS:</b> Un modulo dedicato alle palestre (stato macchinari, PT, supporto e affluenza simulata).</li>
                     </ul>
                 </div>
             </div>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-yellow-400 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-yellow-900 text-sm uppercase tracking-wide">Business Case &amp; Vision</span>
+                <div class="w-32 bg-blue-500 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">Business Case & Vision</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    Liftly non è più solo un'app per l'atleta: è uno <strong>strumento di fidelizzazione (retention)</strong> per i proprietari di palestre. Il modello di entrate cambia radicalmente:
+                    Liftly unisce un'app B2C consumer a una piattaforma B2B. L'utente finale ottiene gratuitamente uno strumento di altissimo livello per tracciare i propri progressi. Le palestre acquistano licenze SaaS per attivare i "Gym Hub" personalizzati, offrendo ai loro iscritti un servizio Premium integrato che aumenta drasticamente la retention.
+                </div>
+            </div>
+
+            <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="w-32 bg-blue-500 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">Obiettivo e Metrica</span>
+                </div>
+                <div class="p-6 text-slate-600 text-sm leading-relaxed">
+                    Rilasciare l'intero applicativo funzionante entro la data di consegna del 15 Maggio 2026.
                     <ul class="list-disc ml-5 mt-2 space-y-1">
-                        <li><b>Licenze B2B:</b> Pacchetti annuali a partire da <strong>$550/palestra</strong>, scalabili per numero di iscritti.</li>
-                        <li><b>Zero friction per l'utente finale:</b> Liftly PRO è incluso nell'abbonamento fisico alla palestra — nessun paywall app.</li>
-                        <li><b>Valore per la palestra:</b> Differenziazione competitiva, dati di engagement degli iscritti, comunicazione diretta digitale.</li>
+                        <li><b>Copertura Funzionale:</b> Tutte le schermate (Login, Dashboard, Workout, Tools, Chat, Gym) operative e collegate a Firebase.</li>
+                        <li><b>Stabilità:</b> Architettura database multi-tenant e real-time testata e sicura.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-yellow-400 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-yellow-900 text-sm uppercase tracking-wide">Obiettivo e Metrica</span>
-                </div>
-                <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    Completare il pivot B2B entro la scadenza scolastica con un prototipo funzionante dell'ecosistema palestra.
-                    <ul class="list-disc ml-5 mt-2 space-y-1">
-                        <li><b>Adozione Funzionalità Gym:</b> Almeno 4 dei 5 moduli B2B (macchinari, PT hub, supporto, sfide locali, piano abbonamento) implementati e funzionanti.</li>
-                        <li><b>Multi-tenancy:</b> Segregazione dati completa per <code>gymId</code> verificata.</li>
-                        <li><b>Engagement:</b> Sistema di sfide locali e leaderboard per-palestra operativi.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-yellow-400 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-yellow-900 text-sm uppercase tracking-wide">Derivabili</span>
+                <div class="w-32 bg-blue-500 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">Derivabili</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
                     <ul class="list-disc ml-5 space-y-1">
-                        <li><b>Documentazione V2:</b> Project Charter B2B, SRS V2, WBS B2B, Gantt aggiornato.</li>
-                        <li><b>Software:</b> App con modulo "Gym Environment" completo (macchinari, PT, supporto, sfide).</li>
-                        <li><b>Database:</b> Struttura Firestore multi-tenant con collezioni <code>gyms</code>, <code>gym_machines</code>, <code>trainers</code>, <code>support_tickets</code>, <code>challenges</code>.</li>
-                        <li><b>Flyer Palestra:</b> Materiale promozionale per la palestra da consegnare agli iscritti per l'attivazione di Liftly PRO.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-slate-200 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-slate-700 text-sm uppercase tracking-wide">Stakeholder</span>
-                </div>
-                <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    <ul class="list-none space-y-2 text-xs">
-                        <li><b>Clienti B2B (Nuovi):</b> Proprietari e gestori di centri sportivi — acquirenti della licenza software.</li>
-                        <li><b>Operatori (Nuovi):</b> Personal Trainer e staff reception — utenti del pannello palestra.</li>
-                        <li><b>Utenti Finali:</b> Iscritti alla palestra — beneficiari di Liftly PRO.</li>
-                        <li><b>Process Owner:</b> Davide Dolce — supervisione complessiva del progetto.</li>
-                        <li><b>Tech Lead:</b> Saqlain Khalid — responsabile sviluppo app e database.</li>
+                        <li><b>Documentazione Tecnica:</b> Project Charter, SRS, WBS, Gantt, OBS.</li>
+                        <li><b>Software:</b> Repository del codice sorgente completo (Frontend React + Tailwind, Backend Firebase).</li>
+                        <li><b>Pacchetto App:</b> File APK compilato con Capacitor per dispositivi Android.</li>
                     </ul>
                 </div>
             </div>
@@ -146,71 +122,54 @@
 
         <!-- Ambito & Rischi -->
         <div class="space-y-6">
-            <h4 class="text-xl font-black text-[#001540] border-b-2 border-slate-100 pb-2">Ambito e Limiti V2</h4>
+            <h4 class="text-xl font-black text-[#001540] border-b-2 border-slate-100 pb-2">Ambito e Limiti</h4>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-teal-300 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-teal-900 text-sm uppercase tracking-wide">Nell'Ambito Del Progetto</span>
+                <div class="w-32 bg-teal-500 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">In Ambito</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
                     <ul class="list-disc ml-5 space-y-1">
-                        <li><b>Modulo Gym Environment:</b> Selezione palestra via codice invito, widget affluenza badge-based, lista macchinari per stato.</li>
-                        <li><b>Hub Personal Trainer:</b> Profili PT filtrati per palestra con chat diretta.</li>
-                        <li><b>Supporto Diretto:</b> Interfaccia ticket-chat con la reception.</li>
-                        <li><b>"Il Tuo Piano":</b> Visualizzazione abbonamento, scadenza e livello PRO dell'iscritto.</li>
-                        <li><b>Gamification Locale:</b> Leaderboard locale per palestra + tab globale; sfide create dalla palestra.</li>
-                        <li><b>Database Multi-tenant:</b> Segregazione completa dei dati per <code>gymId</code> su Firebase/Firestore.</li>
+                        <li><b>Gestione Utente:</b> Auth Firebase, Profilo biometrico, Impostazioni.</li>
+                        <li><b>Allenamento:</b> Custom split (es. Push/Pull/Legs), salvataggio schede e statistiche volume.</li>
+                        <li><b>Strumenti:</b> Tracker Peso, Calorie/Macro, Indice di Massa Corporea (BMI).</li>
+                        <li><b>Social e Gamification:</b> LiftChat (Messaggi diretti), Gruppi, Amici, Sistema Punti (XP) giornaliero, Leaderboard.</li>
+                        <li><b>Gym Hub (B2B):</b> Associazione palestra, visualizzazione macchinari, ticket di supporto, vetrina Personal Trainer.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-teal-100 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-teal-800 text-sm uppercase tracking-wide">Fuori Dall'Ambito</span>
+                <div class="w-32 bg-slate-300 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-slate-700 text-sm uppercase tracking-wide">Fuori Ambito</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
                     <ul class="list-disc ml-5 space-y-1">
-                        <li><b>Pannello Admin Web:</b> Interfaccia dedicata ai gestori della palestra (confermato fuori scope — previsto come sviluppo futuro).</li>
-                        <li><b>Integrazione Tornelli/Badge Reali:</b> Il dato di affluenza rimane simulato tramite campo <code>currentOccupancy</code> nel DB.</li>
-                        <li><b>Gateway di Pagamento:</b> La licenza B2B e l'abbonamento PRO sono simulati tramite flag nel database.</li>
-                        <li><b>Pubblicazione Store:</b> Il progetto rimane una PWA ottimizzata per mobile.</li>
-                        <li><b>Integrazione IA:</b> Nessun consiglio AI su allenamento o dieta.</li>
+                        <li><b>Dashboard Web Amministratori:</b> Il pannello gestionale per i proprietari delle palestre.</li>
+                        <li><b>Integrazione Hardware:</b> Collegamento reale a tornelli e sensori per l'affluenza in tempo reale (verrà simulata a DB).</li>
+                        <li><b>Sistemi di Pagamento (Stripe/PayPal):</b> L'abbonamento PRO e le licenze SaaS sono simulate nel database.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-yellow-400 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-yellow-900 text-sm uppercase tracking-wide">Expected Benefits</span>
-                </div>
-                <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    <ul class="list-disc ml-5 mt-2 space-y-1">
-                        <li><b>Per la Palestra:</b> Incremento della retention degli iscritti, canale di comunicazione digitale diretto, dati di utilizzo e engagement.</li>
-                        <li><b>Per l'Utente Finale:</b> Accesso a tutte le funzioni PRO senza costi aggiuntivi, senso di community locale, comunicazione con PT e reception semplificata.</li>
-                        <li><b>Per il Team:</b> Acquisizione competenze su architetture SaaS multi-tenant, modelli B2B e Firebase avanzato.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="w-32 bg-orange-300 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-orange-900 text-sm uppercase tracking-wide">Rischi</span>
+                <div class="w-32 bg-orange-400 shrink-0 p-4 flex items-center justify-center text-center">
+                    <span class="font-black text-white text-sm uppercase tracking-wide">Rischi</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
                     <ul class="list-disc ml-5 space-y-1">
-                        <li>Complessità elevata della struttura dati multi-tenant: rischio di data leak tra palestre diverse se le regole Firestore non sono configurate correttamente.</li>
-                        <li>Aumento significativo del numero di moduli da sviluppare rispetto alla V1: rischio di non completare tutti i moduli entro la scadenza.</li>
-                        <li>La simulazione dell'accesso badge (senza hardware reale) potrebbe ridurre il realismo della demo.</li>
+                        <li><b>Scope Creep:</b> La mole di funzionalità (Workout + Social + B2B + Tools) rischia di dilatare i tempi di sviluppo oltre la scadenza.</li>
+                        <li><b>Complessità Database:</b> Garantire una corretta separazione multi-tenant per le palestre insieme a messaggi chat in tempo reale.</li>
                     </ul>
                 </div>
             </div>
-
+            
             <div class="flex bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="w-32 bg-orange-200 shrink-0 p-4 flex items-center justify-center text-center">
-                    <span class="font-black text-orange-800 text-sm uppercase tracking-wide">Vincoli</span>
+                    <span class="font-black text-orange-900 text-sm uppercase tracking-wide">Vincoli</span>
                 </div>
                 <div class="p-6 text-slate-600 text-sm leading-relaxed">
-                    Il progetto deve essere completato entro la scadenza del progetto scolastico. Le risorse (tempo, budget, personale) rimangono limitate a un team di 2 persone. Il pannello Admin per la palestra è esplicitamente escluso da questa fase per contenere il perimetro di lavoro.
+                    Data di consegna rigida (15/05/2026). Team di sviluppo composto esclusivamente da 2 persone. Stack tecnologico limitato al solo ecosistema web e Firebase, compilato per Android tramite Capacitor.
                 </div>
             </div>
         </div>
@@ -219,100 +178,90 @@
     <!-- Tables Grid -->
     <div class="grid lg:grid-cols-2 gap-8 mb-8">
 
-        <!-- Milestones V2 -->
+        <!-- Milestones -->
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 pb-4 border-b border-slate-100">
                 <h4 class="text-xl font-black text-[#001540] flex items-center gap-2">
-                    <i data-lucide="flag" class="w-5 h-5 text-blue-500"></i> Milestones V2
+                    <i data-lucide="flag" class="w-5 h-5 text-blue-500"></i> Milestones di Progetto
                 </h4>
             </div>
             <div class="p-2 overflow-hidden">
                 <table class="w-full text-left text-sm table-fixed">
                     <thead>
                         <tr class="bg-slate-100/50">
-                            <th class="w-3/5 px-2 py-3 font-bold text-[#001540] uppercase tracking-wide text-[10px] md:text-xs border-b break-words whitespace-normal">Key Milestone</th>
-                            <th class="w-1/5 px-2 py-3 font-bold text-[#001540] uppercase tracking-wide text-[10px] md:text-xs border-b text-center break-words whitespace-normal">Start</th>
-                            <th class="w-1/5 px-2 py-3 font-bold text-[#001540] uppercase tracking-wide text-[10px] md:text-xs border-b text-center break-words whitespace-normal">Finish</th>
+                            <th class="w-3/5 px-4 py-3 font-bold text-[#001540] uppercase tracking-wide text-xs border-b">Descrizione Milestone</th>
+                            <th class="w-2/5 px-4 py-3 font-bold text-[#001540] uppercase tracking-wide text-xs border-b text-right">Data Completamento</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-slate-600">
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs break-words whitespace-normal">Liftly V1 completata e consegnata (B2C)</td>
-                            <td class="px-2 py-3 text-center text-xs">13/02/2026</td>
-                            <td class="px-2 py-3 text-center text-xs">08/05/2026</td>
+                            <td class="px-4 py-3 font-medium text-slate-800 text-xs">Kick-off e Pianificazione Requisiti</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">04/03/2026</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs break-words whitespace-normal">🚀 Liftly V2 – B2B Pivot (kick-off)</td>
-                            <td class="px-2 py-3 text-center text-xs">28/04/2026</td>
-                            <td class="px-2 py-3 text-center text-xs">28/04/2026</td>
+                            <td class="px-4 py-3 font-medium text-slate-800 text-xs">Core App: Auth, Workout, Database</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">25/03/2026</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs break-words whitespace-normal">Struttura DB Multi-tenant completata</td>
-                            <td class="px-2 py-3 text-center text-xs">28/04/2026</td>
-                            <td class="px-2 py-3 text-center text-xs">30/04/2026</td>
+                            <td class="px-4 py-3 font-medium text-slate-800 text-xs">Moduli Tools & Progressione Punti (XP)</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">10/04/2026</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs break-words whitespace-normal">Moduli Gym Environment (Macchinari, PT Hub, Supporto)</td>
-                            <td class="px-2 py-3 text-center text-xs">01/05/2026</td>
-                            <td class="px-2 py-3 text-center text-xs">06/05/2026</td>
+                            <td class="px-4 py-3 font-medium text-slate-800 text-xs">LiftChat, Social e Gym Environment B2B</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">08/05/2026</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs break-words whitespace-normal">Gamification Locale e Leaderboard per-Palestra</td>
-                            <td class="px-2 py-3 text-center text-xs">07/05/2026</td>
-                            <td class="px-2 py-3 text-center text-xs">08/05/2026</td>
+                            <td class="px-4 py-3 font-medium text-emerald-700 text-xs font-bold">Consegna e Documentazione Finale</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono font-bold text-emerald-700">15/05/2026</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Modello di Ricavo B2B -->
+        <!-- Preventivo Costi / Ore -->
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <div class="p-6 pb-4 border-b border-slate-100">
                 <h4 class="text-xl font-black text-[#001540] flex items-center gap-2">
-                    <i data-lucide="euro" class="w-5 h-5 text-emerald-500"></i> Modello di Ricavo B2B
+                    <i data-lucide="calculator" class="w-5 h-5 text-emerald-500"></i> Stima Costi e Ore (Budget)
                 </h4>
             </div>
             <div class="flex-1 p-2">
                 <table class="w-full text-left text-sm h-full table-fixed">
                     <thead>
                         <tr class="bg-slate-100/50">
-                            <th class="w-1/3 px-2 py-3 font-bold text-[#001540] uppercase tracking-wide text-[10px] md:text-xs border-b break-words whitespace-normal">Voce</th>
-                            <th class="w-1/3 px-2 py-3 font-bold text-[#001540] uppercase tracking-wide text-[10px] md:text-xs border-b break-words whitespace-normal">Dettaglio</th>
-                            <th class="w-1/3 px-2 py-3 font-bold text-[#001540] uppercase tracking-wide text-[10px] md:text-xs border-b text-right break-words whitespace-normal">Valore</th>
+                            <th class="w-2/5 px-4 py-3 font-bold text-[#001540] uppercase tracking-wide text-xs border-b">Area di Sviluppo</th>
+                            <th class="w-1/5 px-4 py-3 font-bold text-[#001540] uppercase tracking-wide text-xs border-b text-center">Ore Uomo</th>
+                            <th class="w-2/5 px-4 py-3 font-bold text-[#001540] uppercase tracking-wide text-xs border-b text-right">Costo (@30€/h)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-slate-600">
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 text-slate-500 font-semibold text-xs">Licenza Base</td>
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs">Pacchetto annuale palestra</td>
-                            <td class="px-2 py-3 text-right text-xs font-bold text-emerald-600">$550 / anno</td>
+                            <td class="px-4 py-3 text-slate-700 font-semibold text-xs">Project Management (PM)</td>
+                            <td class="px-4 py-3 text-center text-xs">38 h</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">1.140,00 €</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 text-slate-500 font-semibold text-xs">Licenza Pro</td>
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs">Palestre grandi (+500 iscritti)</td>
-                            <td class="px-2 py-3 text-right text-xs font-bold text-emerald-600">Custom</td>
+                            <td class="px-4 py-3 text-slate-700 font-semibold text-xs">Core, Workout & UI/UX</td>
+                            <td class="px-4 py-3 text-center text-xs">48 h</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">1.440,00 €</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 text-slate-500 font-semibold text-xs">Acquisizione B2B</td>
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs">Fiere fitness, commerciali diretti</td>
-                            <td class="px-2 py-3 text-right text-xs">Sostituisce Facebook Ads</td>
+                            <td class="px-4 py-3 text-slate-700 font-semibold text-xs">Tools, Chat e Social</td>
+                            <td class="px-4 py-3 text-center text-xs">40 h</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">1.200,00 €</td>
                         </tr>
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 text-slate-500 font-semibold text-xs">Costo Dev (V2)</td>
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs">PM + Developer (ore aggiuntive)</td>
-                            <td class="px-2 py-3 text-right text-xs">+€620 stimato</td>
-                        </tr>
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-2 py-3 text-slate-500 font-semibold text-xs">Utente Finale</td>
-                            <td class="px-2 py-3 font-medium text-slate-800 text-xs">Liftly PRO incluso nell'abbonamento palestra</td>
-                            <td class="px-2 py-3 text-right text-xs font-bold text-blue-600">€0 per l'utente</td>
+                            <td class="px-4 py-3 text-slate-700 font-semibold text-xs">Database, Punti & Gym B2B</td>
+                            <td class="px-4 py-3 text-center text-xs">34 h</td>
+                            <td class="px-4 py-3 text-right text-xs font-mono">1.020,00 €</td>
                         </tr>
                     </tbody>
-                    <tfoot class="bg-blue-50/50">
+                    <tfoot class="bg-emerald-50">
                         <tr>
-                            <td colspan="2" class="px-2 py-4 font-black text-[#001540] text-right uppercase tracking-wider text-xs">Totale Costi V1+V2</td>
-                            <td class="px-2 py-4 font-black text-[#001540] text-right text-sm md:text-base border-t-2 border-slate-200">€3.321,84</td>
+                            <td class="px-4 py-4 font-black text-[#001540] uppercase tracking-wider text-sm border-t-2 border-emerald-200">Totale Progetto</td>
+                            <td class="px-4 py-4 text-center font-black text-emerald-700 text-sm border-t-2 border-emerald-200">160 h</td>
+                            <td class="px-4 py-4 text-right font-black text-emerald-700 text-lg border-t-2 border-emerald-200">4.800,00 €</td>
                         </tr>
                     </tfoot>
                 </table>
